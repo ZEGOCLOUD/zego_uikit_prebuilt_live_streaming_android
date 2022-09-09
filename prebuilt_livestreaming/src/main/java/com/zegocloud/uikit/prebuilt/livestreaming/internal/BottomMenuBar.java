@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreming.internal;
+package com.zegocloud.uikit.prebuilt.livestreaming.internal;
 
 import android.content.Context;
 import android.graphics.drawable.StateListDrawable;
@@ -20,9 +20,9 @@ import com.zegocloud.uikit.components.audiovideo.ZegoSwitchAudioOutputButton;
 import com.zegocloud.uikit.components.audiovideo.ZegoSwitchCameraButton;
 import com.zegocloud.uikit.components.audiovideo.ZegoToggleCameraButton;
 import com.zegocloud.uikit.components.audiovideo.ZegoToggleMicrophoneButton;
-import com.zegocloud.uikit.prebuilt.livestreming.R;
-import com.zegocloud.uikit.prebuilt.livestreming.ZegoInRoomMessageButton;
-import com.zegocloud.uikit.prebuilt.livestreming.ZegoMenuBarButtonName;
+import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoInRoomMessageButton;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,12 +1,9 @@
-package com.zegocloud.uikit.prebuilt.livestreming;
+package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.Manifest;
 import android.Manifest.permission;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,8 +18,8 @@ import com.permissionx.guolindev.PermissionX;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.components.audiovideo.ZegoViewProvider;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoViewConfig;
-import com.zegocloud.uikit.prebuilt.livestreming.databinding.FragmentZegouikitPrebuiltLivestreamingBinding;
-import com.zegocloud.uikit.prebuilt.livestreming.internal.LeaveLiveStreamingListener;
+import com.zegocloud.uikit.prebuilt.livestreaming.databinding.FragmentZegouikitPrebuiltLivestreamingBinding;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.LeaveLiveStreamingListener;
 import com.zegocloud.uikit.service.defines.AudioVideoUpdateListener;
 import com.zegocloud.uikit.service.defines.RoomUserUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;

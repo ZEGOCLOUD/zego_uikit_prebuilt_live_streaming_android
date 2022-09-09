@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreming;
+package com.zegocloud.uikit.prebuilt.livestreaming;
 
 public enum ZegoMenuBarButtonName {
     TOGGLE_CAMERA_BUTTON,

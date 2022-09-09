@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreming;
+package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import androidx.annotation.IntDef;
 import java.io.Serializable;

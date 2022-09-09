@@ -30,7 +30,7 @@
     android:layout_marginTop="10dp"
     app:layout_constraintTop_toTopOf="parent">
 
-    <com.zegocloud.uikit.prebuilt.livestreming.internal.ZegoExitLiveButton
+    <com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoExitLiveButton
       android:id="@+id/exit_live"
       android:layout_width="40dp"
       android:layout_height="40dp"
@@ -40,7 +40,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
-    <com.zegocloud.uikit.prebuilt.livestreming.ZegoMemberButton
+    <com.zegocloud.uikit.prebuilt.livestreaming.ZegoMemberButton
       android:id="@+id/member_count"
       android:layout_width="53dp"
       android:layout_height="28dp"
@@ -64,7 +64,7 @@
     app:layout_constraintBottom_toTopOf="@+id/bottom_menu_bar"
     app:layout_constraintStart_toStartOf="parent" />
 
-  <com.zegocloud.uikit.prebuilt.livestreming.internal.BottomMenuBar
+  <com.zegocloud.uikit.prebuilt.livestreaming.internal.BottomMenuBar
     android:id="@+id/bottom_menu_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

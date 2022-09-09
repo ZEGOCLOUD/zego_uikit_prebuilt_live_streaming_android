@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreming;
+package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.app.Dialog;
 import android.content.Context;

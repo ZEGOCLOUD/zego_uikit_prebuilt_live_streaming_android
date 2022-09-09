@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreming.internal;
+package com.zegocloud.uikit.prebuilt.livestreaming.internal;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.zegocloud.uikit.prebuilt.livestreming.ZegoConfirmDialogInfo;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoConfirmDialogInfo;
 
 public class ZegoExitLiveButton extends AppCompatImageView {
 
