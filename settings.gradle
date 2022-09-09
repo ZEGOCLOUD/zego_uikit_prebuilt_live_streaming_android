@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "zego_uikit_prebuilt_live_streaming_android"
 include ':app'
+include ':prebuilt_livestreaming'
