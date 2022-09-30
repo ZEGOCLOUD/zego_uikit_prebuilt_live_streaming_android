@@ -16,15 +16,15 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.permissionx.guolindev.PermissionX;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.components.audiovideo.ZegoViewProvider;
+import com.zegocloud.uikit.components.audiovideo.ZegoForegroundViewProvider;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoViewConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.databinding.FragmentZegouikitPrebuiltLivestreamingBinding;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.LeaveLiveStreamingListener;
-import com.zegocloud.uikit.service.defines.AudioVideoUpdateListener;
-import com.zegocloud.uikit.service.defines.RoomUserUpdateListener;
+import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
 import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,15 +34,15 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment {
     private OnBackPressedCallback onBackPressedCallback;
     private FragmentZegouikitPrebuiltLivestreamingBinding binding;
     private List<View> menuBarExtendedButtons = new ArrayList<>();
-    private ZegoViewProvider provider;
+    private ZegoForegroundViewProvider provider;
     private LeaveLiveStreamingListener leaveListener;
 
     public ZegoUIKitPrebuiltLiveStreamingFragment() {
         // Required empty public constructor
     }
 
-    public static ZegoUIKitPrebuiltLiveStreamingFragment newInstance(long appID, String appSign,
-        String userID, String userName, String liveID, ZegoUIKitPrebuiltLiveStreamingConfig config) {
+    public static ZegoUIKitPrebuiltLiveStreamingFragment newInstance(long appID, String appSign, String userID,
+        String userName, String liveID, ZegoUIKitPrebuiltLiveStreamingConfig config) {
 
         ZegoUIKitPrebuiltLiveStreamingFragment fragment = new ZegoUIKitPrebuiltLiveStreamingFragment();
         Bundle bundle = new Bundle();
@@ -86,8 +86,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-        Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentZegouikitPrebuiltLivestreamingBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -120,7 +119,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment {
             "config");
         String userID = arguments.getString("userID");
 
-        ZegoUIKit.addAudioVideoUpdateListener(new AudioVideoUpdateListener() {
+        ZegoUIKit.addAudioVideoUpdateListener(new ZegoAudioVideoUpdateListener() {
             @Override
             public void onAudioVideoAvailable(List<ZegoUIKitUser> userList) {
                 if (userList.size() > 0) {
@@ -139,14 +138,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment {
         if (provider != null) {
             binding.hostVideoView.setForegroundViewProvider(provider);
         }
-        ZegoUIKit.addUserUpdateListener(new RoomUserUpdateListener() {
+        ZegoUIKit.addUserUpdateListener(new ZegoUserUpdateListener() {
             @Override
             public void onUserJoined(List<ZegoUIKitUser> userInfoList) {
 
             }
 
             @Override
-            public void onUserJoinLeft(List<ZegoUIKitUser> userInfoList) {
+            public void onUserLeft(List<ZegoUIKitUser> userInfoList) {
                 for (ZegoUIKitUser zegoUIKitUser : userInfoList) {
                     if (Objects.equals(zegoUIKitUser.userID, binding.hostVideoView.getUserID())) {
                         binding.hostVideoView.setUserID("");
@@ -182,17 +181,15 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment {
         ZegoUIKit.setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
 
         boolean permissionGranted =
-            PermissionX.isGranted(getContext(), permission.CAMERA)
-                && PermissionX.isGranted(getContext(), permission.RECORD_AUDIO);
+            PermissionX.isGranted(getContext(), permission.CAMERA) && PermissionX.isGranted(getContext(),
+                permission.RECORD_AUDIO);
         if (!permissionGranted) {
             PermissionX.init(requireActivity())
                 .permissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
                 .onExplainRequestReason((scope, deniedList) -> {
-                    scope.showRequestReasonDialog(deniedList,
-                        "We require camera&microphone access to connect a living",
+                    scope.showRequestReasonDialog(deniedList, "We require camera&microphone access to connect a living",
                         "OK", "Cancel");
-                })
-                .request((allGranted, grantedList, deniedList) -> {
+                }).request((allGranted, grantedList, deniedList) -> {
                     if (config.turnOnCameraWhenJoining) {
                         ZegoUIKit.turnCameraOn(userID, false);
                         ZegoUIKit.turnCameraOn(userID, true);
@@ -249,7 +246,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment {
         }
     }
 
-    public void setForegroundViewProvider(ZegoViewProvider provider) {
+    public void setForegroundViewProvider(ZegoForegroundViewProvider provider) {
         this.provider = provider;
         if (binding != null) {
             binding.hostVideoView.setForegroundViewProvider(provider);

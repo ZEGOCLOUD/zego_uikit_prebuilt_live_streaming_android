@@ -2,9 +2,14 @@ package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,6 +18,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import com.zegocloud.uikit.components.live.ZegoInRoomMessageInput;
 import com.zegocloud.uikit.utils.KeyboardUtils;
+import com.zegocloud.uikit.utils.Utils;
 
 public class ZegoInRoomMessageInputBoard extends Dialog {
 
@@ -22,11 +28,15 @@ public class ZegoInRoomMessageInputBoard extends Dialog {
         super(context);
     }
 
+    public ZegoInRoomMessageInputBoard(@NonNull Context context, int themeResId) {
+        super(context, themeResId);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        contentView = new ZegoInRoomMessageInput(getContext());
+        contentView = new ZegoInRoomMessageInput(getContext(),true);
         FrameLayout frameLayout = new FrameLayout(getContext());
         frameLayout.addView(contentView);
         setContentView(frameLayout);
@@ -40,34 +50,32 @@ public class ZegoInRoomMessageInputBoard extends Dialog {
         window.setAttributes(lp);
         window.setBackgroundDrawable(new ColorDrawable());
 
-        setCanceledOnTouchOutside(false);
-
-        int mode = WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE |
-            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
+        int mode = LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
         window.setSoftInputMode(mode);
+
+        setCanceledOnTouchOutside(true);
 
         setOnDismissListener(dialog -> {
             KeyboardUtils.hideInputWindow(contentView);
         });
-        contentView.setListener(message -> {
+        contentView.setSubmitListener(message -> {
             dismiss();
         });
+
+        int corner = Utils.dp2px(8f, getContext().getResources().getDisplayMetrics());
+        float[] outerR = new float[]{corner, corner, corner, corner, corner, corner, corner, corner};
+        RoundRectShape roundRectShape = new RoundRectShape(outerR, null, null);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(roundRectShape);
+        shapeDrawable.getPaint().setColor(Color.parseColor("#222222"));
+        contentView.setBackground(shapeDrawable);
     }
 
     @Override
-    public boolean onTouchEvent(@NonNull MotionEvent event) {
-        if (event.getX() < 0 || event.getY() < 0) {
+    public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_ESCAPE) {
             dismiss();
+            return true;
         }
-        if (event.getX() > contentView.getWidth() || event.getY() > contentView.getHeight()) {
-            dismiss();
-        }
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        dismiss();
+        return false;
     }
 }

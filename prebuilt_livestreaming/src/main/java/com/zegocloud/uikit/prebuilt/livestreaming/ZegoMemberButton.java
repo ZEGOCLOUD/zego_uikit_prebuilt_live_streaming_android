@@ -4,14 +4,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.service.defines.RoomUserUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
 import com.zegocloud.uikit.service.internal.UIKitCore;
 import java.util.List;
 
 public class ZegoMemberButton extends androidx.appcompat.widget.AppCompatTextView {
 
-    private RoomUserUpdateListener roomUserUpdateListener;
+    private ZegoUserUpdateListener zegoUserUpdateListener;
 
     public ZegoMemberButton(Context context) {
         super(context);
@@ -30,7 +30,7 @@ public class ZegoMemberButton extends androidx.appcompat.widget.AppCompatTextVie
 
     private void initView() {
         setText(String.valueOf(ZegoUIKit.getAllUsers().size()));
-        roomUserUpdateListener = new RoomUserUpdateListener() {
+        zegoUserUpdateListener = new ZegoUserUpdateListener() {
             @Override
             public void onUserJoined(List<ZegoUIKitUser> userInfoList) {
                 int size = ZegoUIKit.getAllUsers().size();
@@ -38,7 +38,7 @@ public class ZegoMemberButton extends androidx.appcompat.widget.AppCompatTextVie
             }
 
             @Override
-            public void onUserJoinLeft(List<ZegoUIKitUser> userInfoList) {
+            public void onUserLeft(List<ZegoUIKitUser> userInfoList) {
                 int size = ZegoUIKit.getAllUsers().size();
                 setText(String.valueOf(size));
             }
@@ -48,12 +48,12 @@ public class ZegoMemberButton extends androidx.appcompat.widget.AppCompatTextVie
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        UIKitCore.getInstance().addUserUpdateListener(roomUserUpdateListener, true);
+        UIKitCore.getInstance().addUserUpdateListenerInternal(zegoUserUpdateListener);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        UIKitCore.getInstance().removeUserUpdateListener(roomUserUpdateListener, true);
+        UIKitCore.getInstance().removeUserUpdateListenerInternal(zegoUserUpdateListener);
     }
 }
