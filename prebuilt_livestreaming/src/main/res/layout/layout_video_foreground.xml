@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="34dp"
+  android:background="@drawable/background_video_foreground"
+  android:orientation="horizontal"
+  android:paddingStart="5dp"
+  android:paddingEnd="5dp">
+
+  <TextView
+    android:id="@+id/foreground_textview"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:layout_weight="1"
+    android:ellipsize="end"
+    android:gravity="end"
+    android:maxLines="1"
+    android:singleLine="true"
+    android:textColor="@android:color/white"
+    android:textSize="11sp"
+    app:layout_constraintEnd_toStartOf="@+id/foreground_camera"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_goneMarginEnd="5dp" />
+
+  <com.zegocloud.uikit.components.audiovideo.ZegoCameraStateView
+    android:id="@+id/foreground_camera"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="@id/foreground_textview"
+    app:layout_constraintEnd_toStartOf="@id/foreground_mic"
+    app:layout_constraintTop_toTopOf="@id/foreground_textview" />
+
+  <com.zegocloud.uikit.components.audiovideo.ZegoMicrophoneStateView
+    android:id="@+id/foreground_mic"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="@id/foreground_textview"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="@id/foreground_textview" />
+</androidx.constraintlayout.widget.ConstraintLayout>

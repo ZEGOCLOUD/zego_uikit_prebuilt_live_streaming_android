@@ -2,19 +2,16 @@ package com.zegocloud.uikit.prebuilt.livestreaming.internal;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.AttributeSet;
-import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.zegocloud.uikit.prebuilt.livestreaming.ZegoConfirmDialogInfo;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 
 public class ZegoExitLiveButton extends AppCompatImageView {
 
-    private ZegoConfirmDialogInfo confirmDialogInfo;
-    private LeaveLiveStreamingListener leaveLiveListener;
+    private ZegoDialogInfo confirmDialogInfo;
+    private ZegoLeaveLiveStreamingListener leaveLiveListener;
 
     public ZegoExitLiveButton(@NonNull Context context) {
         super(context);
@@ -29,9 +26,12 @@ public class ZegoExitLiveButton extends AppCompatImageView {
     public void initView() {
         setOnClickListener(null);
         setImageResource(com.zegocloud.uikit.R.drawable.icon_nav_close);
+        setOnClickListener(v -> {
+            invokeWhenClick();
+        });
     }
 
-    public void setConfirmDialogInfo(ZegoConfirmDialogInfo info) {
+    public void setConfirmDialogInfo(ZegoDialogInfo info) {
         confirmDialogInfo = info;
     }
 
@@ -46,43 +46,20 @@ public class ZegoExitLiveButton extends AppCompatImageView {
         }
     }
 
-    @Override
-    public void setOnClickListener(@Nullable OnClickListener l) {
-        super.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                invokeWhenClick();
-                if (l != null) {
-                    l.onClick(ZegoExitLiveButton.this);
-                }
-            }
-        });
-    }
-
-    public void setLeaveLiveListener(LeaveLiveStreamingListener listener) {
+    public void setLeaveLiveListener(ZegoLeaveLiveStreamingListener listener) {
         this.leaveLiveListener = listener;
     }
 
-    private void showQuitDialog(ZegoConfirmDialogInfo dialogInfo) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-        builder.setTitle(dialogInfo.title);
-        builder.setMessage(dialogInfo.message);
-        builder.setPositiveButton(dialogInfo.confirmButtonName, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+    private void showQuitDialog(ZegoDialogInfo dialogInfo) {
+        new ConfirmDialog.Builder(getContext()).setTitle(dialogInfo.title).setMessage(dialogInfo.message)
+            .setPositiveButton(dialogInfo.confirmButtonName, (dialog, which) -> {
                 if (leaveLiveListener != null) {
                     leaveLiveListener.onLeaveLiveStreaming();
                 }
-            }
-        });
-        builder.setNegativeButton(dialogInfo.cancelButtonName, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-            }
-        });
-        builder.setCancelable(false);
-        builder.show();
+            }).setNegativeButton(dialogInfo.cancelButtonName, (dialog, which) -> {
+                dialog.dismiss();
+            }).build().show();
     }
 
 }

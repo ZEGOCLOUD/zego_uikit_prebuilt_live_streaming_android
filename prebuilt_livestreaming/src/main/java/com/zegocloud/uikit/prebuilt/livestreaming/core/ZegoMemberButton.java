@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreaming;
+package com.zegocloud.uikit.prebuilt.livestreaming.core;
 
 import android.content.Context;
 import android.util.AttributeSet;

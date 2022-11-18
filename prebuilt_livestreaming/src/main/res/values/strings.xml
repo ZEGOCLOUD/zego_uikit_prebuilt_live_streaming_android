@@ -1,9 +1,57 @@
 <resources>
   <string name="app_name">prebuilt_livestreaming</string>
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="close">close</string>
   <string name="live_over">The live is over</string>
   <string name="attention">Attention</string>
-  <string name="no_host">No host is currently online</string>
+  <string name="no_host">No host is online</string>
+  <string name="permission_explain_camera">Camera access is required to start a live stream.</string>
+  <string name="permission_explain_mic">Microphone access is required to start a live stream.</string>
+  <string name="permission_explain_camera_mic">Camera and microphone access are required to start a live stream.</string>
+  <string name="settings_camera">Please go to system settings to allow camera access. </string>
+  <string name="settings_mic">Please go to system settings to allow microphone access. </string>
+  <string name="settings_camera_mic">Please go to system settings to allow camera and microphone access.</string>
+  <string name="ok">OK</string>
+  <string name="cancel">Cancel</string>
+  <string name="start">Start</string>
+  <string name="memberlist_title">Attendance</string>
+  <string name="you">You</string>
+  <string name="co_host">Co-host</string>
+  <string name="host">Host</string>
+  <string name="live_member_invite">Invite %s to co-host</string>
+  <string name="agree">Agree</string>
+  <string name="disagree">Disagree</string>
+  <string name="settings">Settings</string>
+  <string name="end">End</string>
+
+  <string name="request_co_host">Apply to co-host</string>
+  <string name="cancel_co_host">Cancel the application</string>
+  <string name="remove_co_host">Remove the co-host</string>
+  <string name="invite_co_host">Invite %s to co-host</string>
+  <string name="request_co_host_tips">You are applying to be a co-host, please wait for confirmation.</string>
+  <string name="host_reject_co_host_tips">Your request to co-host with the host has been refused.</string>
+  <string name="invite_co_host_tips">Failed to connect with the co-host，please try again.</string>
+  <string name="invite_co_host_repeat">You\'ve sent the co-host invitation, please wait for confirmation.</string>
+  <string name="refuse_co_host_tips">%s refused to be a co-host.</string>
+  <string name="request_no_host_tips">Failed to apply for connection.</string>
+
+  <string name="receive_co_host_request_title">Co-host request</string>
+  <string name="receive_co_host_request_message">%s wants to co-host with you.</string>
+  <string name="receive_co_host_request_cancel">@string/disagree</string>
+  <string name="receive_co_host_request_ok">@string/agree</string>
+
+  <string name="receive_co_host_invite_title">Invitation</string>
+  <string name="receive_co_host_invite_message">The host is inviting you to co-host.</string>
+  <string name="receive_co_host_invite_cancel">@string/disagree</string>
+  <string name="receive_co_host_invite_ok">@string/agree</string>
+
+  <string name="end_co_host_title">End the connection</string>
+  <string name="end_co_host_message">Do you want to end the cohosting?</string>
+  <string name="end_co_host_cancel">@string/cancel</string>
+  <string name="end_co_host_ok">@string/ok</string>
+
+  <string name="stop_live_title">Stop the live</string>
+  <string name="stop_live_message">Are you sure to stop the live?</string>
+  <string name="stop_live_cancel">@string/cancel</string>
+  <string name="stop_live_ok">Stop it</string>
+
 </resources>

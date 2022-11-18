@@ -1,6 +1,6 @@
 package com.zegocloud.uikit.prebuilt.livestreaming.internal;
 
-public interface LeaveLiveStreamingListener {
+public interface ZegoLeaveLiveStreamingListener {
 
     void onLeaveLiveStreaming();
 }

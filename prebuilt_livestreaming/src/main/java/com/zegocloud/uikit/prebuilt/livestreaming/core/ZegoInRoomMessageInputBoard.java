@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreaming;
+package com.zegocloud.uikit.prebuilt.livestreaming.core;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -7,16 +7,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
-import com.zegocloud.uikit.components.live.ZegoInRoomMessageInput;
+import com.zegocloud.uikit.components.message.ZegoInRoomMessageInput;
 import com.zegocloud.uikit.utils.KeyboardUtils;
 import com.zegocloud.uikit.utils.Utils;
 

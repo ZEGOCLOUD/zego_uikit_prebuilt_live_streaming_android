@@ -5,17 +5,18 @@
   android:layout_height="match_parent"
   android:background="@drawable/img_bg">
 
-  <com.zegocloud.uikit.components.audiovideo.ZegoAudioVideoView
-    android:id="@+id/host_video_view"
+  <com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoContainer
+    android:id="@+id/live_video_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 
   <TextView
-    android:id="@+id/no_host_hint"
+    android:id="@+id/live_no_host_hint"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:drawablePadding="10dp"
     android:gravity="center"
-    android:maxWidth="165dp"
     android:text="@string/no_host"
     android:textColor="@android:color/white"
     android:textSize="16sp"
@@ -24,51 +25,145 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent" />
 
-  <RelativeLayout
-    android:layout_width="match_parent"
+  <com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoExitLiveButton
+    android:id="@+id/live_exit"
+    android:layout_width="40dp"
     android:layout_height="40dp"
     android:layout_marginTop="10dp"
+    android:layout_marginEnd="10dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <RelativeLayout
+    android:id="@+id/live_host_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="34dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="13dp"
+    android:background="@drawable/list_people_round_rect"
+    app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
 
-    <com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoExitLiveButton
-      android:id="@+id/exit_live"
-      android:layout_width="40dp"
-      android:layout_height="40dp"
-      android:layout_alignParentEnd="true"
+    <com.zegocloud.uikit.components.internal.RippleIconView
+      android:id="@+id/live_host_icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
       android:layout_centerVertical="true"
-      android:layout_marginEnd="10dp"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
+      android:layout_marginStart="3dp"
+      app:circleRadius="14dp"
+      app:drawRipple="false" />
 
-    <com.zegocloud.uikit.prebuilt.livestreaming.ZegoMemberButton
-      android:id="@+id/member_count"
-      android:layout_width="53dp"
-      android:layout_height="28dp"
-      android:layout_centerVertical="true"
-      android:layout_toStartOf="@id/exit_live"
-      android:background="@drawable/list_people_round_rect"
-      android:drawableStart="@drawable/list_people"
-      android:drawablePadding="2dp"
-      android:gravity="center_vertical"
-      android:paddingStart="12dp"
-      android:paddingEnd="12dp"
+    <TextView
+      android:id="@+id/live_host_name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:layout_marginStart="6dp"
+      android:layout_marginEnd="12dp"
+      android:layout_toRightOf="@id/live_host_icon"
+      android:ellipsize="end"
+      android:maxWidth="120dp"
+      android:maxLines="1"
+      android:singleLine="true"
       android:textColor="@android:color/white"
       android:textSize="12sp" />
   </RelativeLayout>
 
-  <com.zegocloud.uikit.components.live.ZegoInRoomMessageView
-    android:id="@+id/message_view"
+  <com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMemberButton
+    android:id="@+id/live_member_count"
+    android:layout_width="wrap_content"
+    android:layout_height="28dp"
+    android:layout_marginTop="16dp"
+    android:layout_toStartOf="@id/live_exit"
+    android:background="@drawable/list_people_round_rect"
+    android:drawableStart="@drawable/list_people"
+    android:drawablePadding="4dp"
+    android:gravity="center_vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:textColor="@android:color/white"
+    android:textSize="12sp"
+    app:layout_constraintEnd_toStartOf="@+id/live_exit"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <androidx.constraintlayout.utils.widget.ImageFilterView
+    android:id="@+id/live_member_count_notify"
+    android:layout_width="8dp"
+    android:layout_height="8dp"
+    android:background="#FF0D23"
+    android:visibility="gone"
+    app:layout_constraintEnd_toEndOf="@id/live_member_count"
+    app:layout_constraintTop_toTopOf="@id/live_member_count"
+    app:roundPercent="1" />
+
+  <com.zegocloud.uikit.components.message.ZegoInRoomMessageView
+    android:id="@+id/live_message_view"
     android:layout_width="270dp"
     android:layout_height="200dp"
     android:layout_marginEnd="90dp"
-    app:layout_constraintBottom_toTopOf="@+id/bottom_menu_bar"
+    app:layout_constraintBottom_toTopOf="@+id/live_bottom_menu_bar"
     app:layout_constraintStart_toStartOf="parent" />
 
   <com.zegocloud.uikit.prebuilt.livestreaming.internal.BottomMenuBar
-    android:id="@+id/bottom_menu_bar"
+    android:id="@+id/live_bottom_menu_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintBottom_toBottomOf="parent" />
 
+  <androidx.constraintlayout.widget.Group
+    android:id="@+id/live_group"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:constraint_referenced_ids="live_bottom_menu_bar,live_message_view,live_member_count,live_exit,live_host_layout" />
 
+  <ImageView
+    android:id="@+id/preview_back"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="2dp"
+    android:scaleType="center"
+    android:src="@drawable/nav_back"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <com.zegocloud.uikit.components.audiovideo.ZegoSwitchCameraButton
+    android:id="@+id/preview_switch"
+    android:layout_width="36dp"
+    android:layout_height="36dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginEnd="16dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <Button
+    android:id="@+id/preview_start"
+    android:layout_width="150dp"
+    android:layout_height="44dp"
+    android:layout_marginBottom="48dp"
+    android:background="@drawable/bg_purple_btn"
+    android:gravity="center"
+    android:text="@string/start"
+    android:textColor="@android:color/white"
+    android:textSize="16sp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <androidx.constraintlayout.widget.Group
+    android:id="@+id/preview_group"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:constraint_referenced_ids="preview_back,preview_group,preview_start,preview_switch" />
+
+  <TextView
+    android:id="@+id/live_toast"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:gravity="center"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:textColor="@android:color/white"
+    android:textSize="14sp"
+    app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

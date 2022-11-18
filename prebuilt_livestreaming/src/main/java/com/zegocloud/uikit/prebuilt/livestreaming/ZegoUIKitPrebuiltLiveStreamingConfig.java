@@ -1,71 +1,77 @@
 package com.zegocloud.uikit.prebuilt.livestreaming;
 
-import androidx.annotation.IntDef;
-import java.io.Serializable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import androidx.annotation.Nullable;
+import com.zegocloud.uikit.plugin.common.IZegoUIKitPlugin;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingEndListener;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoBottomMenuBarConfig;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMemberListConfig;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltAudioVideoViewConfig;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoLeaveLiveStreamingListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class ZegoUIKitPrebuiltLiveStreamingConfig implements Serializable {
+public class ZegoUIKitPrebuiltLiveStreamingConfig {
 
-    public boolean showSoundWaveOnAudioView = true; // 语音模式下，是否显示头像周围的声浪
-    public boolean turnOnCameraWhenJoining = true; // 是否默认开启摄像头，如果摄像头和麦克风都关闭，则停止推流。
-    public boolean turnOnMicrophoneWhenJoining = true; // 是否默认开启麦克风，如果摄像头和麦克风都关闭，则停止推流。
-    public boolean useSpeakerWhenJoining = true; // 是否默认使用扬声器，默认为false。如果否，使用系统默认设备。
-    public boolean showInRoomMessageButton = true; // 是否显示发送消息的按钮
-    public List<ZegoMenuBarButtonName> menuBarButtons = Arrays.asList(
-        ZegoMenuBarButtonName.TOGGLE_CAMERA_BUTTON,
-        ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON,
-        ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON);
-    public int menuBarButtonsMaxCount = 5;
+    public ZegoLiveStreamingRole role = ZegoLiveStreamingRole.AUDIENCE;
+    public boolean turnOnCameraWhenJoining = false;
+    public boolean turnOnMicrophoneWhenJoining = false;
+    public boolean useSpeakerWhenJoining = true;
+    public ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig;
+    public List<IZegoUIKitPlugin> plugins = new ArrayList<>();
+    public ZegoBottomMenuBarConfig bottomMenuBarConfig = new ZegoBottomMenuBarConfig(
+        Arrays.asList(ZegoMenuBarButtonName.TOGGLE_CAMERA_BUTTON, ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON,
+            ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON),
+        Arrays.asList(ZegoMenuBarButtonName.TOGGLE_CAMERA_BUTTON, ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON,
+            ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON, ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON),
+        Collections.singletonList(ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON));
+    public ZegoMemberListConfig memberListConfig;
+    public ZegoDialogInfo confirmDialogInfo;
+    public transient ZegoLiveStreamingEndListener zegoLiveStreamingEndListener;
+    public transient ZegoLeaveLiveStreamingListener leaveLiveStreamingListener;
+    public ZegoTranslationText translationText = new ZegoTranslationText();
 
-    public ZegoConfirmDialogInfo confirmDialogInfo;
-
-    public static final int ROLE_NONE = 0;
-    public static final int ROLE_HOST = 1;
-    public static final int ROLE_AUDIENCE = 2;
-
-    @IntDef({ROLE_NONE, ROLE_HOST, ROLE_AUDIENCE})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ROLE {
-
+    public static ZegoUIKitPrebuiltLiveStreamingConfig host() {
+        return host(new ArrayList<>());
     }
 
-    public ZegoUIKitPrebuiltLiveStreamingConfig() {
-        this(ROLE_NONE);
-    }
-
-    public ZegoUIKitPrebuiltLiveStreamingConfig(@ROLE int role) {
-        if (role == ROLE_HOST) {
-            showSoundWaveOnAudioView = true;
-            turnOnCameraWhenJoining = true;
-            turnOnMicrophoneWhenJoining = true;
-            useSpeakerWhenJoining = true;
-            showInRoomMessageButton = true;
-            menuBarButtons = Arrays.asList(
-                ZegoMenuBarButtonName.TOGGLE_CAMERA_BUTTON,
-                ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON,
-                ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON);
-            menuBarButtonsMaxCount = 5;
-        } else if (role == ROLE_AUDIENCE) {
-            showSoundWaveOnAudioView = true;
-            turnOnCameraWhenJoining = false;
-            turnOnMicrophoneWhenJoining = false;
-            useSpeakerWhenJoining = true;
-            showInRoomMessageButton = true;
-            menuBarButtons = new ArrayList<>();
-            menuBarButtonsMaxCount = 5;
+    public static ZegoUIKitPrebuiltLiveStreamingConfig host(@Nullable List<IZegoUIKitPlugin> plugins) {
+        ZegoUIKitPrebuiltLiveStreamingConfig config = new ZegoUIKitPrebuiltLiveStreamingConfig();
+        config.role = ZegoLiveStreamingRole.HOST;
+        config.turnOnCameraWhenJoining = true;
+        config.turnOnMicrophoneWhenJoining = true;
+        config.plugins = plugins;
+        config.confirmDialogInfo = new ZegoDialogInfo("Stop the live", "Are you sure to stop the live?", "Cancel",
+            "Stop it");
+        if (plugins != null && !plugins.isEmpty()) {
+            config.bottomMenuBarConfig.audienceButtons = Collections.singletonList(
+                ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON);
         } else {
-            showSoundWaveOnAudioView = true;
-            turnOnCameraWhenJoining = false;
-            turnOnMicrophoneWhenJoining = false;
-            useSpeakerWhenJoining = true;
-            showInRoomMessageButton = true;
-            menuBarButtons = new ArrayList<>();
-            menuBarButtonsMaxCount = 5;
+            config.bottomMenuBarConfig.audienceButtons = new ArrayList<>();
         }
+
+        return config;
     }
 
+    public static ZegoUIKitPrebuiltLiveStreamingConfig audience() {
+        return audience(new ArrayList<>());
+    }
+
+    public static ZegoUIKitPrebuiltLiveStreamingConfig audience(List<IZegoUIKitPlugin> plugins) {
+        ZegoUIKitPrebuiltLiveStreamingConfig config = new ZegoUIKitPrebuiltLiveStreamingConfig();
+        config.role = ZegoLiveStreamingRole.AUDIENCE;
+        config.plugins = plugins;
+        if (plugins != null && !plugins.isEmpty()) {
+            config.bottomMenuBarConfig.audienceButtons = Collections.singletonList(
+                ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON);
+        } else {
+            config.bottomMenuBarConfig.audienceButtons = new ArrayList<>();
+        }
+        return config;
+    }
 }
