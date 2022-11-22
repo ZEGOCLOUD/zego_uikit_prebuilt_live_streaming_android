@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,7 +105,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (isLiveStarted() && isLocalUserHost && config.confirmDialogInfo != null) {
+                boolean hostStarted = isLiveStarted() && isLocalUserHost;
+                boolean isNotHost = !isLocalUserHost;
+                if (config.confirmDialogInfo != null && (hostStarted || isNotHost)) {
                     showQuitDialog(getDialogInfo());
                 } else {
                     leaveRoom();
@@ -336,10 +337,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         }
         initVideoContainer();
 
-        if (isLocalUserHost) {
-            if (config.confirmDialogInfo != null) {
-                binding.liveExit.setConfirmDialogInfo(getDialogInfo());
-            }
+        if (config.confirmDialogInfo != null) {
+            binding.liveExit.setConfirmDialogInfo(getDialogInfo());
         }
         binding.liveExit.setLeaveLiveListener(() -> {
             if (config.leaveLiveStreamingListener != null) {
@@ -404,12 +403,6 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             if (config.leaveLiveStreamingListener != null) {
                 config.leaveLiveStreamingListener.onLeaveLiveStreaming();
             } else {
-                if (isLocalUserHost) {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("host", "");
-                    map.put("live_status", "0");
-                    ZegoUIKit.updateRoomProperties(map);
-                }
                 leaveRoom();
                 requireActivity().finish();
             }

@@ -10,7 +10,10 @@ public class ZegoDialogInfo implements Serializable {
     public String confirmButtonName;
 
     public ZegoDialogInfo() {
-
+        this.title = "";
+        this.message = "";
+        this.cancelButtonName = "";
+        this.confirmButtonName = "";
     }
 
     public ZegoDialogInfo(String title, String message) {
