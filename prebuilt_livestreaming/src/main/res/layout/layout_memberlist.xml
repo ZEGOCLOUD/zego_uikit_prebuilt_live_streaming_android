@@ -46,7 +46,7 @@
       app:layout_constraintStart_toEndOf="@id/live_member_list_title_separate"
       app:layout_constraintTop_toTopOf="parent" />
 
-    <com.zegocloud.uikit.components.common.ZegoMemberList
+    <com.zegocloud.uikit.components.memberlist.ZegoMemberList
       android:id="@+id/live_member_list"
       android:layout_width="match_parent"
       android:layout_height="0dp"

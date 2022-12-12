@@ -43,7 +43,7 @@ public class ZegoRemoveCoHostButton extends ZegoStartInvitationButton {
     @Override
     protected void invokedWhenClick() {
         List<String> idList = GenericUtils.map(invitees, zegoUIKitUser -> zegoUIKitUser.userID);
-        ZegoUIKit.sendInvitation(idList, timeout, type, data, new PluginCallbackListener() {
+        ZegoUIKit.getSignalingPlugin().sendInvitation(idList, timeout, type, data, new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
                 if (callbackListener != null) {

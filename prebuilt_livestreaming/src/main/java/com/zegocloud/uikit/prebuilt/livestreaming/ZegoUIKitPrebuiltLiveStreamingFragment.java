@@ -101,6 +101,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             ZegoUIKit.installPlugins(config.plugins);
             ZegoUIKit.init(requireActivity().getApplication(), appID, appSign, ZegoScenario.LIVE);
             ZegoUIKit.login(userID, userName);
+            ZegoUIKit.getSignalingPlugin().login(userID, userName, null);
         }
         onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
@@ -129,6 +130,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         LiveStreamingManager.getInstance().unInit();
         ZegoUIKit.leaveRoom();
         ZegoUIKit.logout();
+        ZegoUIKit.getSignalingPlugin().logout();
     }
 
     @Override

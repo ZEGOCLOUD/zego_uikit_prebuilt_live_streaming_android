@@ -35,7 +35,7 @@ public class ZegoRefuseCoHostButton extends ZegoRefuseInvitationButton {
 
     @Override
     protected void invokedWhenClick() {
-        ZegoUIKit.refuseInvitation(inviterID, "", new PluginCallbackListener() {
+        ZegoUIKit.getSignalingPlugin().refuseInvitation(inviterID, "", new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
                 if (callbackListener != null) {

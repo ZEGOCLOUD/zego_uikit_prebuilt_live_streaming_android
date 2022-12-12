@@ -5,7 +5,7 @@ import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.service.defines.ZegoInvitationListener;
+import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginInvitationListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.GenericUtils;
 import java.util.HashMap;
@@ -43,14 +43,14 @@ public class LiveStreamingManager {
 
     private Context context;
     private PrebuiltUICallBack uiCallBack;
-    private ZegoInvitationListener invitationListener;
+    private ZegoUIKitSignalingPluginInvitationListener invitationListener;
     private Map<String, Integer> userStatusMap = new HashMap<>();
 
     private ZegoTranslationText translationText;
 
     public void init(Context context) {
         this.context = context.getApplicationContext();
-        invitationListener = new ZegoInvitationListener() {
+        invitationListener = new ZegoUIKitSignalingPluginInvitationListener() {
             @Override
             public void onInvitationReceived(ZegoUIKitUser inviter, int type, String data) {
                 if (type == LiveInvitationType.REQUEST_COHOST.getValue()) {
@@ -173,11 +173,11 @@ public class LiveStreamingManager {
                 }
             }
         };
-        ZegoUIKit.addInvitationListener(invitationListener);
+        ZegoUIKit.getSignalingPlugin().addInvitationListener(invitationListener);
     }
 
     public void unInit() {
-        ZegoUIKit.removeInvitationListener(invitationListener);
+        ZegoUIKit.getSignalingPlugin().removeInvitationListener(invitationListener);
         setPrebuiltUiCallBack(null);
         userStatusMap.clear();
     }

@@ -35,7 +35,7 @@ public class ZegoAcceptCoHostButton extends ZegoAcceptInvitationButton {
 
     @Override
     protected void invokedWhenClick() {
-        ZegoUIKit.acceptInvitation(inviterID, "", new PluginCallbackListener() {
+        ZegoUIKit.getSignalingPlugin().acceptInvitation(inviterID, "", new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
                 if (callbackListener != null) {

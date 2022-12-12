@@ -79,7 +79,7 @@ public class ZegoInviteJoinCoHostButton extends ZegoStartInvitationButton {
             }
         }
 
-        ZegoUIKit.sendInvitation(idList, timeout, type, data, new PluginCallbackListener() {
+        ZegoUIKit.getSignalingPlugin().sendInvitation(idList, timeout, type, data, new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
                 int code = (int) result.get("code");

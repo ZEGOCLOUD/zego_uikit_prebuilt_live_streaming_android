@@ -154,7 +154,7 @@ public class ZegoCoHostControlButton extends FrameLayout {
             if (uiKitUser == null) {
                 return;
             }
-            UIKitCore.getInstance().cancelInvitation(Collections.singletonList(hostUserID), "", null);
+            ZegoUIKit.getSignalingPlugin().cancelInvitation(Collections.singletonList(hostUserID), "", null);
         }
     }
 

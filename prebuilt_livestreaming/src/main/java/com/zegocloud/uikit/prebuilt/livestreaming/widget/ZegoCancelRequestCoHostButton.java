@@ -51,7 +51,7 @@ public class ZegoCancelRequestCoHostButton extends ZegoCancelInvitationButton {
             return;
         }
         invitees.add(hostUserID);
-        UIKitCore.getInstance().cancelInvitation(invitees, "", new PluginCallbackListener() {
+        ZegoUIKit.getSignalingPlugin().cancelInvitation(invitees, "", new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
                 if (callbackListener != null) {

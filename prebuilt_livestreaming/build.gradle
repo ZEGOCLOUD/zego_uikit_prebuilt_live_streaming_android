@@ -31,5 +31,5 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     api 'com.guolindev.permissionx:permissionx:1.6.4'
-    api 'com.github.ZEGOCLOUD:zego_uikit_android:1.6.+'
+    api 'com.github.ZEGOCLOUD:zego_uikit_android:1.7.+'
 }
