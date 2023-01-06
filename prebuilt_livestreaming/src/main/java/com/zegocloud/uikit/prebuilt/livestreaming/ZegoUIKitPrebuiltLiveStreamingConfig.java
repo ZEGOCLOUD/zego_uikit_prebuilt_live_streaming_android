@@ -1,5 +1,6 @@
 package com.zegocloud.uikit.prebuilt.livestreaming;
 
+import android.view.View;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.plugin.common.IZegoUIKitPlugin;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingEndListener;
@@ -11,6 +12,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltAudioVideoViewConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoLeaveLiveStreamingListener;
+import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoStartLiveButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +37,14 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public transient ZegoLiveStreamingEndListener zegoLiveStreamingEndListener;
     public transient ZegoLeaveLiveStreamingListener leaveLiveStreamingListener;
     public ZegoTranslationText translationText = new ZegoTranslationText();
+    public boolean markAsLargeRoom = false;
+    public boolean needConfirmWhenOthersTurnOnYourCamera = false;
+    public boolean needConfirmWhenOthersTurnOnYourMicrophone = false;
+    public ZegoDialogInfo othersTurnOnYourCameraConfirmDialogInfo;
+    public ZegoDialogInfo othersTurnOnYourMicrophoneConfirmDialogInfo;
+    public transient ZegoStartLiveButton startLiveButton;
+    public transient View.OnClickListener onStartLiveButtonPressed;
+
 
     public static ZegoUIKitPrebuiltLiveStreamingConfig host() {
         return host(new ArrayList<>());

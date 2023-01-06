@@ -8,6 +8,7 @@ public class ZegoTranslationText {
     public String cancelRequestCoHostButton = "Cancel the application";
     public String removeCoHostButton = "Remove the co-host";
     public String inviteCoHostButton = "Invite %s to co-host";
+    public String removeUserMenuDialogButton = "remove %s from the room";
     public String cancelMenuDialogButton = "Cancel";
 
     public String noHostOnline = "No host is online.";

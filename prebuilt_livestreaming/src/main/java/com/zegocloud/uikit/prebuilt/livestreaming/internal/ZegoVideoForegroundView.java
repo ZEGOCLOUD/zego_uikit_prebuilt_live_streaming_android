@@ -21,9 +21,9 @@ import java.util.Objects;
 
 public class ZegoVideoForegroundView extends FrameLayout {
 
-    private TextView textView;
+    private TextView nameTextView;
     private ZegoMicrophoneStateView micStatusView;
-    private ZegoUIKitUser userInfo;
+    protected ZegoUIKitUser userInfo;
     private ZegoCameraStateView cameraStatusView;
     private ZegoMicrophoneStateChangeListener microphoneStateChangeListener;
 
@@ -43,10 +43,10 @@ public class ZegoVideoForegroundView extends FrameLayout {
         initView();
     }
 
-    private void initView() {
+    protected void initView() {
         ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(getContext())
             .inflate(R.layout.layout_video_foreground, null, false);
-        textView = viewGroup.findViewById(R.id.foreground_textview);
+        nameTextView = viewGroup.findViewById(R.id.foreground_textview);
         micStatusView = viewGroup.findViewById(R.id.foreground_mic);
         cameraStatusView = viewGroup.findViewById(R.id.foreground_camera);
         setUserInfo(userInfo);
@@ -89,9 +89,9 @@ public class ZegoVideoForegroundView extends FrameLayout {
 
     public void setUserInfo(ZegoUIKitUser userInfo) {
         this.userInfo = userInfo;
-        if (textView != null) {
+        if (nameTextView != null) {
             if (userInfo != null) {
-                textView.setText(userInfo.userName);
+                nameTextView.setText(userInfo.userName);
             }
         }
         if (micStatusView != null) {
@@ -115,7 +115,7 @@ public class ZegoVideoForegroundView extends FrameLayout {
     }
 
     public void showUserName(boolean showUserName) {
-        textView.setVisibility(showUserName ? View.VISIBLE : View.GONE);
+        nameTextView.setVisibility(showUserName ? View.VISIBLE : View.GONE);
     }
 
     public ZegoMicrophoneStateView getMicStatusView() {

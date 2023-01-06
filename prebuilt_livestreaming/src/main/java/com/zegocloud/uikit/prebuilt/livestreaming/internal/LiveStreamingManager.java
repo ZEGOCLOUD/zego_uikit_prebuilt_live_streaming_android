@@ -136,7 +136,7 @@ public class LiveStreamingManager {
                     if (uiCallBack != null) {
                         String string = context.getString(R.string.host_reject_co_host_tips);
                         if (translationText != null && translationText.hostRejectCoHostRequestToast != null) {
-                            string =  translationText.hostRejectCoHostRequestToast;
+                            string = translationText.hostRejectCoHostRequestToast;
                         }
                         uiCallBack.showTopTips(string, false);
                     }
@@ -150,7 +150,7 @@ public class LiveStreamingManager {
                     if (uiCallBack != null) {
                         String string = context.getString(R.string.refuse_co_host_tips, invitee.userName);
                         if (translationText != null && translationText.audienceRejectInvitationToast != null) {
-                            string =  String.format(translationText.audienceRejectInvitationToast,invitee.userName);
+                            string = String.format(translationText.audienceRejectInvitationToast, invitee.userName);
                         }
                         uiCallBack.showTopTips(string, false);
                     }

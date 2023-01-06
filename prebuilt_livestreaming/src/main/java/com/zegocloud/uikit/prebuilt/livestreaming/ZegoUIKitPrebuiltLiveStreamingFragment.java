@@ -2,6 +2,7 @@ package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.Manifest.permission;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
@@ -35,11 +37,14 @@ import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoVideoForegroundVi
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
 import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
+import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
-import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
+import com.zegocloud.uikit.service.defines.ZegoTurnOnYourCameraRequestListener;
+import com.zegocloud.uikit.service.defines.ZegoTurnOnYourMicrophoneRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -146,14 +151,11 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         binding.previewGroup.setVisibility(View.GONE);
         String liveID = getArguments().getString("liveID");
         if (!TextUtils.isEmpty(liveID)) {
-            ZegoUIKit.joinRoom(liveID, new ZegoUIKitCallback() {
-                @Override
-                public void onResult(int errorCode) {
-                    if (errorCode == 0) {
-                        onRoomJoinSucceed();
-                    } else {
-                        onRoomJoinFailed();
-                    }
+            ZegoUIKit.joinRoom(liveID, config.markAsLargeRoom, errorCode -> {
+                if (errorCode == 0) {
+                    onRoomJoinSucceed();
+                } else {
+                    onRoomJoinFailed();
                 }
             });
         }
@@ -225,6 +227,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         ZegoUIKit.addRoomPropertyUpdateListener(new ZegoRoomPropertyUpdateListener() {
             @Override
             public void onRoomPropertyUpdated(String key, String oldValue, String newValue) {
+                if (ZegoUIKit.getLocalUser() == null) {
+                    return;
+                }
                 String userID = ZegoUIKit.getLocalUser().userID;
                 isLocalUserHost = Objects.equals(getHostID(), userID);
                 if (Objects.equals("host", key)) {
@@ -284,6 +289,15 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                         }
                     }
                 }
+                if (Objects.equals("enableChat", key)) {
+                    if (!isLocalUserHost) {
+                        if (newValue.equals("0")) {
+                            binding.liveBottomMenuBar.enableChat(false);
+                        } else if (newValue.equals("1")) {
+                            binding.liveBottomMenuBar.enableChat(true);
+                        }
+                    }
+                }
             }
 
             @Override
@@ -326,6 +340,79 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 }
             }
         });
+        ZegoUIKit.addTurnOnYourMicrophoneRequestListener(new ZegoTurnOnYourMicrophoneRequestListener() {
+            @Override
+            public void onTurnOnYourMicrophoneRequest(ZegoUIKitUser fromUser) {
+                if (config.needConfirmWhenOthersTurnOnYourCamera) {
+                    ZegoDialogInfo dialogInfo = config.othersTurnOnYourMicrophoneConfirmDialogInfo;
+                    if (dialogInfo != null) {
+                        String message = dialogInfo.message;
+                        if (message.contains("%s")) {
+                            message = String.format(message, fromUser.userName);
+                        }
+                        new ConfirmDialog.Builder(getContext()).setTitle(dialogInfo.title).setMessage(message)
+                            .setPositiveButton(dialogInfo.confirmButtonName, (dialog, which) -> {
+                                dialog.dismiss();
+                                requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
+                                    String userID = ZegoUIKit.getLocalUser().userID;
+                                    if (grantedList.contains(permission.RECORD_AUDIO)) {
+                                        ZegoUIKit.turnMicrophoneOn(userID, true);
+                                    }
+                                });
+                            }).setNegativeButton(dialogInfo.cancelButtonName, (dialog, which) -> {
+                                dialog.dismiss();
+                            }).build().show();
+                    }
+                } else {
+                    requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
+                        String userID = ZegoUIKit.getLocalUser().userID;
+                        if (grantedList.contains(permission.RECORD_AUDIO)) {
+                            ZegoUIKit.turnMicrophoneOn(userID, true);
+                        }
+                    });
+                }
+            }
+        });
+
+        ZegoUIKit.addTurnOnYourCameraRequestListener(new ZegoTurnOnYourCameraRequestListener() {
+            @Override
+            public void onTurnOnYourCameraRequest(ZegoUIKitUser fromUser) {
+                if (config.needConfirmWhenOthersTurnOnYourMicrophone) {
+                    ZegoDialogInfo dialogInfo = config.othersTurnOnYourCameraConfirmDialogInfo;
+                    if (dialogInfo != null) {
+                        String message = dialogInfo.message;
+                        if (message.contains("%s")) {
+                            message = String.format(message, fromUser.userName);
+                        }
+                        new ConfirmDialog.Builder(getContext()).setTitle(dialogInfo.title).setMessage(message)
+                            .setPositiveButton(dialogInfo.confirmButtonName, (dialog, which) -> {
+                                dialog.dismiss();
+                                requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
+                                    String userID = ZegoUIKit.getLocalUser().userID;
+                                    if (grantedList.contains(permission.CAMERA)) {
+                                        ZegoUIKit.turnCameraOn(userID, true);
+                                    }
+                                });
+                            }).setNegativeButton(dialogInfo.cancelButtonName, (dialog, which) -> {
+                                dialog.dismiss();
+                            }).build().show();
+                    }
+                } else {
+                    requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
+                        String userID = ZegoUIKit.getLocalUser().userID;
+                        if (grantedList.contains(permission.CAMERA)) {
+                            ZegoUIKit.turnCameraOn(userID, true);
+                        }
+                    });
+                }
+            }
+        });
+        ZegoUIKit.addOnMeRemovedFromRoomListener(new ZegoMeRemovedFromRoomListener() {
+            @Override
+            public void onMeRemovedFromRoom() {
+                requireActivity().onBackPressed();
+            }
+        });
     }
 
     private void initLiveBtns() {
@@ -356,6 +443,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             if (config.memberListConfig != null) {
                 livememberList.setMemberListItemViewProvider(config.memberListConfig.memberListItemViewProvider);
             }
+            livememberList.setEnableCoHosting(config.plugins != null && !config.plugins.isEmpty());
             livememberList.show();
         });
         initBottomMenuBar();
@@ -415,12 +503,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             binding.previewStart.setText(config.translationText.startLiveStreamingButton);
         }
         binding.previewStart.setOnClickListener(v -> {
-            requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
-                Map<String, String> map = new HashMap<>();
-                map.put("live_status", "1");
-                ZegoUIKit.updateRoomProperties(map);
-            });
+            if (config.onStartLiveButtonPressed != null) {
+                config.onStartLiveButtonPressed.onClick(v);
+            }
         });
+        if (config.startLiveButton != null) {
+            binding.previewStartParent.removeView(binding.previewStart);
+            binding.previewStartParent.addView(config.startLiveButton);
+        }
     }
 
     private boolean isLiveStarted() {
@@ -482,6 +572,18 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
     private void requestPermissionIfNeeded(RequestCallback requestCallback) {
         List<String> permissions = Arrays.asList(permission.CAMERA, permission.RECORD_AUDIO);
+
+        boolean allGranted = true;
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(getContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+                allGranted = false;
+            }
+        }
+        if (allGranted) {
+            requestCallback.onResult(true, permissions, new ArrayList<>());
+            return;
+        }
+
         PermissionX.init(requireActivity()).permissions(permissions).onExplainRequestReason((scope, deniedList) -> {
             String message = "";
             if (deniedList.size() == 1) {

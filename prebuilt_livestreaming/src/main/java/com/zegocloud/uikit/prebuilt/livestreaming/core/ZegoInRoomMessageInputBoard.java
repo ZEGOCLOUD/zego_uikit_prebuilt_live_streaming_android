@@ -21,6 +21,7 @@ import com.zegocloud.uikit.utils.Utils;
 public class ZegoInRoomMessageInputBoard extends Dialog {
 
     private ZegoInRoomMessageInput contentView;
+    private boolean enableChat = true;
 
     public ZegoInRoomMessageInputBoard(@NonNull Context context) {
         super(context);
@@ -34,7 +35,7 @@ public class ZegoInRoomMessageInputBoard extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        contentView = new ZegoInRoomMessageInput(getContext(),true);
+        contentView = new ZegoInRoomMessageInput(getContext(), true);
         FrameLayout frameLayout = new FrameLayout(getContext());
         frameLayout.addView(contentView);
         setContentView(frameLayout);

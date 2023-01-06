@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,10 +18,10 @@ import com.zegocloud.uikit.components.audiovideo.ZegoToggleCameraButton;
 import com.zegocloud.uikit.components.audiovideo.ZegoToggleMicrophoneButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoBottomMenuBarConfig;
-import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoInRoomMessageButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoCoHostControlButton;
+import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoEnableChatButton;
 import com.zegocloud.uikit.utils.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,8 +60,6 @@ public class BottomMenuBar extends LinearLayout {
         setGravity(Gravity.CENTER_HORIZONTAL);
 
         messageButton = new ZegoInRoomMessageButton(getContext());
-        messageButton.setImageResource(R.drawable.icon_im);
-        messageButton.setScaleType(ScaleType.FIT_XY);
         LinearLayout.LayoutParams btnParam = new LayoutParams(-2, -2);
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int marginStart = Utils.dp2px(16, displayMetrics);
@@ -152,6 +149,11 @@ public class BottomMenuBar extends LinearLayout {
                 });
             }
             break;
+            case ENABLE_CHAT_BUTTON: {
+                view = new ZegoEnableChatButton(getContext());
+                LayoutParams params = generateChildLayoutParams();
+                view.setLayoutParams(params);
+            }
         }
         if (view != null) {
             view.setTag(name);
@@ -213,7 +215,10 @@ public class BottomMenuBar extends LinearLayout {
                 showList.addAll(menuBarViews.subList(0, showChildCount));
                 hideList = menuBarViews.subList(showChildCount, menuBarViews.size());
             }
-            showList.add(new MoreButton(getContext()));
+            MoreButton moreButton = new MoreButton(getContext());
+            LayoutParams params = generateChildLayoutParams();
+            moreButton.setLayoutParams(params);
+            showList.add(moreButton);
         }
 
         for (int i = 0; i < showList.size(); i++) {
@@ -287,6 +292,10 @@ public class BottomMenuBar extends LinearLayout {
         }
         this.menuBarConfig = menuBarConfig;
         showInRoomMessageButton(menuBarConfig.showInRoomMessageButton);
+    }
+
+    public void enableChat(boolean enable) {
+        messageButton.setEnabled(enable);
     }
 
     public class MoreButton extends AppCompatImageView {

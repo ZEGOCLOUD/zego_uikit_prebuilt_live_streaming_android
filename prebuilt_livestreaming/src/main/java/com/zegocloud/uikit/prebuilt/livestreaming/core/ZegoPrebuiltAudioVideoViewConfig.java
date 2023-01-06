@@ -5,6 +5,6 @@ import com.zegocloud.uikit.components.audiovideo.ZegoForegroundViewProvider;
 public class ZegoPrebuiltAudioVideoViewConfig {
 
     public boolean showSoundWaveOnAudioView = true;
-    public boolean useVideoViewAspectFill;
+    public boolean useVideoViewAspectFill = true;
     public transient ZegoForegroundViewProvider provider;
 }

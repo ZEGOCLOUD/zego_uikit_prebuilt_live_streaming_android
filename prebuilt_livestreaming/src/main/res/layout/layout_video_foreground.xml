@@ -31,9 +31,9 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:visibility="gone"
-    app:layout_constraintBottom_toBottomOf="@id/foreground_textview"
+    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toStartOf="@id/foreground_mic"
-    app:layout_constraintTop_toTopOf="@id/foreground_textview" />
+    app:layout_constraintTop_toTopOf="parent" />
 
   <com.zegocloud.uikit.components.audiovideo.ZegoMicrophoneStateView
     android:id="@+id/foreground_mic"
@@ -41,7 +41,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:visibility="gone"
-    app:layout_constraintBottom_toBottomOf="@id/foreground_textview"
+    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="@id/foreground_textview" />
+    app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

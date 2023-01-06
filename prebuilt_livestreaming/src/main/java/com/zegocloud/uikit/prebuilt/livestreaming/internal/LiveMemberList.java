@@ -20,7 +20,6 @@ import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.components.internal.RippleIconView;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListComparator;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListItemViewProvider;
-import com.zegocloud.uikit.plugin.common.ZegoUIKitPluginType;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LayoutMemberlistBinding;
@@ -38,6 +37,7 @@ public class LiveMemberList extends BottomSheetDialog {
     private LayoutMemberlistBinding binding;
     private ZegoMemberListItemViewProvider memberListItemProvider;
     private ZegoUserUpdateListener userUpdateListener;
+    private boolean enableCoHosting;
 
     public LiveMemberList(@NonNull Context context) {
         super(context, R.style.TransparentDialog);
@@ -201,9 +201,8 @@ public class LiveMemberList extends BottomSheetDialog {
                     } else {
                         agree.setVisibility(View.GONE);
                         disagree.setVisibility(View.GONE);
-                        boolean hasSignalPlugIn = ZegoUIKit.getPlugin(ZegoUIKitPluginType.SIGNALING) != null;
                         boolean isSelfHost = Objects.equals(localUser.userID, hostUserID);
-                        if (isSelfHost && hasSignalPlugIn && !isYou) {
+                        if (isSelfHost && enableCoHosting && !isYou) {
                             more.setVisibility(View.VISIBLE);
                         } else {
                             more.setVisibility(View.GONE);
@@ -266,5 +265,9 @@ public class LiveMemberList extends BottomSheetDialog {
 
     public void setMemberListItemViewProvider(ZegoMemberListItemViewProvider memberListItemProvider) {
         this.memberListItemProvider = memberListItemProvider;
+    }
+
+    public void setEnableCoHosting(boolean enableCoHosting) {
+        this.enableCoHosting = enableCoHosting;
     }
 }
