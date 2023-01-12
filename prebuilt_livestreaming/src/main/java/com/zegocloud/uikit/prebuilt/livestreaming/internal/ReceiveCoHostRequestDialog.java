@@ -22,14 +22,14 @@ public class ReceiveCoHostRequestDialog {
             int code = (int) result.get("code");
             if (code == 0) {
                 dismiss();
-                LiveStreamingManager.getInstance().removeReceiveCoHostRequestUser(inviter.userID);
+                LiveStreamingManager.getInstance().removeUserStatusAndCheck(inviter.userID);
             }
         });
         acceptButton.setRequestCallbackListener(result -> {
             int code = (int) result.get("code");
             if (code == 0) {
                 dismiss();
-                LiveStreamingManager.getInstance().removeReceiveCoHostRequestUser(inviter.userID);
+                LiveStreamingManager.getInstance().removeUserStatusAndCheck(inviter.userID);
             }
         });
 

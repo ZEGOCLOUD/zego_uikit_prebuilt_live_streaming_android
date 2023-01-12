@@ -329,14 +329,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                         binding.liveHostName.setText(uiKitUser.userName);
                         break;
                     }
-                    LiveStreamingManager.getInstance().removeUserStatus(uiKitUser.userID);
+                    LiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                 }
             }
 
             @Override
             public void onUserLeft(List<ZegoUIKitUser> userInfoList) {
                 for (ZegoUIKitUser uiKitUser : userInfoList) {
-                    LiveStreamingManager.getInstance().removeUserStatus(uiKitUser.userID);
+                    LiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                 }
             }
         });
