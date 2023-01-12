@@ -343,7 +343,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         ZegoUIKit.addTurnOnYourMicrophoneRequestListener(new ZegoTurnOnYourMicrophoneRequestListener() {
             @Override
             public void onTurnOnYourMicrophoneRequest(ZegoUIKitUser fromUser) {
-                if (config.needConfirmWhenOthersTurnOnYourCamera) {
+                if (config.canMicrophoneTurnOnByOthers) {
                     ZegoDialogInfo dialogInfo = config.othersTurnOnYourMicrophoneConfirmDialogInfo;
                     if (dialogInfo != null) {
                         String message = dialogInfo.message;
@@ -362,14 +362,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                             }).setNegativeButton(dialogInfo.cancelButtonName, (dialog, which) -> {
                                 dialog.dismiss();
                             }).build().show();
+                    } else {
+                        requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
+                            String userID = ZegoUIKit.getLocalUser().userID;
+                            if (grantedList.contains(permission.RECORD_AUDIO)) {
+                                ZegoUIKit.turnMicrophoneOn(userID, true);
+                            }
+                        });
                     }
-                } else {
-                    requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
-                        String userID = ZegoUIKit.getLocalUser().userID;
-                        if (grantedList.contains(permission.RECORD_AUDIO)) {
-                            ZegoUIKit.turnMicrophoneOn(userID, true);
-                        }
-                    });
                 }
             }
         });
@@ -377,7 +377,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         ZegoUIKit.addTurnOnYourCameraRequestListener(new ZegoTurnOnYourCameraRequestListener() {
             @Override
             public void onTurnOnYourCameraRequest(ZegoUIKitUser fromUser) {
-                if (config.needConfirmWhenOthersTurnOnYourMicrophone) {
+                if (config.canCameraTurnOnByOthers) {
                     ZegoDialogInfo dialogInfo = config.othersTurnOnYourCameraConfirmDialogInfo;
                     if (dialogInfo != null) {
                         String message = dialogInfo.message;
@@ -396,14 +396,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                             }).setNegativeButton(dialogInfo.cancelButtonName, (dialog, which) -> {
                                 dialog.dismiss();
                             }).build().show();
+                    } else {
+                        requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
+                            String userID = ZegoUIKit.getLocalUser().userID;
+                            if (grantedList.contains(permission.CAMERA)) {
+                                ZegoUIKit.turnCameraOn(userID, true);
+                            }
+                        });
                     }
-                } else {
-                    requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
-                        String userID = ZegoUIKit.getLocalUser().userID;
-                        if (grantedList.contains(permission.CAMERA)) {
-                            ZegoUIKit.turnCameraOn(userID, true);
-                        }
-                    });
                 }
             }
         });

@@ -38,8 +38,8 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public transient ZegoLeaveLiveStreamingListener leaveLiveStreamingListener;
     public ZegoTranslationText translationText = new ZegoTranslationText();
     public boolean markAsLargeRoom = false;
-    public boolean needConfirmWhenOthersTurnOnYourCamera = false;
-    public boolean needConfirmWhenOthersTurnOnYourMicrophone = false;
+    public boolean canCameraTurnOnByOthers = false;
+    public boolean canMicrophoneTurnOnByOthers = false;
     public ZegoDialogInfo othersTurnOnYourCameraConfirmDialogInfo;
     public ZegoDialogInfo othersTurnOnYourMicrophoneConfirmDialogInfo;
     public transient ZegoStartLiveButton startLiveButton;
