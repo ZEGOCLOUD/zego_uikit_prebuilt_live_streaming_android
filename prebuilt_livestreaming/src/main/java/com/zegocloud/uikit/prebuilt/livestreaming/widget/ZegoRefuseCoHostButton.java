@@ -26,7 +26,7 @@ public class ZegoRefuseCoHostButton extends ZegoRefuseInvitationButton {
 
     @Override
     protected void initView() {
-        setText(R.string.disagree);
+        setText(R.string.livestreaming_disagree);
         setTextColor(Color.WHITE);
         setTextSize(16);
         setGravity(Gravity.CENTER);

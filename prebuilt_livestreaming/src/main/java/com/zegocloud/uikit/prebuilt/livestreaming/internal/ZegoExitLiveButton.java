@@ -25,7 +25,7 @@ public class ZegoExitLiveButton extends AppCompatImageView {
 
     public void initView() {
         setOnClickListener(null);
-        setImageResource(com.zegocloud.uikit.R.drawable.icon_nav_close);
+        setImageResource(com.zegocloud.uikit.R.drawable.zego_uikit_icon_nav_close);
         setOnClickListener(v -> {
             invokeWhenClick();
         });

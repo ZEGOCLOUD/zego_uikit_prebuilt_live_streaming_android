@@ -22,7 +22,7 @@ import com.zegocloud.uikit.components.memberlist.ZegoMemberListComparator;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListItemViewProvider;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LayoutMemberlistBinding;
+import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingLayoutMemberlistBinding;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -34,7 +34,7 @@ import java.util.Objects;
 
 public class LiveMemberList extends BottomSheetDialog {
 
-    private LayoutMemberlistBinding binding;
+    private LivestreamingLayoutMemberlistBinding binding;
     private ZegoMemberListItemViewProvider memberListItemProvider;
     private ZegoUserUpdateListener userUpdateListener;
     private boolean enableCoHosting;
@@ -54,7 +54,7 @@ public class LiveMemberList extends BottomSheetDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = LayoutMemberlistBinding.inflate(getLayoutInflater());
+        binding = LivestreamingLayoutMemberlistBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Window window = getWindow();
@@ -127,7 +127,7 @@ public class LiveMemberList extends BottomSheetDialog {
                 @Override
                 public View onCreateView(ViewGroup parent) {
                     View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_liveroom_member, parent, false);
+                        .inflate(R.layout.livestreaming_item_member, parent, false);
                     int height = Utils.dp2px(70, parent.getContext().getResources().getDisplayMetrics());
                     view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
                     return view;
@@ -151,19 +151,19 @@ public class LiveMemberList extends BottomSheetDialog {
                         builder.append("(");
                     }
                     if (isYou) {
-                        builder.append(getContext().getString(R.string.you));
+                        builder.append(getContext().getString(R.string.livestreaming_you));
                     }
                     if (isHost) {
                         if (isYou) {
                             builder.append(",");
                         }
-                        builder.append(getContext().getString(R.string.host));
+                        builder.append(getContext().getString(R.string.livestreaming_host));
                     } else {
                         if (isCoHost) {
                             if (isYou) {
                                 builder.append(",");
                             }
-                            builder.append(getContext().getString(R.string.co_host));
+                            builder.append(getContext().getString(R.string.livestreaming_co_host));
                         }
                     }
 
@@ -188,11 +188,11 @@ public class LiveMemberList extends BottomSheetDialog {
                     agree.setTextSize(14);
                     agree.setRequestCallbackListener(v -> {
                         dismiss();
-                        LiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
+                        LiveStreamingManager.getInstance().removeReceiveCoHostRequestUser(uiKitUser.userID);
                     });
                     disagree.setRequestCallbackListener(v -> {
                         dismiss();
-                        LiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
+                        LiveStreamingManager.getInstance().removeReceiveCoHostRequestUser(uiKitUser.userID);
                     });
                     if (LiveStreamingManager.getInstance().isUserCoHostRequestExisted(uiKitUser.userID)) {
                         agree.setVisibility(View.VISIBLE);

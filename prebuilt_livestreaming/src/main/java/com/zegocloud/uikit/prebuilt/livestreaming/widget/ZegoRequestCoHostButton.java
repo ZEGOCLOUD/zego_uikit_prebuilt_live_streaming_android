@@ -12,12 +12,12 @@ import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoStartInvitationButton;
+import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveInvitationType;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveInvitationType;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
-import com.zegocloud.uikit.utils.GenericUtils;
 import com.zegocloud.uikit.utils.Utils;
 import java.util.HashMap;
 import java.util.List;
@@ -42,15 +42,15 @@ public class ZegoRequestCoHostButton extends ZegoStartInvitationButton {
     protected void initView() {
         super.initView();
         type = LiveInvitationType.REQUEST_COHOST.getValue();
-        setBackgroundResource(R.drawable.bg_cohost_btn);
-        setText(R.string.request_co_host);
+        setBackgroundResource(R.drawable.livestreaming_bg_cohost_btn);
+        setText(R.string.livestreaming_request_co_host);
         setTextColor(Color.WHITE);
         setTextSize(13);
         setGravity(Gravity.CENTER);
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         setPadding(Utils.dp2px(14, displayMetrics), 0, Utils.dp2px(16, displayMetrics), 0);
         setCompoundDrawablePadding(Utils.dp2px(6, displayMetrics));
-        setCompoundDrawablesWithIntrinsicBounds(R.drawable.bottombar_cohost, 0, 0, 0);
+        setCompoundDrawablesWithIntrinsicBounds(R.drawable.livestreaming_bottombar_cohost, 0, 0, 0);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ZegoRequestCoHostButton extends ZegoStartInvitationButton {
         if (!Objects.equals(liveStatus, "1")) {
             Map<String, Object> map = new HashMap<>();
             map.put("code", -1);
-            map.put("message", getContext().getString(R.string.request_no_host_tips));
+            map.put("message", getContext().getString(R.string.livestreaming_request_no_host_tips));
             ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
             if (translationText != null && translationText.requestCoHostFailed != null) {
                 map.put("message", translationText.requestCoHostFailed);
@@ -81,7 +81,7 @@ public class ZegoRequestCoHostButton extends ZegoStartInvitationButton {
         if (TextUtils.isEmpty(hostUserID) || uiKitUser == null) {
             Map<String, Object> map = new HashMap<>();
             map.put("code", -1);
-            map.put("message", getContext().getString(R.string.request_no_host_tips));
+            map.put("message", getContext().getString(R.string.livestreaming_request_no_host_tips));
             ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
             if (translationText != null && translationText.requestCoHostFailed != null) {
                 map.put("message", translationText.requestCoHostFailed);
@@ -99,13 +99,13 @@ public class ZegoRequestCoHostButton extends ZegoStartInvitationButton {
             public void callback(Map<String, Object> result) {
                 int code = (int) result.get("code");
                 if (code != 0) {
-                    result.put("message", getContext().getString(R.string.request_no_host_tips));
+                    result.put("message", getContext().getString(R.string.livestreaming_request_no_host_tips));
                     ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
                     if (translationText != null && translationText.requestCoHostFailed != null) {
                         result.put("message", translationText.requestCoHostFailed);
                     }
                 } else {
-                    result.put("message", getContext().getString(R.string.request_co_host_tips));
+                    result.put("message", getContext().getString(R.string.livestreaming_request_co_host_tips));
                     ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
                     if (translationText != null && translationText.sendRequestCoHostToast != null) {
                         result.put("message", translationText.sendRequestCoHostToast);

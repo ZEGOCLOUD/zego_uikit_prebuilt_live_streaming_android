@@ -27,7 +27,7 @@ public class ZegoAcceptCoHostButton extends ZegoAcceptInvitationButton {
     @Override
     protected void initView() {
         super.initView();
-        setText(R.string.agree);
+        setText(R.string.livestreaming_agree);
         setTextColor(Color.WHITE);
         setTextSize(16);
         setGravity(Gravity.CENTER);

@@ -1,18 +1,11 @@
 package com.zegocloud.uikit.prebuilt.livestreaming.widget;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import androidx.annotation.Nullable;
-import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
-import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
 
 public class ZegoEndCoHostButton extends androidx.appcompat.widget.AppCompatButton {
@@ -33,14 +26,14 @@ public class ZegoEndCoHostButton extends androidx.appcompat.widget.AppCompatButt
     }
 
     protected void initView() {
-        setBackgroundResource(R.drawable.bg_end_cohost_btn);
-        setText(R.string.end);
+        setBackgroundResource(R.drawable.livestreaming_bg_end_cohost_btn);
+        setText(R.string.livestreaming_end);
         setTextColor(Color.WHITE);
         setTextSize(13);
         setGravity(Gravity.CENTER);
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         setPadding(Utils.dp2px(14, displayMetrics), 0, Utils.dp2px(16, displayMetrics), 0);
         setCompoundDrawablePadding(Utils.dp2px(6, displayMetrics));
-        setCompoundDrawablesWithIntrinsicBounds(R.drawable.bottombar_cohost, 0, 0, 0);
+        setCompoundDrawablesWithIntrinsicBounds(R.drawable.livestreaming_bottombar_cohost, 0, 0, 0);
     }
 }

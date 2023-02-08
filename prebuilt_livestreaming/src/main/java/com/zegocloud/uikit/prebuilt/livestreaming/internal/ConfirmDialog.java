@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import androidx.annotation.StringRes;
-import com.zegocloud.uikit.prebuilt.livestreaming.databinding.DialogConfirmBinding;
+import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingDialogConfirmBinding;
 
 public class ConfirmDialog extends Dialog {
 
@@ -21,7 +21,7 @@ public class ConfirmDialog extends Dialog {
     private String cancelText;
     private DialogInterface.OnClickListener positiveListener;
     private DialogInterface.OnClickListener negativeListener;
-    private DialogConfirmBinding binding;
+    private LivestreamingDialogConfirmBinding binding;
     private View negativeView;
     private View positiveView;
 
@@ -41,7 +41,7 @@ public class ConfirmDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DialogConfirmBinding.inflate(getLayoutInflater());
+        binding = LivestreamingDialogConfirmBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Window window = getWindow();
         window.setGravity(Gravity.CENTER);

@@ -2,12 +2,12 @@ package com.zegocloud.uikit.prebuilt.livestreaming.internal;
 
 import android.content.Context;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginInvitationListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
-import com.zegocloud.uikit.utils.GenericUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +85,7 @@ public class LiveStreamingManager {
                 } else {
                     // if inviter not host,then me is the host,
                     // and no respond to audience's cohost request
-                    removeUserStatusAndCheck(inviter.userID);
+                    removeReceiveCoHostRequestUser(inviter.userID);
                     //                    if (uiCallBack != null) {
                     //                        uiCallBack.dismissReceiveCoHostRequestDialog();
                     //                    }
@@ -115,7 +115,7 @@ public class LiveStreamingManager {
                 if (Objects.equals(getHostID(), invitee.userID)) {
                     // invitee is host.then me is audience,
                     // and the host accept my cohost request
-                    removeUserStatusAndCheck(invitee.userID);
+                    removeReceiveCoHostRequestUser(invitee.userID);
                     if (uiCallBack != null) {
                         uiCallBack.showCoHostButtons();
                     }
@@ -132,9 +132,9 @@ public class LiveStreamingManager {
                 if (Objects.equals(getHostID(), invitee.userID)) {
                     // invitee is host.then me is audience,
                     // and the host refused my cohost request
-                    removeUserStatusAndCheck(invitee.userID);
+                    removeReceiveCoHostRequestUser(invitee.userID);
                     if (uiCallBack != null) {
-                        String string = context.getString(R.string.host_reject_co_host_tips);
+                        String string = context.getString(R.string.livestreaming_host_reject_co_host_tips);
                         if (translationText != null && translationText.hostRejectCoHostRequestToast != null) {
                             string = translationText.hostRejectCoHostRequestToast;
                         }
@@ -148,7 +148,7 @@ public class LiveStreamingManager {
                     // and the audience refused my cohost invite
                     removeUserStatus(invitee.userID);
                     if (uiCallBack != null) {
-                        String string = context.getString(R.string.refuse_co_host_tips, invitee.userName);
+                        String string = context.getString(R.string.livestreaming_refuse_co_host_tips, invitee.userName);
                         if (translationText != null && translationText.audienceRejectInvitationToast != null) {
                             string = String.format(translationText.audienceRejectInvitationToast, invitee.userName);
                         }
@@ -166,7 +166,7 @@ public class LiveStreamingManager {
                 } else {
                     // if inviter not host,then me is host,
                     // and the audience canceled cohost request to me
-                    removeUserStatusAndCheck(inviter.userID);
+                    removeReceiveCoHostRequestUser(inviter.userID);
                     if (uiCallBack != null) {
                         uiCallBack.dismissReceiveCoHostRequestDialog();
                     }
@@ -191,7 +191,7 @@ public class LiveStreamingManager {
         }
     }
 
-    public void removeUserStatusAndCheck(String userID) {
+    public void removeReceiveCoHostRequestUser(String userID) {
         Integer remove = removeUserStatus(userID);
         if (remove != null) {
             if (Objects.equals(ZegoUIKit.getLocalUser().userID, getHostID())) {

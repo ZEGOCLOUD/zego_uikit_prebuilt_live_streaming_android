@@ -1,16 +1,11 @@
 package com.zegocloud.uikit.prebuilt.livestreaming.widget;
 
-import android.Manifest.permission;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import com.permissionx.guolindev.PermissionX;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
@@ -19,11 +14,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.ConfirmDialog;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveStreamingManager;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
-import com.zegocloud.uikit.service.internal.UIKitCore;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class ZegoCoHostControlButton extends FrameLayout {
@@ -74,10 +65,10 @@ public class ZegoCoHostControlButton extends FrameLayout {
         endCoHostButton = new ZegoEndCoHostButton(getContext());
         endCoHostButton.setOnClickListener(v -> {
             if (getContext() instanceof Activity) {
-                String title = getContext().getString(R.string.end_co_host_title);
-                String message = getContext().getString(R.string.end_co_host_message);
-                String cancelButtonName = getContext().getString(R.string.end_co_host_cancel);
-                String confirmButtonName = getContext().getString(R.string.end_co_host_ok);
+                String title = getContext().getString(R.string.livestreaming_end_co_host_title);
+                String message = getContext().getString(R.string.livestreaming_end_co_host_message);
+                String cancelButtonName = getContext().getString(R.string.livestreaming_end_co_host_cancel);
+                String confirmButtonName = getContext().getString(R.string.livestreaming_end_co_host_ok);
                 ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
                 if (translationText != null) {
                     ZegoDialogInfo dialogInfo = translationText.endConnectionDialogInfo;

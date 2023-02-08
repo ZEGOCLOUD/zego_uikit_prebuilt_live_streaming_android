@@ -8,7 +8,7 @@
     android:id="@+id/live_member_list_layout"
     android:layout_width="match_parent"
     android:layout_height="385dp"
-    android:background="@drawable/background_memberlist">
+    android:background="@drawable/livestreaming_background_memberlist">
 
     <TextView
       android:id="@+id/live_member_list_title"
@@ -17,7 +17,7 @@
       android:layout_marginTop="15dp"
       android:gravity="center_vertical"
       android:paddingStart="16dp"
-      android:text="@string/memberlist_title"
+      android:text="@string/livestreaming_memberlist_title"
       android:textColor="@android:color/white"
       android:textSize="16sp"
       app:layout_constraintStart_toStartOf="parent"

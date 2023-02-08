@@ -43,11 +43,11 @@ public class RemoveCoHostDialog extends Dialog {
         FrameLayout rootView = new FrameLayout(getContext());
         childParent = new LinearLayout(getContext());
         childParent.setOrientation(LinearLayout.VERTICAL);
-        childParent.setBackgroundResource(R.drawable.bg_bottom_menu_dialog);
+        childParent.setBackgroundResource(R.drawable.livestreaming_bg_bottom_menu_dialog);
         rootView.addView(childParent);
 
         TextView removeUserButton = new TextView(getContext());
-        removeUserButton.setText(getContext().getString(R.string.remove_user, userInfo.userName));
+        removeUserButton.setText(getContext().getString(R.string.livestreaming_remove_user, userInfo.userName));
         ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null && translationText.removeUserMenuDialogButton != null) {
             removeUserButton.setText(String.format(translationText.removeUserMenuDialogButton,userInfo.userName));
@@ -90,7 +90,7 @@ public class RemoveCoHostDialog extends Dialog {
             new LinearLayout.LayoutParams(-1, Utils.dp2px(1, getContext().getResources().getDisplayMetrics())));
 
         TextView cancelButton = new TextView(getContext());
-        cancelButton.setText(R.string.cancel);
+        cancelButton.setText(R.string.livestreaming_cancel);
         cancelButton.setTextColor(Color.WHITE);
         cancelButton.setTextSize(14);
         cancelButton.setGravity(Gravity.CENTER);

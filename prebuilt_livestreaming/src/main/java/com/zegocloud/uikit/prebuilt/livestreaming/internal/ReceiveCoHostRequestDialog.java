@@ -22,21 +22,21 @@ public class ReceiveCoHostRequestDialog {
             int code = (int) result.get("code");
             if (code == 0) {
                 dismiss();
-                LiveStreamingManager.getInstance().removeUserStatusAndCheck(inviter.userID);
+                LiveStreamingManager.getInstance().removeReceiveCoHostRequestUser(inviter.userID);
             }
         });
         acceptButton.setRequestCallbackListener(result -> {
             int code = (int) result.get("code");
             if (code == 0) {
                 dismiss();
-                LiveStreamingManager.getInstance().removeUserStatusAndCheck(inviter.userID);
+                LiveStreamingManager.getInstance().removeReceiveCoHostRequestUser(inviter.userID);
             }
         });
 
-        String title = context.getString(R.string.receive_co_host_request_title);
-        String message = context.getString(R.string.receive_co_host_request_message, inviter.userName);
-        String cancelButtonName = context.getString(R.string.receive_co_host_request_cancel);
-        String confirmButtonName = context.getString(R.string.receive_co_host_request_ok);
+        String title = context.getString(R.string.livestreaming_receive_co_host_request_title);
+        String message = context.getString(R.string.livestreaming_receive_co_host_request_message, inviter.userName);
+        String cancelButtonName = context.getString(R.string.livestreaming_receive_co_host_request_cancel);
+        String confirmButtonName = context.getString(R.string.livestreaming_receive_co_host_request_ok);
         ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null) {
             ZegoDialogInfo dialogInfo = translationText.receivedCoHostRequestDialogInfo;

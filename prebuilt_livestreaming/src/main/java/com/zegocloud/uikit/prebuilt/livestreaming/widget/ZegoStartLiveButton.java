@@ -85,27 +85,27 @@ public class ZegoStartLiveButton extends androidx.appcompat.widget.AppCompatButt
                 String message = "";
                 if (deniedList.size() == 1) {
                     if (deniedList.contains(permission.CAMERA)) {
-                        message = getContext().getString(R.string.permission_explain_camera);
+                        message = getContext().getString(R.string.livestreaming_permission_explain_camera);
                     } else if (deniedList.contains(permission.RECORD_AUDIO)) {
-                        message = getContext().getString(R.string.permission_explain_mic);
+                        message = getContext().getString(R.string.livestreaming_permission_explain_mic);
                     }
                 } else {
-                    message = getContext().getString(R.string.permission_explain_camera_mic);
+                    message = getContext().getString(R.string.livestreaming_permission_explain_camera_mic);
                 }
-                scope.showRequestReasonDialog(deniedList, message, getContext().getString(R.string.ok));
+                scope.showRequestReasonDialog(deniedList, message, getContext().getString(R.string.livestreaming_ok));
             }).onForwardToSettings((scope, deniedList) -> {
                 String message = "";
                 if (deniedList.size() == 1) {
                     if (deniedList.contains(permission.CAMERA)) {
-                        message = getContext().getString(R.string.settings_camera);
+                        message = getContext().getString(R.string.livestreaming_settings_camera);
                     } else if (deniedList.contains(permission.RECORD_AUDIO)) {
-                        message = getContext().getString(R.string.settings_mic);
+                        message = getContext().getString(R.string.livestreaming_settings_mic);
                     }
                 } else {
-                    message = getContext().getString(R.string.settings_camera_mic);
+                    message = getContext().getString(R.string.livestreaming_settings_camera_mic);
                 }
-                scope.showForwardToSettingsDialog(deniedList, message, getContext().getString(R.string.settings),
-                    getContext().getString(R.string.cancel));
+                scope.showForwardToSettingsDialog(deniedList, message, getContext().getString(R.string.livestreaming_settings),
+                    getContext().getString(R.string.livestreaming_cancel));
             }).request(new RequestCallback() {
                 @Override
                 public void onResult(boolean allGranted, @NonNull List<String> grantedList,

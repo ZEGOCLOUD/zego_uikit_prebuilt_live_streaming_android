@@ -313,8 +313,8 @@ public class BottomMenuBar extends LinearLayout {
         private void initView() {
             StateListDrawable sld = new StateListDrawable();
             sld.addState(new int[]{android.R.attr.state_pressed},
-                ContextCompat.getDrawable(getContext(), R.drawable.icon_tab_more));
-            sld.addState(new int[]{}, ContextCompat.getDrawable(getContext(), R.drawable.icon_tab_more));
+                ContextCompat.getDrawable(getContext(), R.drawable.livestreaming_icon_tab_more));
+            sld.addState(new int[]{}, ContextCompat.getDrawable(getContext(), R.drawable.livestreaming_icon_tab_more));
             setImageDrawable(sld);
             setOnClickListener(v -> showMoreDialog());
         }

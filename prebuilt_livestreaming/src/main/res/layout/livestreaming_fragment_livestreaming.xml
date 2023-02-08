@@ -3,7 +3,7 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@drawable/img_bg">
+  android:background="@drawable/livestreaming_img_bg">
 
   <com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoContainer
     android:id="@+id/live_video_container"
@@ -17,7 +17,7 @@
     android:layout_gravity="center"
     android:drawablePadding="10dp"
     android:gravity="center"
-    android:text="@string/no_host"
+    android:text="@string/livestreaming_no_host"
     android:textColor="@android:color/white"
     android:textSize="16sp"
     app:layout_constraintBottom_toBottomOf="parent"
@@ -40,7 +40,7 @@
     android:layout_height="34dp"
     android:layout_marginStart="16dp"
     android:layout_marginTop="13dp"
-    android:background="@drawable/list_people_round_rect"
+    android:background="@drawable/livestreaming_list_people_round_rect"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
 
@@ -75,8 +75,8 @@
     android:layout_height="28dp"
     android:layout_marginTop="16dp"
     android:layout_toStartOf="@id/live_exit"
-    android:background="@drawable/list_people_round_rect"
-    android:drawableStart="@drawable/list_people"
+    android:background="@drawable/livestreaming_list_people_round_rect"
+    android:drawableStart="@drawable/livestreaming_list_people"
     android:drawablePadding="4dp"
     android:gravity="center_vertical"
     android:paddingStart="12dp"
@@ -123,7 +123,7 @@
     android:layout_marginStart="4dp"
     android:layout_marginTop="2dp"
     android:scaleType="center"
-    android:src="@drawable/nav_back"
+    android:src="@drawable/livestreaming_nav_back"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent" />
 
@@ -149,9 +149,9 @@
       android:id="@+id/preview_start"
       android:layout_width="150dp"
       android:layout_height="44dp"
-      android:background="@drawable/bg_purple_btn"
+      android:background="@drawable/livestreaming_bg_purple_btn"
       android:gravity="center"
-      android:text="@string/start"
+      android:text="@string/livestreaming_start"
       android:textColor="@android:color/white"
       android:textSize="16sp" />
   </FrameLayout>

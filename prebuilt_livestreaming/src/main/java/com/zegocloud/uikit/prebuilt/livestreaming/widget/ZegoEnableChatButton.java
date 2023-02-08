@@ -91,9 +91,9 @@ public class ZegoEnableChatButton extends androidx.appcompat.widget.AppCompatIma
 
     private void updateImage() {
         if (enableChat) {
-            setImageResource(R.drawable.icon_message_enable);
+            setImageResource(R.drawable.livestreaming_icon_message_enable);
         } else {
-            setImageResource(R.drawable.icon_message_disable);
+            setImageResource(R.drawable.livestreaming_icon_message_disable);
         }
     }
 }

@@ -47,8 +47,8 @@ public class ZegoInRoomMessageButton extends AppCompatImageView {
         setScaleType(ScaleType.FIT_XY);
         StateListDrawable sld = new StateListDrawable();
         sld.addState(new int[]{android.R.attr.state_enabled},
-            ContextCompat.getDrawable(getContext(), R.drawable.icon_im));
-        sld.addState(new int[]{}, ContextCompat.getDrawable(getContext(), R.drawable.icon_im_disable));
+            ContextCompat.getDrawable(getContext(), R.drawable.livestreaming_icon_im));
+        sld.addState(new int[]{}, ContextCompat.getDrawable(getContext(), R.drawable.livestreaming_icon_im_disable));
         setImageDrawable(sld);
 
         roomPropertyUpdateListener = new ZegoRoomPropertyUpdateListener() {

@@ -27,8 +27,8 @@ public class ReceiveCoHostInviteDialog {
                 dismiss();
             }
         });
-        dialog = new ConfirmDialog.Builder(context).setTitle(R.string.receive_co_host_invite_title)
-            .setMessage(R.string.receive_co_host_invite_message).setCustomPositiveButton(acceptButton)
+        dialog = new ConfirmDialog.Builder(context).setTitle(R.string.livestreaming_receive_co_host_invite_title)
+            .setMessage(R.string.livestreaming_receive_co_host_invite_message).setCustomPositiveButton(acceptButton)
             .setCustomNegativeButton(refuseButton).build();
     }
 
