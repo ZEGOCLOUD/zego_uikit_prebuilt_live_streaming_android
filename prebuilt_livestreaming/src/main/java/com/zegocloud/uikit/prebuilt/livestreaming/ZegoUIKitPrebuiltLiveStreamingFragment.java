@@ -33,7 +33,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.internal.ConfirmDialog;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveMemberList;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.ReceiveCoHostRequestDialog;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoVideoForegroundView;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoAudioVideoForegroundView;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
 import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
@@ -57,12 +57,11 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     private OnBackPressedCallback onBackPressedCallback;
     private LivestreamingFragmentLivestreamingBinding binding;
     private Map<ZegoLiveStreamingRole, List<View>> bottomMenuBarExtendedButtons = new HashMap<>();
-
-    private boolean isLocalUserHost = false;
     private ZegoUIKitPrebuiltLiveStreamingConfig config;
     private ConfirmDialog receiveCoHostInviteDialog;
     private ReceiveCoHostRequestDialog receiveCoHostRequestDialog;
     private LiveMemberList livememberList;
+    private boolean isLocalUserHost = false;
     private boolean hostFirst = true;
     private Runnable hideTipsRunnable = new Runnable() {
         @Override
@@ -70,6 +69,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             binding.liveToast.setVisibility(View.GONE);
         }
     };
+    private View backgroundView;
 
     public ZegoUIKitPrebuiltLiveStreamingFragment() {
         // Required empty public constructor
@@ -141,6 +141,10 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = LivestreamingFragmentLivestreamingBinding.inflate(inflater, container, false);
+        if (backgroundView != null) {
+            binding.liveBackgroundViewParent.removeAllViews();
+            binding.liveBackgroundViewParent.addView(backgroundView);
+        }
         return binding.getRoot();
     }
 
@@ -249,7 +253,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                             ZegoUIKit.stopPlayingAllAudioVideo();
                             showLiveView();
                             binding.liveBottomMenuBar.showAudienceButtons();
-                            binding.liveNoHostHint.setVisibility(View.VISIBLE);
+                            binding.liveBackgroundViewParent.setVisibility(View.VISIBLE);
                             binding.liveVideoContainer.setVisibility(View.GONE);
                         }
                     }
@@ -258,7 +262,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 if (Objects.equals("live_status", key)) {
                     if ("1".equals(newValue)) {
                         ZegoUIKit.startPlayingAllAudioVideo();
-                        binding.liveNoHostHint.setVisibility(View.GONE);
+                        binding.liveBackgroundViewParent.setVisibility(View.GONE);
                         binding.liveVideoContainer.setVisibility(View.VISIBLE);
                         if (oldValue != null) {
                             showLiveView();
@@ -277,11 +281,11 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
                         }
                         if (isLocalUserHost) {
-                            binding.liveNoHostHint.setVisibility(View.GONE);
+                            binding.liveBackgroundViewParent.setVisibility(View.GONE);
                             binding.liveVideoContainer.setVisibility(View.VISIBLE);
                             binding.liveBottomMenuBar.showHostButtons();
                         } else {
-                            binding.liveNoHostHint.setVisibility(View.VISIBLE);
+                            binding.liveBackgroundViewParent.setVisibility(View.VISIBLE);
                             binding.liveVideoContainer.setVisibility(View.GONE);
                             binding.liveBottomMenuBar.showAudienceButtons();
                             dismissReceiveCoHostInviteDialog();
@@ -350,8 +354,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                         if (message.contains("%s")) {
                             message = String.format(message, fromUser.userName);
                         }
-                        new ConfirmDialog.Builder(getContext()).setTitle(dialogInfo.title)
-                            .setMessage(message)
+                        new ConfirmDialog.Builder(getContext()).setTitle(dialogInfo.title).setMessage(message)
                             .setPositiveButton(dialogInfo.confirmButtonName, (dialog, which) -> {
                                 dialog.dismiss();
                                 requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
@@ -416,9 +419,13 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         });
     }
 
+    public void setBackgroundView(View view) {
+        this.backgroundView = view;
+    }
+
     private void initLiveBtns() {
         if (config.role != ZegoLiveStreamingRole.HOST) {
-            binding.liveNoHostHint.setVisibility(View.VISIBLE);
+            binding.liveBackgroundViewParent.setVisibility(View.VISIBLE);
             binding.liveVideoContainer.setVisibility(View.GONE);
         }
         ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
@@ -565,8 +572,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             binding.liveVideoContainer.setForegroundViewProvider(config.audioVideoViewConfig.provider);
         } else {
             binding.liveVideoContainer.setForegroundViewProvider((parent, uiKitUser) -> {
-                ZegoVideoForegroundView foregroundView = new ZegoVideoForegroundView(parent.getContext(), uiKitUser);
-                foregroundView.showCamera(false);
+                ZegoAudioVideoForegroundView foregroundView = new ZegoAudioVideoForegroundView(parent.getContext(),
+                    uiKitUser.userID);
+                foregroundView.showCameraView(false);
                 return foregroundView;
             });
         }

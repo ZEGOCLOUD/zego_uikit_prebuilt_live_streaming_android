@@ -13,7 +13,7 @@
   <string name="livestreaming_ok">OK</string>
   <string name="livestreaming_cancel">Cancel</string>
   <string name="livestreaming_start">Start</string>
-  <string name="livestreaming_memberlist_title">Attendance</string>
+  <string name="livestreaming_memberlist_title">Audience</string>
   <string name="livestreaming_you">You</string>
   <string name="livestreaming_co_host">Co-host</string>
   <string name="livestreaming_host">Host</string>

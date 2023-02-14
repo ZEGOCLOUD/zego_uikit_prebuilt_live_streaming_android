@@ -12,7 +12,7 @@ public class ZegoTranslationText {
     public String cancelMenuDialogButton = "Cancel";
 
     public String noHostOnline = "No host is online.";
-    public String memberListTitle = "Attendance";
+    public String memberListTitle = "Audience";
 
     public String sendRequestCoHostToast = "You are applying to be a co-host, please wait for confirmation.";
     public String hostRejectCoHostRequestToast = "Your request to co-host with the host has been refused.";

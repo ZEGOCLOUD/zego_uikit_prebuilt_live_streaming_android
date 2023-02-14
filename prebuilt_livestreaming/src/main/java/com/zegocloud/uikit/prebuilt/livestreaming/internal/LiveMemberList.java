@@ -92,7 +92,7 @@ public class LiveMemberList extends BottomSheetDialog {
                         if (isYou) {
                             you = uiKitUser;
                         } else {
-                            boolean isCoHost = uiKitUser.isCameraOpen || uiKitUser.isMicOpen;
+                            boolean isCoHost = uiKitUser.isCameraOn || uiKitUser.isMicrophoneOn;
                             if (isCoHost) {
                                 coHost.add(uiKitUser);
                             } else {
@@ -145,7 +145,7 @@ public class LiveMemberList extends BottomSheetDialog {
                     String hostUserID = ZegoUIKit.getRoomProperties().get("host");
                     boolean isYou = Objects.equals(uiKitUser, localUser);
                     boolean isHost = Objects.equals(uiKitUser.userID, hostUserID);
-                    boolean isCoHost = uiKitUser.isCameraOpen || uiKitUser.isMicOpen;
+                    boolean isCoHost = uiKitUser.isCameraOn || uiKitUser.isMicrophoneOn;
                     StringBuilder builder = new StringBuilder();
                     if (isYou || isHost || isCoHost) {
                         builder.append("(");
