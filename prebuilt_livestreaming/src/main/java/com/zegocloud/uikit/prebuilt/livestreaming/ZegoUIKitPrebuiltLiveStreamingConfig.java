@@ -1,6 +1,7 @@
 package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.view.View;
+import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayout;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoBottomMenuBarConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingEndListener;
@@ -41,6 +42,8 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public ZegoDialogInfo othersTurnOnYourMicrophoneConfirmDialogInfo;
     public transient ZegoStartLiveButton startLiveButton;
     public transient View.OnClickListener onStartLiveButtonPressed;
+    public ZegoLayout zegoLayout;
+
 
     public static ZegoUIKitPrebuiltLiveStreamingConfig host() {
         return host(false);

@@ -188,11 +188,11 @@ public class LiveMemberList extends BottomSheetDialog {
                     agree.setTextSize(14);
                     agree.setRequestCallbackListener(v -> {
                         dismiss();
-                        LiveStreamingManager.getInstance().removeReceiveCoHostRequestUser(uiKitUser.userID);
+                        LiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                     });
                     disagree.setRequestCallbackListener(v -> {
                         dismiss();
-                        LiveStreamingManager.getInstance().removeReceiveCoHostRequestUser(uiKitUser.userID);
+                        LiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                     });
                     if (LiveStreamingManager.getInstance().isUserCoHostRequestExisted(uiKitUser.userID)) {
                         agree.setVisibility(View.VISIBLE);

@@ -85,7 +85,7 @@ public class LiveStreamingManager {
                 } else {
                     // if inviter not host,then me is the host,
                     // and no respond to audience's cohost request
-                    removeReceiveCoHostRequestUser(inviter.userID);
+                    removeUserStatusAndCheck(inviter.userID);
                     //                    if (uiCallBack != null) {
                     //                        uiCallBack.dismissReceiveCoHostRequestDialog();
                     //                    }
@@ -115,7 +115,7 @@ public class LiveStreamingManager {
                 if (Objects.equals(getHostID(), invitee.userID)) {
                     // invitee is host.then me is audience,
                     // and the host accept my cohost request
-                    removeReceiveCoHostRequestUser(invitee.userID);
+                    removeUserStatusAndCheck(invitee.userID);
                     if (uiCallBack != null) {
                         uiCallBack.showCoHostButtons();
                     }
@@ -132,7 +132,7 @@ public class LiveStreamingManager {
                 if (Objects.equals(getHostID(), invitee.userID)) {
                     // invitee is host.then me is audience,
                     // and the host refused my cohost request
-                    removeReceiveCoHostRequestUser(invitee.userID);
+                    removeUserStatusAndCheck(invitee.userID);
                     if (uiCallBack != null) {
                         String string = context.getString(R.string.livestreaming_host_reject_co_host_tips);
                         if (translationText != null && translationText.hostRejectCoHostRequestToast != null) {
@@ -166,7 +166,7 @@ public class LiveStreamingManager {
                 } else {
                     // if inviter not host,then me is host,
                     // and the audience canceled cohost request to me
-                    removeReceiveCoHostRequestUser(inviter.userID);
+                    removeUserStatusAndCheck(inviter.userID);
                     if (uiCallBack != null) {
                         uiCallBack.dismissReceiveCoHostRequestDialog();
                     }
@@ -191,7 +191,7 @@ public class LiveStreamingManager {
         }
     }
 
-    public void removeReceiveCoHostRequestUser(String userID) {
+    public void removeUserStatusAndCheck(String userID) {
         Integer remove = removeUserStatus(userID);
         if (remove != null) {
             if (Objects.equals(ZegoUIKit.getLocalUser().userID, getHostID())) {

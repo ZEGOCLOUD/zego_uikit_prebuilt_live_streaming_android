@@ -55,6 +55,8 @@ public class ZegoAudioVideoForegroundView extends ZegoBaseAudioVideoForegroundVi
             Utils.dp2px(34, getContext().getResources().getDisplayMetrics()));
         layoutParams.gravity = Gravity.BOTTOM;
         addView(viewGroup, layoutParams);
+
+        showCameraView(false);
     }
 
     @Override

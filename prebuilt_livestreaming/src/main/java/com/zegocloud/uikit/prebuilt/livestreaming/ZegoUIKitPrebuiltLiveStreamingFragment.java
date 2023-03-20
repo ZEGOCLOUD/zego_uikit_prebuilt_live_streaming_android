@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +19,14 @@ import androidx.fragment.app.Fragment;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.components.audiovideo.ZegoBaseAudioVideoForegroundView;
+import com.zegocloud.uikit.components.audiovideo.ZegoForegroundViewProvider;
+import com.zegocloud.uikit.components.audiovideo.ZegoScreenSharingView;
+import com.zegocloud.uikit.components.audiovideo.ZegoShowFullscreenModeToggleButtonRules;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoComparator;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoViewConfig;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayout;
+import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayoutGalleryConfig;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayoutMode;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayoutPictureInPictureConfig;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoViewPosition;
@@ -34,6 +40,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveMemberList;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.ReceiveCoHostRequestDialog;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoAudioVideoForegroundView;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoScreenShareForegroundView;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
 import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
@@ -216,7 +223,6 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         ZegoUIKit.addAudioVideoUpdateListener(new ZegoAudioVideoUpdateListener() {
             @Override
             public void onAudioVideoAvailable(List<ZegoUIKitUser> userList) {
-
             }
 
             @Override
@@ -344,6 +350,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 }
             }
         });
+
         ZegoUIKit.addTurnOnYourMicrophoneRequestListener(new ZegoTurnOnYourMicrophoneRequestListener() {
             @Override
             public void onTurnOnYourMicrophoneRequest(ZegoUIKitUser fromUser) {
@@ -540,13 +547,17 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private void initVideoContainer() {
-        ZegoLayout layout = new ZegoLayout();
-        layout.mode = ZegoLayoutMode.PICTURE_IN_PICTURE;
-        ZegoLayoutPictureInPictureConfig pipConfig = new ZegoLayoutPictureInPictureConfig();
-        pipConfig.smallViewDefaultPosition = ZegoViewPosition.BOTTOM_RIGHT;
-        pipConfig.removeViewWhenAudioVideoUnavailable = true;
-        layout.config = pipConfig;
-        binding.liveVideoContainer.setLayout(layout);
+        if (config.zegoLayout == null) {
+            ZegoLayout layout = new ZegoLayout();
+            layout.mode = ZegoLayoutMode.PICTURE_IN_PICTURE;
+            ZegoLayoutPictureInPictureConfig pipConfig = new ZegoLayoutPictureInPictureConfig();
+            pipConfig.smallViewDefaultPosition = ZegoViewPosition.BOTTOM_RIGHT;
+            pipConfig.removeViewWhenAudioVideoUnavailable = true;
+            layout.config = pipConfig;
+            binding.liveVideoContainer.setLayout(layout);
+        } else {
+            binding.liveVideoContainer.setLayout(config.zegoLayout);
+        }
         if (config.audioVideoViewConfig != null) {
             ZegoAudioVideoViewConfig audioVideoViewConfig = new ZegoAudioVideoViewConfig();
             audioVideoViewConfig.showSoundWavesInAudioMode = config.audioVideoViewConfig.showSoundWaveOnAudioView;
@@ -569,15 +580,27 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         });
 
         if (config.audioVideoViewConfig != null) {
-            binding.liveVideoContainer.setForegroundViewProvider(config.audioVideoViewConfig.provider);
+            binding.liveVideoContainer.setAudioVideoForegroundViewProvider(config.audioVideoViewConfig.provider);
         } else {
-            binding.liveVideoContainer.setForegroundViewProvider((parent, uiKitUser) -> {
+            binding.liveVideoContainer.setAudioVideoForegroundViewProvider((parent, uiKitUser) -> {
                 ZegoAudioVideoForegroundView foregroundView = new ZegoAudioVideoForegroundView(parent.getContext(),
                     uiKitUser.userID);
-                foregroundView.showCameraView(false);
                 return foregroundView;
             });
         }
+
+        binding.liveVideoContainer.setScreenShareForegroundViewProvider((parent, uiKitUser) -> {
+            ZegoScreenShareForegroundView foregroundView = new ZegoScreenShareForegroundView(parent,
+                uiKitUser.userID);
+            foregroundView.setParentContainer(binding.liveVideoContainer);
+
+            if (config.zegoLayout.config instanceof ZegoLayoutGalleryConfig) {
+                ZegoLayoutGalleryConfig galleryConfig = (ZegoLayoutGalleryConfig) config.zegoLayout.config;
+                foregroundView.setToggleButtonRules(galleryConfig.fullscreenModeToggleButtonRules);
+            }
+
+            return foregroundView;
+        });
     }
 
     private void requestPermissionIfNeeded(RequestCallback requestCallback) {
