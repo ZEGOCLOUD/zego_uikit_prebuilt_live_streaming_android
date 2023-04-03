@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -30,7 +29,6 @@ public class ZegoScreenShareForegroundView extends ZegoBaseAudioVideoForegroundV
     public ZegoScreenShareForegroundView(ViewGroup screenSharingView, String userID) {
         super(screenSharingView.getContext(), userID);
         this.screenSharingView = (ZegoScreenSharingView) screenSharingView;
-        Log.d("TAG", "ZegoScreenShareForegroundView: " + this.screenSharingView.isFullScreen());
         imageView.setSelected(this.screenSharingView.isFullScreen());
     }
 
