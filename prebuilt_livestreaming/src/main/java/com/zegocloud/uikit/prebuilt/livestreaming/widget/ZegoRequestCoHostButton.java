@@ -92,7 +92,10 @@ public class ZegoRequestCoHostButton extends ZegoStartInvitationButton {
             LiveStreamingManager.getInstance().showTopTips((String) map.get("message"), false);
             return;
         }
-        invitees.add(uiKitUser);
+
+        if (!invitees.contains(uiKitUser)) {
+            invitees.add(uiKitUser);
+        }
         List<String> idList = GenericUtils.map(invitees, zegoUIKitUser -> zegoUIKitUser.userID);
         ZegoUIKit.getSignalingPlugin().sendInvitation(idList, timeout, type, data, new PluginCallbackListener() {
             @Override

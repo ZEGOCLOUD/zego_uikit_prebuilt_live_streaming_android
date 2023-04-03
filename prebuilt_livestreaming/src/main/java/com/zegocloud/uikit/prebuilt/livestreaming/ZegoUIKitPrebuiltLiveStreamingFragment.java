@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +46,7 @@ import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
+import com.zegocloud.uikit.service.defines.ZegoScreenSharingUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoTurnOnYourCameraRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoTurnOnYourMicrophoneRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -234,6 +234,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 }
             }
         });
+
         ZegoUIKit.addRoomPropertyUpdateListener(new ZegoRoomPropertyUpdateListener() {
             @Override
             public void onRoomPropertyUpdated(String key, String oldValue, String newValue) {
