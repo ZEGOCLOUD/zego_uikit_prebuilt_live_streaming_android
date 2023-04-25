@@ -13,6 +13,7 @@
 |---|---|
 |![Host](images/host.gif)|![Audience](images/audience.gif)|
 
+[![Tutorial | How to build live streaming using Android in 10 mins with ZEGOCLOUD](https://res.cloudinary.com/marcomontalbano/image/upload/v1682408457/video_to_markdown/images/youtube--bDd3jB17dPY-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://youtu.be/bDd3jB17dPY "Tutorial | How to build live streaming using Android in 10 mins with ZEGOCLOUD")
 
 ## When do you need the Live Streaming Kit
 
