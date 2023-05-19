@@ -23,6 +23,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'com.zegocloud.uikit.prebuilt.livestreaming'
 }
 
 dependencies {
