@@ -1,7 +1,6 @@
 package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.Manifest.permission;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -51,7 +50,6 @@ import com.zegocloud.uikit.service.defines.ZegoTurnOnYourCameraRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoTurnOnYourMicrophoneRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
-import com.zegocloud.uikit.service.internal.ExpressAdapter;
 import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoVideoConfigPreset;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
@@ -143,7 +141,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                     .getRotation()) {
                     orientation = ZegoOrientation.ORIENTATION_90;
                 }
-                ExpressAdapter.setAppOrientation(orientation);
+                ZegoUIKit.setAppOrientation(orientation);
             }
         };
 
