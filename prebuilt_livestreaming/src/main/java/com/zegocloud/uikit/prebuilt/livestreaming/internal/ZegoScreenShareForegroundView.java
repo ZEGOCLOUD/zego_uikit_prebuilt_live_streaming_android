@@ -11,9 +11,8 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import com.zegocloud.uikit.components.audiovideo.ZegoBaseAudioVideoForegroundView;
 import com.zegocloud.uikit.components.audiovideo.ZegoScreenSharingView;
-import com.zegocloud.uikit.components.audiovideo.ZegoShowFullscreenModeToggleButtonRules;
+import com.zegocloud.uikit.components.common.ZegoShowFullscreenModeToggleButtonRules;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoContainer;
-import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
 
@@ -22,7 +21,7 @@ public class ZegoScreenShareForegroundView extends ZegoBaseAudioVideoForegroundV
 
     private ImageView imageView;
     private ZegoAudioVideoContainer audioVideoContainer;
-    private ZegoShowFullscreenModeToggleButtonRules toggleButtonRules;
+    private ZegoShowFullscreenModeToggleButtonRules showFullscreenModeToggleButtonRules;
     private ZegoScreenSharingView screenSharingView;
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -39,8 +38,9 @@ public class ZegoScreenShareForegroundView extends ZegoBaseAudioVideoForegroundV
 
         StateListDrawable sld = new StateListDrawable();
         sld.addState(new int[]{android.R.attr.state_selected},
-            ContextCompat.getDrawable(getContext(), R.drawable.livestreaming_icon_full_screen_off));
-        sld.addState(new int[]{}, ContextCompat.getDrawable(getContext(), R.drawable.livestreaming_icon_full_screen));
+            ContextCompat.getDrawable(getContext(), com.zegocloud.uikit.R.drawable.zego_uikit_exit_full_screen));
+        sld.addState(new int[]{},
+            ContextCompat.getDrawable(getContext(), com.zegocloud.uikit.R.drawable.zego_uikit_icon_full_screen));
         imageView.setImageDrawable(sld);
         int size = Utils.dp2px(32, getContext().getResources().getDisplayMetrics());
         LayoutParams params = new LayoutParams(size, size);
@@ -74,17 +74,16 @@ public class ZegoScreenShareForegroundView extends ZegoBaseAudioVideoForegroundV
         imageView.setOnClickListener(v -> {
             if (audioVideoContainer != null) {
                 boolean selected = imageView.isSelected();
-                selected = !selected;
-                imageView.setSelected(selected);
-                audioVideoContainer.showScreenSharingViewInFullscreenMode(userID, selected);
+                imageView.setSelected(!selected);
+                audioVideoContainer.showScreenSharingViewInFullscreenMode(userID, !selected);
             }
         });
     }
 
-    public void setToggleButtonRules(ZegoShowFullscreenModeToggleButtonRules toggleButtonRules) {
-        this.toggleButtonRules = toggleButtonRules;
+    public void setShowFullscreenModeToggleButtonRules(ZegoShowFullscreenModeToggleButtonRules showFullscreenModeToggleButtonRules) {
+        this.showFullscreenModeToggleButtonRules = showFullscreenModeToggleButtonRules;
 
-        if (toggleButtonRules == ZegoShowFullscreenModeToggleButtonRules.SHOW_WHEN_SCREEN_PRESSED) {
+        if (showFullscreenModeToggleButtonRules == ZegoShowFullscreenModeToggleButtonRules.SHOW_WHEN_SCREEN_PRESSED) {
             Runnable runnable = this::hideFullButton;
             handler.postDelayed(runnable, 3000);
             screenSharingView.setOnClickListener(v -> {
@@ -92,7 +91,7 @@ public class ZegoScreenShareForegroundView extends ZegoBaseAudioVideoForegroundV
                 handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, 3000);
             });
-        } else if (toggleButtonRules == ZegoShowFullscreenModeToggleButtonRules.ALWAYS_HIDE) {
+        } else if (showFullscreenModeToggleButtonRules == ZegoShowFullscreenModeToggleButtonRules.ALWAYS_HIDE) {
             hideFullButton();
         }
     }

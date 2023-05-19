@@ -18,10 +18,6 @@ import androidx.fragment.app.Fragment;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.components.audiovideo.ZegoBaseAudioVideoForegroundView;
-import com.zegocloud.uikit.components.audiovideo.ZegoForegroundViewProvider;
-import com.zegocloud.uikit.components.audiovideo.ZegoScreenSharingView;
-import com.zegocloud.uikit.components.audiovideo.ZegoShowFullscreenModeToggleButtonRules;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoComparator;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoViewConfig;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayout;
@@ -46,11 +42,12 @@ import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
-import com.zegocloud.uikit.service.defines.ZegoScreenSharingUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoTurnOnYourCameraRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoTurnOnYourMicrophoneRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
+import im.zego.zegoexpress.constants.ZegoVideoConfigPreset;
+import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -477,6 +474,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         } else {
             binding.liveBottomMenuBar.showAudienceButtons();
         }
+
+        binding.liveBottomMenuBar.setScreenShareVideoConfig(config.screenSharingVideoConfig);
+
     }
 
     private ZegoDialogInfo getDialogInfo() {
@@ -564,6 +564,12 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             audioVideoViewConfig.showSoundWavesInAudioMode = config.audioVideoViewConfig.showSoundWaveOnAudioView;
             audioVideoViewConfig.useVideoViewAspectFill = config.audioVideoViewConfig.useVideoViewAspectFill;
             binding.liveVideoContainer.setAudioVideoConfig(audioVideoViewConfig);
+
+            if (config.videoConfig != null) {
+                ZegoVideoConfigPreset zegoVideoConfigPreset = ZegoVideoConfigPreset.getZegoVideoConfigPreset(
+                    config.videoConfig.resolution.value());
+                ZegoUIKit.setVideoConfig(new ZegoVideoConfig(zegoVideoConfigPreset));
+            }
         }
         binding.liveVideoContainer.setAudioVideoComparator(new ZegoAudioVideoComparator() {
             @Override
@@ -597,7 +603,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
             if (config.zegoLayout.config instanceof ZegoLayoutGalleryConfig) {
                 ZegoLayoutGalleryConfig galleryConfig = (ZegoLayoutGalleryConfig) config.zegoLayout.config;
-                foregroundView.setToggleButtonRules(galleryConfig.fullscreenModeToggleButtonRules);
+                foregroundView.setShowFullscreenModeToggleButtonRules(galleryConfig.showScreenSharingFullscreenModeToggleButtonRules);
             }
 
             return foregroundView;

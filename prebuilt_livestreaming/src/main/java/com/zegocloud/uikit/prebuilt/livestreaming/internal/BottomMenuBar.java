@@ -16,10 +16,12 @@ import com.zegocloud.uikit.components.audiovideo.ZegoSwitchAudioOutputButton;
 import com.zegocloud.uikit.components.audiovideo.ZegoSwitchCameraButton;
 import com.zegocloud.uikit.components.audiovideo.ZegoToggleCameraButton;
 import com.zegocloud.uikit.components.audiovideo.ZegoToggleMicrophoneButton;
+import com.zegocloud.uikit.components.common.ZegoScreenSharingToggleButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoBottomMenuBarConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltVideoConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoCoHostControlButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoEnableChatButton;
 import com.zegocloud.uikit.utils.Utils;
@@ -38,6 +40,7 @@ public class BottomMenuBar extends LinearLayout {
     private ZegoInRoomMessageButton messageButton;
     private ZegoBottomMenuBarConfig menuBarConfig = new ZegoBottomMenuBarConfig();
     private ZegoLiveStreamingRole currentRole;
+    private ZegoPrebuiltVideoConfig screenSharingVideoConfig;
 
     public BottomMenuBar(@NonNull Context context) {
         super(context);
@@ -154,6 +157,17 @@ public class BottomMenuBar extends LinearLayout {
                 LayoutParams params = generateChildLayoutParams();
                 view.setLayoutParams(params);
             }
+            break;
+            case SCREEN_SHARING_TOGGLE_BUTTON: {
+                view = new ZegoScreenSharingToggleButton(getContext());
+                ((ZegoScreenSharingToggleButton) view).bottomBarStyle();
+                if (screenSharingVideoConfig != null) {
+                    ((ZegoScreenSharingToggleButton) view).setPresetResolution(screenSharingVideoConfig.resolution);
+                }
+                LayoutParams params = generateChildLayoutParams();
+                view.setLayoutParams(params);
+            }
+            break;
         }
         if (view != null) {
             view.setTag(name);
@@ -296,6 +310,23 @@ public class BottomMenuBar extends LinearLayout {
 
     public void enableChat(boolean enable) {
         messageButton.setEnabled(enable);
+    }
+
+    public void setScreenShareVideoConfig(ZegoPrebuiltVideoConfig screenSharingVideoConfig) {
+        this.screenSharingVideoConfig = screenSharingVideoConfig;
+        if (screenSharingVideoConfig == null) {
+            return;
+        }
+        for (View view : showList) {
+            if (view instanceof ZegoScreenSharingToggleButton) {
+                ((ZegoScreenSharingToggleButton) view).setPresetResolution(screenSharingVideoConfig.resolution);
+            }
+        }
+        for (View view : hideList) {
+            if (view instanceof ZegoScreenSharingToggleButton) {
+                ((ZegoScreenSharingToggleButton) view).setPresetResolution(screenSharingVideoConfig.resolution);
+            }
+        }
     }
 
     public class MoreButton extends AppCompatImageView {

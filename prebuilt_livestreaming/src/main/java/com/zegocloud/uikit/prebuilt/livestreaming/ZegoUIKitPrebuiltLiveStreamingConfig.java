@@ -2,6 +2,7 @@ package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.view.View;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayout;
+import com.zegocloud.uikit.components.common.ZegoPresetResolution;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoBottomMenuBarConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingEndListener;
@@ -9,6 +10,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMemberListConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltAudioVideoViewConfig;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltVideoConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoLeaveLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoStartLiveButton;
@@ -43,6 +45,10 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public transient ZegoStartLiveButton startLiveButton;
     public transient View.OnClickListener onStartLiveButtonPressed;
     public ZegoLayout zegoLayout;
+    public ZegoPrebuiltVideoConfig screenSharingVideoConfig = new ZegoPrebuiltVideoConfig(
+        ZegoPresetResolution.PRESET_540P);
+    public ZegoPrebuiltVideoConfig videoConfig = new ZegoPrebuiltVideoConfig(ZegoPresetResolution.PRESET_360P);
+
 
 
     public static ZegoUIKitPrebuiltLiveStreamingConfig host() {
