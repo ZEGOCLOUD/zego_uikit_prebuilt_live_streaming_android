@@ -1,13 +1,18 @@
 package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.Manifest.permission;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.activity.OnBackPressedCallback;
@@ -46,6 +51,8 @@ import com.zegocloud.uikit.service.defines.ZegoTurnOnYourCameraRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoTurnOnYourMicrophoneRequestListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
+import com.zegocloud.uikit.service.internal.ExpressAdapter;
+import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoVideoConfigPreset;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import java.util.ArrayList;
@@ -74,6 +81,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         }
     };
     private View backgroundView;
+    private IntentFilter configurationChangeFilter;
+    private BroadcastReceiver configurationChangeReceiver;
 
     public ZegoUIKitPrebuiltLiveStreamingFragment() {
         // Required empty public constructor
@@ -112,6 +121,32 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             ZegoUIKit.login(userID, userName);
             ZegoUIKit.getSignalingPlugin().login(userID, userName, null);
         }
+
+        configurationChangeFilter = new IntentFilter();
+        configurationChangeFilter.addAction("android.intent.action.CONFIGURATION_CHANGED");
+
+        configurationChangeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                ZegoOrientation orientation = ZegoOrientation.ORIENTATION_0;
+
+                if (Surface.ROTATION_0 == requireActivity().getWindowManager().getDefaultDisplay()
+                    .getRotation()) {
+                    orientation = ZegoOrientation.ORIENTATION_0;
+                } else if (Surface.ROTATION_180 == requireActivity().getWindowManager().getDefaultDisplay()
+                    .getRotation()) {
+                    orientation = ZegoOrientation.ORIENTATION_180;
+                } else if (Surface.ROTATION_270 == requireActivity().getWindowManager().getDefaultDisplay()
+                    .getRotation()) {
+                    orientation = ZegoOrientation.ORIENTATION_270;
+                } else if (Surface.ROTATION_90 == requireActivity().getWindowManager().getDefaultDisplay()
+                    .getRotation()) {
+                    orientation = ZegoOrientation.ORIENTATION_90;
+                }
+                ExpressAdapter.setAppOrientation(orientation);
+            }
+        };
+
         onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -130,6 +165,11 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private void leaveRoom() {
+        if (configurationChangeReceiver != null) {
+            requireActivity().unregisterReceiver(configurationChangeReceiver);
+            configurationChangeReceiver = null;
+        }
+
         if (isLocalUserHost) {
             Map<String, String> map = new HashMap<>();
             map.put("host", "");
@@ -174,6 +214,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private void onRoomJoinSucceed() {
+        requireActivity().registerReceiver(configurationChangeReceiver, configurationChangeFilter);
+
         String userID = ZegoUIKit.getLocalUser().userID;
         isLocalUserHost = config.role == ZegoLiveStreamingRole.HOST;
 
@@ -603,7 +645,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
             if (config.zegoLayout.config instanceof ZegoLayoutGalleryConfig) {
                 ZegoLayoutGalleryConfig galleryConfig = (ZegoLayoutGalleryConfig) config.zegoLayout.config;
-                foregroundView.setShowFullscreenModeToggleButtonRules(galleryConfig.showScreenSharingFullscreenModeToggleButtonRules);
+                foregroundView.setShowFullscreenModeToggleButtonRules(
+                    galleryConfig.showScreenSharingFullscreenModeToggleButtonRules);
             }
 
             return foregroundView;
