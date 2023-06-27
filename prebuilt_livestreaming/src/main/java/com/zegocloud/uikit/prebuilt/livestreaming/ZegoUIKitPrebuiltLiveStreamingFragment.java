@@ -496,6 +496,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             if (config.memberListConfig != null) {
                 livememberList.setMemberListItemViewProvider(config.memberListConfig.memberListItemViewProvider);
             }
+            if (config.avatarViewProvider != null) {
+                livememberList.setAvatarViewProvider(config.avatarViewProvider);
+            }
             livememberList.setEnableCoHosting(config.isEnableCoHosting());
             livememberList.show();
         });
@@ -634,6 +637,10 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                     uiKitUser.userID);
                 return foregroundView;
             });
+        }
+
+        if (config.avatarViewProvider != null) {
+            binding.liveVideoContainer.setAvatarViewProvider(config.avatarViewProvider);
         }
 
         binding.liveVideoContainer.setScreenShareForegroundViewProvider((parent, uiKitUser) -> {

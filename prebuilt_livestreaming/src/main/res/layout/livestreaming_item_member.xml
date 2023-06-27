@@ -16,6 +16,15 @@
     app:layout_constraintTop_toTopOf="parent"
     app:textSize="16sp" />
 
+  <FrameLayout
+    android:id="@+id/live_member_item_custom_icon"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toBottomOf="@id/live_member_item_icon"
+    app:layout_constraintEnd_toEndOf="@id/live_member_item_icon"
+    app:layout_constraintStart_toStartOf="@id/live_member_item_icon"
+    app:layout_constraintTop_toTopOf="@id/live_member_item_icon" />
+
   <TextView
     android:id="@+id/live_member_item_name"
     android:layout_width="wrap_content"

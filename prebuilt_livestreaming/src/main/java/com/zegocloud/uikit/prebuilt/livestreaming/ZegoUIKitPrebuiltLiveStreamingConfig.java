@@ -1,6 +1,7 @@
 package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.view.View;
+import com.zegocloud.uikit.components.audiovideo.ZegoAvatarViewProvider;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayout;
 import com.zegocloud.uikit.components.common.ZegoPresetResolution;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoBottomMenuBarConfig;
@@ -24,7 +25,7 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public boolean turnOnCameraWhenJoining = false;
     public boolean turnOnMicrophoneWhenJoining = false;
     public boolean useSpeakerWhenJoining = true;
-    public ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig;
+    public ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig = new ZegoPrebuiltAudioVideoViewConfig();
     public ZegoBottomMenuBarConfig bottomMenuBarConfig = new ZegoBottomMenuBarConfig(
         Arrays.asList(ZegoMenuBarButtonName.TOGGLE_CAMERA_BUTTON, ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON,
             ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON),
@@ -48,6 +49,7 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public ZegoPrebuiltVideoConfig screenSharingVideoConfig = new ZegoPrebuiltVideoConfig(
         ZegoPresetResolution.PRESET_540P);
     public ZegoPrebuiltVideoConfig videoConfig = new ZegoPrebuiltVideoConfig(ZegoPresetResolution.PRESET_360P);
+    public transient ZegoAvatarViewProvider avatarViewProvider;
 
 
 

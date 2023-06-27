@@ -12,11 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.components.audiovideo.ZegoAvatarViewProvider;
 import com.zegocloud.uikit.components.internal.RippleIconView;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListComparator;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListItemViewProvider;
@@ -38,6 +40,7 @@ public class LiveMemberList extends BottomSheetDialog {
     private ZegoMemberListItemViewProvider memberListItemProvider;
     private ZegoUserUpdateListener userUpdateListener;
     private boolean enableCoHosting;
+    private ZegoAvatarViewProvider zegoAvatarViewProvider;
 
     public LiveMemberList(@NonNull Context context) {
         super(context, R.style.TransparentDialog);
@@ -139,8 +142,13 @@ public class LiveMemberList extends BottomSheetDialog {
                     TextView memberName = view.findViewById(R.id.live_member_item_name);
                     TextView more = view.findViewById(R.id.live_member_item_more);
                     TextView tag = view.findViewById(R.id.live_member_item_tag);
+                    FrameLayout customIcon = view.findViewById(R.id.live_member_item_custom_icon);
                     rippleIconView.setText(uiKitUser.userName, false);
                     memberName.setText(uiKitUser.userName);
+                    if (zegoAvatarViewProvider != null) {
+                        View customAvatarView = zegoAvatarViewProvider.onUserIDUpdated((ViewGroup) view, uiKitUser);
+                        customIcon.addView(customAvatarView);
+                    }
                     ZegoUIKitUser localUser = ZegoUIKit.getLocalUser();
                     String hostUserID = ZegoUIKit.getRoomProperties().get("host");
                     boolean isYou = Objects.equals(uiKitUser, localUser);
@@ -269,5 +277,9 @@ public class LiveMemberList extends BottomSheetDialog {
 
     public void setEnableCoHosting(boolean enableCoHosting) {
         this.enableCoHosting = enableCoHosting;
+    }
+
+    public void setAvatarViewProvider(ZegoAvatarViewProvider zegoAvatarViewProvider) {
+        this.zegoAvatarViewProvider = zegoAvatarViewProvider;
     }
 }
