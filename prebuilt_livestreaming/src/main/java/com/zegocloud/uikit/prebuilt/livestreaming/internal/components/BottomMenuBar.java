@@ -197,6 +197,7 @@ public class BottomMenuBar extends LinearLayout {
                 LayoutParams params = generateChildImageLayoutParams();
                 view.setLayoutParams(params);
             }
+            break;
             case BEAUTY_BUTTON: {
                 view = new BeautyButton(getContext());
                 LayoutParams params = generateChildImageLayoutParams();
@@ -216,7 +217,7 @@ public class BottomMenuBar extends LinearLayout {
                     view.setVisibility(GONE);
                 }
             }
-            break;
+
         }
         if (view != null) {
             view.setTag(name);
