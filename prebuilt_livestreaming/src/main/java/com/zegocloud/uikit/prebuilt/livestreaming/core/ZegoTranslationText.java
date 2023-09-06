@@ -21,6 +21,9 @@ public class ZegoTranslationText {
     public String audienceRejectInvitationToast = "%s refused to be a co-host.";
     public String requestCoHostFailed = "Failed to apply for connection.";
 
+
+    public String coHostEndBecausePK = "Host has started pk,cohost is ended";
+
     public ZegoDialogInfo receivedCoHostRequestDialogInfo = new ZegoDialogInfo("Co-host request",
         "%s wants to co-host with you.", "Disagree", "Agree");
     public ZegoDialogInfo receivedCoHostInvitationDialogInfo = new ZegoDialogInfo("Invitation",

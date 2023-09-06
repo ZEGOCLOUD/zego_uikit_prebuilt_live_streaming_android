@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreaming.internal;
+package com.zegocloud.uikit.prebuilt.livestreaming.internal.components;
 
 import android.app.Activity;
 import android.content.Context;

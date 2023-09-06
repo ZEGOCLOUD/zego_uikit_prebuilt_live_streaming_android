@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreaming.internal;
+package com.zegocloud.uikit.prebuilt.livestreaming.internal.components;
 
 import android.graphics.Color;
 import android.graphics.drawable.StateListDrawable;

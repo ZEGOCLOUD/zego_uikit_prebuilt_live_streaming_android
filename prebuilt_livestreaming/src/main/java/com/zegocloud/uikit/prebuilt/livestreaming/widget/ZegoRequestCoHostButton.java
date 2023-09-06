@@ -6,25 +6,23 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.components.common.ZTextButton;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
-import com.zegocloud.uikit.plugin.invitation.components.ZegoStartInvitationButton;
-import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveInvitationType;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class ZegoRequestCoHostButton extends ZegoStartInvitationButton {
+public class ZegoRequestCoHostButton extends ZTextButton {
 
     public ZegoRequestCoHostButton(@NonNull Context context) {
         super(context);
@@ -41,7 +39,6 @@ public class ZegoRequestCoHostButton extends ZegoStartInvitationButton {
     @Override
     protected void initView() {
         super.initView();
-        type = LiveInvitationType.REQUEST_COHOST.getValue();
         setBackgroundResource(R.drawable.livestreaming_bg_cohost_btn);
         setText(R.string.livestreaming_request_co_host);
         setTextColor(Color.WHITE);
@@ -54,75 +51,83 @@ public class ZegoRequestCoHostButton extends ZegoStartInvitationButton {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
+    protected boolean beforeClick() {
+        boolean isPKStarted = ZegoLiveStreamingManager.getInstance().getPKInfo() != null;
+        if (isPKStarted) {
+            ZegoLiveStreamingManager.getInstance().showTopTips("cannot apply coHost because PK", true);
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override
-    protected void invokedWhenClick() {
+    protected void afterClick() {
+        super.afterClick();
         String liveStatus = ZegoUIKit.getRoomProperties().get("live_status");
         if (!Objects.equals(liveStatus, "1")) {
             Map<String, Object> map = new HashMap<>();
             map.put("code", -1);
             map.put("message", getContext().getString(R.string.livestreaming_request_no_host_tips));
-            ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
             if (translationText != null && translationText.requestCoHostFailed != null) {
                 map.put("message", translationText.requestCoHostFailed);
             }
             if (callbackListener != null) {
                 callbackListener.callback(map);
             }
-            LiveStreamingManager.getInstance().showTopTips((String) map.get("message"), false);
+            ZegoLiveStreamingManager.getInstance().showTopTips((String) map.get("message"), false);
             return;
         }
 
         String hostUserID = ZegoUIKit.getRoomProperties().get("host");
-        ZegoUIKitUser uiKitUser = ZegoUIKit.getUser(hostUserID);
-        if (TextUtils.isEmpty(hostUserID) || uiKitUser == null) {
+        ZegoUIKitUser hostUser = ZegoUIKit.getUser(hostUserID);
+        if (TextUtils.isEmpty(hostUserID) || hostUser == null) {
             Map<String, Object> map = new HashMap<>();
             map.put("code", -1);
             map.put("message", getContext().getString(R.string.livestreaming_request_no_host_tips));
-            ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
             if (translationText != null && translationText.requestCoHostFailed != null) {
                 map.put("message", translationText.requestCoHostFailed);
             }
             if (callbackListener != null) {
                 callbackListener.callback(map);
             }
-            LiveStreamingManager.getInstance().showTopTips((String) map.get("message"), false);
+            ZegoLiveStreamingManager.getInstance().showTopTips((String) map.get("message"), false);
             return;
         }
 
-        if (!invitees.contains(uiKitUser)) {
-            invitees.add(uiKitUser);
-        }
-        List<String> idList = GenericUtils.map(invitees, zegoUIKitUser -> zegoUIKitUser.userID);
-        ZegoUIKit.getSignalingPlugin().sendInvitation(idList, timeout, type, data, new PluginCallbackListener() {
-            @Override
-            public void callback(Map<String, Object> result) {
-                int code = (int) result.get("code");
-                if (code != 0) {
-                    result.put("message", getContext().getString(R.string.livestreaming_request_no_host_tips));
-                    ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
-                    if (translationText != null && translationText.requestCoHostFailed != null) {
-                        result.put("message", translationText.requestCoHostFailed);
+        ZegoUIKit.getSignalingPlugin()
+            .sendInvitation(Collections.singletonList(hostUserID), 60, LiveInvitationType.REQUEST_COHOST.getValue(), "",
+                new PluginCallbackListener() {
+                    @Override
+                    public void callback(Map<String, Object> result) {
+                        int code = (int) result.get("code");
+                        if (code != 0) {
+                            result.put("message", getContext().getString(R.string.livestreaming_request_no_host_tips));
+                            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance()
+                                .getTranslationText();
+                            if (translationText != null && translationText.requestCoHostFailed != null) {
+                                result.put("message", translationText.requestCoHostFailed);
+                            }
+                        } else {
+                            result.put("message", getContext().getString(R.string.livestreaming_request_co_host_tips));
+                            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance()
+                                .getTranslationText();
+                            if (translationText != null && translationText.sendRequestCoHostToast != null) {
+                                result.put("message", translationText.sendRequestCoHostToast);
+                            }
+                            ZegoLiveStreamingManager.getInstance().setUserStatus(ZegoUIKit.getLocalUser().userID,
+                                ZegoLiveStreamingManager.SEND_COHOST_REQUEST);
+                        }
+                        ZegoLiveStreamingManager.getInstance().showTopTips((String) result.get("message"), code == 0);
+                        if (callbackListener != null) {
+                            callbackListener.callback(result);
+                        }
                     }
-                } else {
-                    result.put("message", getContext().getString(R.string.livestreaming_request_co_host_tips));
-                    ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
-                    if (translationText != null && translationText.sendRequestCoHostToast != null) {
-                        result.put("message", translationText.sendRequestCoHostToast);
-                    }
-                    LiveStreamingManager.getInstance()
-                        .setUserStatus(ZegoUIKit.getLocalUser().userID, LiveStreamingManager.SEND_COHOST_REQUEST);
-                }
-                LiveStreamingManager.getInstance().showTopTips((String) result.get("message"), code == 0);
-                if (callbackListener != null) {
-                    callbackListener.callback(result);
-                }
-            }
-        });
+                });
     }
+
 
     public void setRequestCallbackListener(PluginCallbackListener callbackListener) {
         this.callbackListener = callbackListener;

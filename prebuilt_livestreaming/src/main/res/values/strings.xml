@@ -55,4 +55,7 @@
   <string name="livestreaming_stop_live_cancel">@string/livestreaming_cancel</string>
   <string name="livestreaming_stop_live_ok">Stop it</string>
 
+  <string name="livestreaming_cohost_end_because_pk">Host has started pk,cohost is ended</string>
+  <string name="livestreaming_pk_host_reconnected">host reconnecting</string>
+
 </resources>

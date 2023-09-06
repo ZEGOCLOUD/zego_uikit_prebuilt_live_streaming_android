@@ -10,13 +10,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.permissionx.guolindev.PermissionX;
@@ -29,25 +29,25 @@ import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayoutGalleryConfi
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayoutMode;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayoutPictureInPictureConfig;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoViewPosition;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager.ZegoLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingFragmentLivestreamingBinding;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.ConfirmDialog;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveMemberList;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveStreamingManager;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.ReceiveCoHostRequestDialog;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoAudioVideoForegroundView;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoScreenShareForegroundView;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveMemberList;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ReceiveCoHostRequestDialog;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoAudioVideoForegroundView;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoScreenShareForegroundView;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
 import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;
-import com.zegocloud.uikit.service.defines.ZegoScenario;
 import com.zegocloud.uikit.service.defines.ZegoTurnOnYourCameraRequestListener;
-import com.zegocloud.uikit.service.defines.ZegoTurnOnYourMicrophoneRequestListener;
+import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
 import im.zego.zegoexpress.constants.ZegoOrientation;
@@ -101,7 +101,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         return fragment;
     }
 
-    public void setPrebuiltLiveStreamingConfig(ZegoUIKitPrebuiltLiveStreamingConfig prebuiltLiveStreamingConfig) {
+    void setPrebuiltLiveStreamingConfig(ZegoUIKitPrebuiltLiveStreamingConfig prebuiltLiveStreamingConfig) {
         config = prebuiltLiveStreamingConfig;
     }
 
@@ -113,42 +113,38 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         String appSign = arguments.getString("appSign");
         String userName = arguments.getString("userName");
         String userID = arguments.getString("userID");
+
         if (appID != 0) {
-            //            ZegoUIKit.installPlugins(config.plugins);
-            ZegoUIKit.init(requireActivity().getApplication(), appID, appSign, ZegoScenario.LIVE);
-            ZegoUIKit.login(userID, userName);
-            ZegoUIKit.getSignalingPlugin().login(userID, userName, null);
+            ZegoLiveStreamingManager.getInstance().init(requireActivity().getApplication(), appID, appSign, config);
+            ZegoLiveStreamingManager.getInstance().login(userID, userName, new ZegoUIKitCallback() {
+                @Override
+                public void onResult(int errorCode) {
+                    if (errorCode == 0) {
+                        String liveID = getArguments().getString("liveID");
+                        if (!TextUtils.isEmpty(liveID)) {
+                            ZegoLiveStreamingManager.getInstance()
+                                .joinRoom(liveID, config.markAsLargeRoom, errorCode2 -> {
+                                    if (errorCode2 == 0) {
+                                        onRoomJoinSucceed();
+                                    } else {
+                                        onRoomJoinFailed();
+                                    }
+                                });
+                        }
+                    } else {
+                        requireActivity().finish();
+                    }
+                }
+            });
         }
 
         configurationChangeFilter = new IntentFilter();
         configurationChangeFilter.addAction("android.intent.action.CONFIGURATION_CHANGED");
 
-        configurationChangeReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                ZegoOrientation orientation = ZegoOrientation.ORIENTATION_0;
-
-                if (Surface.ROTATION_0 == requireActivity().getWindowManager().getDefaultDisplay()
-                    .getRotation()) {
-                    orientation = ZegoOrientation.ORIENTATION_0;
-                } else if (Surface.ROTATION_180 == requireActivity().getWindowManager().getDefaultDisplay()
-                    .getRotation()) {
-                    orientation = ZegoOrientation.ORIENTATION_180;
-                } else if (Surface.ROTATION_270 == requireActivity().getWindowManager().getDefaultDisplay()
-                    .getRotation()) {
-                    orientation = ZegoOrientation.ORIENTATION_270;
-                } else if (Surface.ROTATION_90 == requireActivity().getWindowManager().getDefaultDisplay()
-                    .getRotation()) {
-                    orientation = ZegoOrientation.ORIENTATION_90;
-                }
-                ZegoUIKit.setAppOrientation(orientation);
-            }
-        };
-
         onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                boolean hostStarted = isLiveStarted() && isLocalUserHost;
+                boolean hostStarted = ZegoLiveStreamingManager.getInstance().isLiveStarted() && isLocalUserHost;
                 boolean isNotHost = !isLocalUserHost;
                 if (config.confirmDialogInfo != null && (hostStarted || isNotHost)) {
                     showQuitDialog(getDialogInfo());
@@ -174,10 +170,12 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             map.put("live_status", "0");
             ZegoUIKit.updateRoomProperties(map);
         }
-        LiveStreamingManager.getInstance().unInit();
-        ZegoUIKit.leaveRoom();
-        ZegoUIKit.logout();
-        ZegoUIKit.getSignalingPlugin().logout();
+        if (ZegoLiveStreamingManager.getInstance().isCurrentUserHost()) {
+            ZegoLiveStreamingManager.getInstance().stopPKBattle();
+        }
+        ZegoLiveStreamingManager.getInstance().leaveRoom();
+        ZegoLiveStreamingManager.getInstance().removeUserData();
+        ZegoLiveStreamingManager.getInstance().removeUserListeners();
     }
 
     @Override
@@ -187,24 +185,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             binding.liveBackgroundViewParent.removeAllViews();
             binding.liveBackgroundViewParent.addView(backgroundView);
         }
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         binding.liveGroup.setVisibility(View.GONE);
         binding.previewGroup.setVisibility(View.GONE);
-        String liveID = getArguments().getString("liveID");
-        if (!TextUtils.isEmpty(liveID)) {
-            ZegoUIKit.joinRoom(liveID, config.markAsLargeRoom, errorCode -> {
-                if (errorCode == 0) {
-                    onRoomJoinSucceed();
-                } else {
-                    onRoomJoinFailed();
-                }
-            });
-        }
+        return binding.getRoot();
     }
 
     private void onRoomJoinFailed() {
@@ -212,6 +195,27 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private void onRoomJoinSucceed() {
+        configurationChangeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                ZegoOrientation orientation = ZegoOrientation.ORIENTATION_0;
+
+                if (Surface.ROTATION_0 == requireActivity().getWindowManager().getDefaultDisplay().getRotation()) {
+                    orientation = ZegoOrientation.ORIENTATION_0;
+                } else if (Surface.ROTATION_180 == requireActivity().getWindowManager().getDefaultDisplay()
+                    .getRotation()) {
+                    orientation = ZegoOrientation.ORIENTATION_180;
+                } else if (Surface.ROTATION_270 == requireActivity().getWindowManager().getDefaultDisplay()
+                    .getRotation()) {
+                    orientation = ZegoOrientation.ORIENTATION_270;
+                } else if (Surface.ROTATION_90 == requireActivity().getWindowManager().getDefaultDisplay()
+                    .getRotation()) {
+                    orientation = ZegoOrientation.ORIENTATION_90;
+                }
+                ZegoUIKit.setAppOrientation(orientation);
+            }
+        };
+
         requireActivity().registerReceiver(configurationChangeReceiver, configurationChangeFilter);
 
         String userID = ZegoUIKit.getLocalUser().userID;
@@ -232,9 +236,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             });
         }
 
-        LiveStreamingManager.getInstance().init(getContext());
-        LiveStreamingManager.getInstance().setTranslationText(config.translationText);
-        LiveStreamingManager.getInstance().setPrebuiltUiCallBack(this);
+        ZegoLiveStreamingManager.getInstance().setTranslationText(config.translationText);
+        ZegoLiveStreamingManager.getInstance().setPrebuiltUiCallBack(this);
 
         initPreviewBtns();
         initLiveBtns();
@@ -254,6 +257,45 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         ZegoUIKit.setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
 
         addUIKitListeners();
+
+        ZegoLiveStreamingManager.getInstance().addLiveStreamingListener(new ZegoLiveStreamingListener() {
+
+            @Override
+            public void onPKStarted() {
+
+                binding.livePkLayout.setVisibility(View.VISIBLE);
+                binding.liveVideoContainer.setVisibility(View.GONE);
+
+                if (ZegoLiveStreamingManager.getInstance().isCurrentUserCoHost()) {
+                    if (config.translationText != null && config.translationText.coHostEndBecausePK != null) {
+                        showTopTips(config.translationText.coHostEndBecausePK, true);
+                    } else {
+                        showTopTips(getString(R.string.livestreaming_cohost_end_because_pk), true);
+                    }
+                }
+
+                if (binding.previewGroup.getVisibility() == View.VISIBLE) {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("live_status", "1");
+                    ZegoUIKit.updateRoomProperties(map);
+                }
+            }
+
+            @Override
+            public void onPKEnded() {
+                binding.livePkLayout.setVisibility(View.INVISIBLE);
+                binding.liveVideoContainer.setVisibility(View.VISIBLE);
+
+                String hostID = ZegoLiveStreamingManager.getInstance().getHostID();
+                ZegoUIKitUser hostUser = ZegoUIKit.getUser(hostID);
+                binding.liveVideoContainer.updateLayout();
+
+            }
+        });
+        binding.livePkLayout.onJoinRoomSucceed();
+        binding.livePkLayout.setPKBattleConfig(config.pkBattleConfig);
+        binding.livePkLayout.setPrebuiltAudioVideoConfig(config.audioVideoViewConfig);
+        binding.livePkLayout.setAvatarViewProvider(config.avatarViewProvider);
     }
 
     private void addUIKitListeners() {
@@ -265,7 +307,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             @Override
             public void onAudioVideoUnAvailable(List<ZegoUIKitUser> userList) {
                 for (ZegoUIKitUser uiKitUser : userList) {
-                    if (Objects.equals(uiKitUser.userID, getHostID())) {
+                    if (Objects.equals(uiKitUser.userID, ZegoLiveStreamingManager.getInstance().getHostID())) {
                         hostFirst = true;
                     }
                 }
@@ -279,16 +321,16 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                     return;
                 }
                 String userID = ZegoUIKit.getLocalUser().userID;
-                isLocalUserHost = Objects.equals(getHostID(), userID);
+                isLocalUserHost = Objects.equals(ZegoLiveStreamingManager.getInstance().getHostID(), userID);
                 if (Objects.equals("host", key)) {
                     if (newValue != null) {
-                        ZegoUIKitUser uiKitUser = ZegoUIKit.getUser(getHostID());
+                        ZegoUIKitUser uiKitUser = ZegoUIKit.getUser(ZegoLiveStreamingManager.getInstance().getHostID());
                         if (uiKitUser != null) {
-                            binding.liveHostIcon.setTextOnly(uiKitUser.userName);
-                            binding.liveHostName.setText(uiKitUser.userName);
+                            binding.liveTopHostIcon.setTextOnly(uiKitUser.userName);
+                            binding.liveTopHostName.setText(uiKitUser.userName);
                         } else {
-                            binding.liveHostIcon.setTextOnly("");
-                            binding.liveHostName.setText("");
+                            binding.liveTopHostIcon.setTextOnly("");
+                            binding.liveTopHostName.setText("");
                         }
                         // second host in ,pre become audience
                         if (oldValue != null && oldValue.equals(userID) && !isLocalUserHost) {
@@ -296,7 +338,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                             ZegoUIKit.turnMicrophoneOn(userID, false);
                             ZegoUIKit.stopPlayingAllAudioVideo();
                             showLiveView();
-                            binding.liveBottomMenuBar.showAudienceButtons();
+                            ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.AUDIENCE);
                             binding.liveBackgroundViewParent.setVisibility(View.VISIBLE);
                             binding.liveVideoContainer.setVisibility(View.GONE);
                         }
@@ -307,7 +349,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                     if ("1".equals(newValue)) {
                         ZegoUIKit.startPlayingAllAudioVideo();
                         binding.liveBackgroundViewParent.setVisibility(View.GONE);
-                        binding.liveVideoContainer.setVisibility(View.VISIBLE);
+                        if (ZegoLiveStreamingManager.getInstance().getPKInfo() == null) {
+                            binding.liveVideoContainer.setVisibility(View.VISIBLE);
+                        }
                         if (oldValue != null) {
                             showLiveView();
                         }
@@ -326,12 +370,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                         }
                         if (isLocalUserHost) {
                             binding.liveBackgroundViewParent.setVisibility(View.GONE);
-                            binding.liveVideoContainer.setVisibility(View.VISIBLE);
-                            binding.liveBottomMenuBar.showHostButtons();
+                            if (ZegoLiveStreamingManager.getInstance().getPKInfo() == null) {
+                                binding.liveVideoContainer.setVisibility(View.VISIBLE);
+                            }
+                            ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.HOST);
                         } else {
                             binding.liveBackgroundViewParent.setVisibility(View.VISIBLE);
                             binding.liveVideoContainer.setVisibility(View.GONE);
-                            binding.liveBottomMenuBar.showAudienceButtons();
+                            ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.AUDIENCE);
                             dismissReceiveCoHostInviteDialog();
                             binding.liveBottomMenuBar.onLiveEnd();
                         }
@@ -372,54 +418,61 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             @Override
             public void onUserJoined(List<ZegoUIKitUser> userInfoList) {
                 for (ZegoUIKitUser uiKitUser : userInfoList) {
-                    if (Objects.equals(uiKitUser.userID, getHostID())) {
-                        binding.liveHostIcon.setText(uiKitUser.userName, false);
-                        binding.liveHostName.setText(uiKitUser.userName);
+                    if (Objects.equals(uiKitUser.userID, ZegoLiveStreamingManager.getInstance().getHostID())) {
+                        binding.liveTopHostIcon.setText(uiKitUser.userName, false);
+                        binding.liveTopHostName.setText(uiKitUser.userName);
                         break;
                     }
-                    LiveStreamingManager.getInstance().removeUserStatus(uiKitUser.userID);
+                    ZegoLiveStreamingManager.getInstance().removeUserStatus(uiKitUser.userID);
                 }
             }
 
             @Override
             public void onUserLeft(List<ZegoUIKitUser> userInfoList) {
                 for (ZegoUIKitUser uiKitUser : userInfoList) {
-                    LiveStreamingManager.getInstance().removeUserStatus(uiKitUser.userID);
+                    ZegoLiveStreamingManager.getInstance().removeUserStatus(uiKitUser.userID);
+                }
+                if (!ZegoLiveStreamingManager.getInstance().isCurrentUserHost()) {
+                    PKInfo pkInfo = ZegoLiveStreamingManager.getInstance().getPKInfo();
+                    if (pkInfo != null) {
+                        for (ZegoUIKitUser zegosdkUser : userInfoList) {
+                            if (zegosdkUser.userID.equals(pkInfo.hostUserID)) {
+                                ZegoLiveStreamingManager.getInstance().stopPKBattleInner();
+                            }
+                        }
+                    }
                 }
             }
         });
 
-        ZegoUIKit.addTurnOnYourMicrophoneRequestListener(new ZegoTurnOnYourMicrophoneRequestListener() {
-            @Override
-            public void onTurnOnYourMicrophoneRequest(ZegoUIKitUser fromUser) {
-                if (config.needConfirmWhenOthersTurnOnYourCamera) {
-                    ZegoDialogInfo dialogInfo = config.othersTurnOnYourMicrophoneConfirmDialogInfo;
-                    if (dialogInfo != null) {
-                        String message = dialogInfo.message;
-                        if (message.contains("%s")) {
-                            message = String.format(message, fromUser.userName);
-                        }
-                        new ConfirmDialog.Builder(getContext()).setTitle(dialogInfo.title).setMessage(message)
-                            .setPositiveButton(dialogInfo.confirmButtonName, (dialog, which) -> {
-                                dialog.dismiss();
-                                requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
-                                    String userID = ZegoUIKit.getLocalUser().userID;
-                                    if (grantedList.contains(permission.RECORD_AUDIO)) {
-                                        ZegoUIKit.turnMicrophoneOn(userID, true);
-                                    }
-                                });
-                            }).setNegativeButton(dialogInfo.cancelButtonName, (dialog, which) -> {
-                                dialog.dismiss();
-                            }).build().show();
+        ZegoUIKit.addTurnOnYourMicrophoneRequestListener(fromUser -> {
+            if (config.needConfirmWhenOthersTurnOnYourCamera) {
+                ZegoDialogInfo dialogInfo = config.othersTurnOnYourMicrophoneConfirmDialogInfo;
+                if (dialogInfo != null) {
+                    String message = dialogInfo.message;
+                    if (message.contains("%s")) {
+                        message = String.format(message, fromUser.userName);
                     }
-                } else {
-                    requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
-                        String userID = ZegoUIKit.getLocalUser().userID;
-                        if (grantedList.contains(permission.RECORD_AUDIO)) {
-                            ZegoUIKit.turnMicrophoneOn(userID, true);
-                        }
-                    });
+                    new ConfirmDialog.Builder(getContext()).setTitle(dialogInfo.title).setMessage(message)
+                        .setPositiveButton(dialogInfo.confirmButtonName, (dialog, which) -> {
+                            dialog.dismiss();
+                            requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
+                                String userID = ZegoUIKit.getLocalUser().userID;
+                                if (grantedList.contains(permission.RECORD_AUDIO)) {
+                                    ZegoUIKit.turnMicrophoneOn(userID, true);
+                                }
+                            });
+                        }).setNegativeButton(dialogInfo.cancelButtonName, (dialog, which) -> {
+                            dialog.dismiss();
+                        }).build().show();
                 }
+            } else {
+                requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
+                    String userID = ZegoUIKit.getLocalUser().userID;
+                    if (grantedList.contains(permission.RECORD_AUDIO)) {
+                        ZegoUIKit.turnMicrophoneOn(userID, true);
+                    }
+                });
             }
         });
 
@@ -473,16 +526,16 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             binding.liveBackgroundViewParent.setVisibility(View.VISIBLE);
             binding.liveVideoContainer.setVisibility(View.GONE);
         }
-        ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null && translationText.noHostOnline != null) {
             binding.liveNoHostHint.setText(translationText.noHostOnline);
         }
         initVideoContainer();
 
         if (config.confirmDialogInfo != null) {
-            binding.liveExit.setConfirmDialogInfo(getDialogInfo());
+            binding.liveTopExit.setConfirmDialogInfo(getDialogInfo());
         }
-        binding.liveExit.setLeaveLiveListener(() -> {
+        binding.liveTopExit.setLeaveLiveListener(() -> {
             if (config.leaveLiveStreamingListener != null) {
                 config.leaveLiveStreamingListener.onLeaveLiveStreaming();
             } else {
@@ -491,7 +544,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             }
         });
 
-        binding.liveMemberCount.setOnClickListener(v -> {
+        binding.liveTopMemberCount.setOnClickListener(v -> {
             livememberList = new LiveMemberList(getContext());
             if (config.memberListConfig != null) {
                 livememberList.setMemberListItemViewProvider(config.memberListConfig.memberListItemViewProvider);
@@ -502,20 +555,17 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             livememberList.setEnableCoHosting(config.isEnableCoHosting());
             livememberList.show();
         });
-        initBottomMenuBar();
-    }
 
-    private void initBottomMenuBar() {
         binding.liveBottomMenuBar.setConfig(config.bottomMenuBarConfig);
         for (Entry<ZegoLiveStreamingRole, List<View>> entry : bottomMenuBarExtendedButtons.entrySet()) {
             binding.liveBottomMenuBar.addExtendedButtons(entry.getValue(), entry.getKey());
         }
         if (config.role == ZegoLiveStreamingRole.HOST) {
-            binding.liveBottomMenuBar.showHostButtons();
+            ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.HOST);
         } else if (config.role == ZegoLiveStreamingRole.COHOST) {
-            binding.liveBottomMenuBar.showCoHostButtons();
+            ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.COHOST);
         } else {
-            binding.liveBottomMenuBar.showAudienceButtons();
+            ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.AUDIENCE);
         }
 
         binding.liveBottomMenuBar.setScreenShareVideoConfig(config.screenSharingVideoConfig);
@@ -572,14 +622,6 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         }
     }
 
-    private boolean isLiveStarted() {
-        return "1".equals(ZegoUIKit.getRoomProperties().get("live_status"));
-    }
-
-    private String getHostID() {
-        return ZegoUIKit.getRoomProperties().get("host");
-    }
-
     private void showPreview() {
         binding.liveGroup.setVisibility(View.GONE);
         binding.previewGroup.setVisibility(View.VISIBLE);
@@ -617,7 +659,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         binding.liveVideoContainer.setAudioVideoComparator(new ZegoAudioVideoComparator() {
             @Override
             public List<ZegoUIKitUser> sortAudioVideo(List<ZegoUIKitUser> userList) {
-                ZegoUIKitUser host = ZegoUIKit.getUser(getHostID());
+                ZegoUIKitUser host = ZegoUIKit.getUser(ZegoLiveStreamingManager.getInstance().getHostID());
                 if (userList.contains(host)) {
                     if (hostFirst) {
                         userList.remove(host);
@@ -644,8 +686,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         }
 
         binding.liveVideoContainer.setScreenShareForegroundViewProvider((parent, uiKitUser) -> {
-            ZegoScreenShareForegroundView foregroundView = new ZegoScreenShareForegroundView(parent,
-                uiKitUser.userID);
+            ZegoScreenShareForegroundView foregroundView = new ZegoScreenShareForegroundView(parent, uiKitUser.userID);
             foregroundView.setParentContainer(binding.liveVideoContainer);
 
             if (config.zegoLayout.config instanceof ZegoLayoutGalleryConfig) {
@@ -769,13 +810,13 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             if (receiveCoHostInviteDialog != null) {
                 receiveCoHostInviteDialog.dismiss();
             }
-            LiveStreamingManager.getInstance().removeUserStatus(inviter.userID);
+            ZegoLiveStreamingManager.getInstance().removeUserStatus(inviter.userID);
         });
         acceptButton.setRequestCallbackListener(v -> {
             if (receiveCoHostInviteDialog != null) {
                 receiveCoHostInviteDialog.dismiss();
             }
-            LiveStreamingManager.getInstance().removeUserStatus(inviter.userID);
+            ZegoLiveStreamingManager.getInstance().removeUserStatus(inviter.userID);
             showCoHostButtons();
         });
 
@@ -783,7 +824,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         String message = context.getString(R.string.livestreaming_receive_co_host_invite_message);
         String cancelButtonName = context.getString(R.string.livestreaming_receive_co_host_invite_cancel);
         String confirmButtonName = context.getString(R.string.livestreaming_receive_co_host_invite_ok);
-        ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null) {
             ZegoDialogInfo dialogInfo = translationText.receivedCoHostInvitationDialogInfo;
             if (dialogInfo != null && dialogInfo.title != null) {
@@ -821,7 +862,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         }
         ZegoUIKit.turnCameraOn(localUser.userID, false);
         ZegoUIKit.turnMicrophoneOn(localUser.userID, false);
-        binding.liveBottomMenuBar.showAudienceButtons();
+        ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.AUDIENCE);
     }
 
     @Override
@@ -838,14 +879,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 String localUserID = ZegoUIKit.getLocalUser().userID;
                 ZegoUIKit.turnCameraOn(localUserID, true);
                 ZegoUIKit.turnMicrophoneOn(localUserID, true);
-                binding.liveBottomMenuBar.showCoHostButtons();
+                ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.COHOST);
             }
         });
     }
 
     @Override
     public void showRedPoint() {
-        binding.liveMemberCountNotify.setVisibility(View.VISIBLE);
+        binding.liveTopMemberCount.showRedPoint();
         if (livememberList != null) {
             livememberList.updateList();
         }
@@ -853,7 +894,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
     @Override
     public void hideRedPoint() {
-        binding.liveMemberCountNotify.setVisibility(View.GONE);
+        binding.liveTopMemberCount.hideRedPoint();
         if (livememberList != null) {
             livememberList.updateList();
         }

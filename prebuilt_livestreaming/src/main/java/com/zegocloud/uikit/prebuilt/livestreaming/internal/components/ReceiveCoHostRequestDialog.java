@@ -1,10 +1,11 @@
-package com.zegocloud.uikit.prebuilt.livestreaming.internal;
+package com.zegocloud.uikit.prebuilt.livestreaming.internal.components;
 
 import android.content.Context;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.ConfirmDialog.Builder;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog.Builder;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -22,14 +23,14 @@ public class ReceiveCoHostRequestDialog {
             int code = (int) result.get("code");
             if (code == 0) {
                 dismiss();
-                LiveStreamingManager.getInstance().removeUserStatusAndCheck(inviter.userID);
+                ZegoLiveStreamingManager.getInstance().removeUserStatusAndCheck(inviter.userID);
             }
         });
         acceptButton.setRequestCallbackListener(result -> {
             int code = (int) result.get("code");
             if (code == 0) {
                 dismiss();
-                LiveStreamingManager.getInstance().removeUserStatusAndCheck(inviter.userID);
+                ZegoLiveStreamingManager.getInstance().removeUserStatusAndCheck(inviter.userID);
             }
         });
 
@@ -37,7 +38,7 @@ public class ReceiveCoHostRequestDialog {
         String message = context.getString(R.string.livestreaming_receive_co_host_request_message, inviter.userName);
         String cancelButtonName = context.getString(R.string.livestreaming_receive_co_host_request_cancel);
         String confirmButtonName = context.getString(R.string.livestreaming_receive_co_host_request_ok);
-        ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null) {
             ZegoDialogInfo dialogInfo = translationText.receivedCoHostRequestDialogInfo;
             if (dialogInfo != null && dialogInfo.title != null) {

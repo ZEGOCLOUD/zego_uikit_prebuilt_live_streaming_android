@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreaming.internal;
+package com.zegocloud.uikit.prebuilt.livestreaming.internal.components;
 
 
 import android.content.Context;
@@ -22,6 +22,7 @@ import com.zegocloud.uikit.components.audiovideo.ZegoAvatarViewProvider;
 import com.zegocloud.uikit.components.internal.RippleIconView;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListComparator;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListItemViewProvider;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingLayoutMemberlistBinding;
@@ -70,7 +71,7 @@ public class LiveMemberList extends BottomSheetDialog {
         setCanceledOnTouchOutside(true);
         window.setBackgroundDrawable(new ColorDrawable());
 
-        ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null && translationText.memberListTitle != null) {
             binding.liveMemberListTitle.setText(translationText.memberListTitle);
         }
@@ -99,7 +100,7 @@ public class LiveMemberList extends BottomSheetDialog {
                             if (isCoHost) {
                                 coHost.add(uiKitUser);
                             } else {
-                                boolean isRequested = LiveStreamingManager.getInstance()
+                                boolean isRequested = ZegoLiveStreamingManager.getInstance()
                                     .isUserCoHostRequestExisted(uiKitUser.userID);
                                 if (isRequested) {
                                     requested.add(uiKitUser);
@@ -196,13 +197,13 @@ public class LiveMemberList extends BottomSheetDialog {
                     agree.setTextSize(14);
                     agree.setRequestCallbackListener(v -> {
                         dismiss();
-                        LiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
+                        ZegoLiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                     });
                     disagree.setRequestCallbackListener(v -> {
                         dismiss();
-                        LiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
+                        ZegoLiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                     });
-                    if (LiveStreamingManager.getInstance().isUserCoHostRequestExisted(uiKitUser.userID)) {
+                    if (ZegoLiveStreamingManager.getInstance().isUserCoHostRequestExisted(uiKitUser.userID)) {
                         agree.setVisibility(View.VISIBLE);
                         disagree.setVisibility(View.VISIBLE);
                         more.setVisibility(View.GONE);

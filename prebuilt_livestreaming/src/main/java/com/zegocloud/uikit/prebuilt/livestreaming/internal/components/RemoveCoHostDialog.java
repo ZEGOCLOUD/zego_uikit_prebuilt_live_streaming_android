@@ -1,4 +1,4 @@
-package com.zegocloud.uikit.prebuilt.livestreaming.internal;
+package com.zegocloud.uikit.prebuilt.livestreaming.internal.components;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRemoveCoHostButton;
@@ -48,7 +49,7 @@ public class RemoveCoHostDialog extends Dialog {
 
         TextView removeUserButton = new TextView(getContext());
         removeUserButton.setText(getContext().getString(R.string.livestreaming_remove_user, userInfo.userName));
-        ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null && translationText.removeUserMenuDialogButton != null) {
             removeUserButton.setText(String.format(translationText.removeUserMenuDialogButton,userInfo.userName));
         }

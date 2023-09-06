@@ -4,16 +4,18 @@ import android.view.View;
 import com.zegocloud.uikit.components.audiovideo.ZegoAvatarViewProvider;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayout;
 import com.zegocloud.uikit.components.common.ZegoPresetResolution;
+import com.zegocloud.uikit.plugin.adapter.plugins.beauty.ZegoBeautyPluginConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoBottomMenuBarConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingEndListener;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingPKBattleConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMemberListConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltAudioVideoViewConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltVideoConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoLeaveLiveStreamingListener;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoLeaveLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoStartLiveButton;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +52,8 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
         ZegoPresetResolution.PRESET_540P);
     public ZegoPrebuiltVideoConfig videoConfig = new ZegoPrebuiltVideoConfig(ZegoPresetResolution.PRESET_360P);
     public transient ZegoAvatarViewProvider avatarViewProvider;
-
+    public ZegoLiveStreamingPKBattleConfig pkBattleConfig = new ZegoLiveStreamingPKBattleConfig();
+    public ZegoBeautyPluginConfig beautyConfig = new ZegoBeautyPluginConfig();
 
 
     public static ZegoUIKitPrebuiltLiveStreamingConfig host() {

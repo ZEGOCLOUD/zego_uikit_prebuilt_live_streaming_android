@@ -5,11 +5,6 @@
   android:layout_height="match_parent"
   android:background="@drawable/livestreaming_img_bg">
 
-  <com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoContainer
-    android:id="@+id/live_video_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
-
   <FrameLayout
     android:id="@+id/live_background_view_parent"
     android:layout_width="match_parent"
@@ -31,8 +26,19 @@
       app:layout_constraintTop_toTopOf="parent" />
   </FrameLayout>
 
-  <com.zegocloud.uikit.prebuilt.livestreaming.internal.ZegoExitLiveButton
-    android:id="@+id/live_exit"
+  <com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoContainer
+    android:id="@+id/live_video_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+
+  <com.zegocloud.uikit.prebuilt.livestreaming.internal.components.PKBattleView
+    android:id="@+id/live_pk_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible" />
+
+  <com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoExitLiveButton
+    android:id="@+id/live_top_exit"
     android:layout_width="40dp"
     android:layout_height="40dp"
     android:layout_marginTop="10dp"
@@ -41,7 +47,7 @@
     app:layout_constraintTop_toTopOf="parent" />
 
   <RelativeLayout
-    android:id="@+id/live_host_layout"
+    android:id="@+id/live_top_host_info"
     android:layout_width="wrap_content"
     android:layout_height="34dp"
     android:layout_marginStart="16dp"
@@ -51,7 +57,7 @@
     app:layout_constraintTop_toTopOf="parent">
 
     <com.zegocloud.uikit.components.internal.RippleIconView
-      android:id="@+id/live_host_icon"
+      android:id="@+id/live_top_host_icon"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerVertical="true"
@@ -60,13 +66,13 @@
       app:drawRipple="false" />
 
     <TextView
-      android:id="@+id/live_host_name"
+      android:id="@+id/live_top_host_name"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
       android:layout_marginStart="6dp"
       android:layout_marginEnd="12dp"
-      android:layout_toRightOf="@id/live_host_icon"
+      android:layout_toRightOf="@id/live_top_host_icon"
       android:ellipsize="end"
       android:maxWidth="120dp"
       android:maxLines="1"
@@ -75,32 +81,15 @@
       android:textSize="12sp" />
   </RelativeLayout>
 
-  <com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMemberButton
-    android:id="@+id/live_member_count"
+  <com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoCountedMemberButton
+    android:id="@+id/live_top_member_count"
     android:layout_width="wrap_content"
     android:layout_height="28dp"
     android:layout_marginTop="16dp"
-    android:layout_toStartOf="@id/live_exit"
+    android:layout_toStartOf="@id/live_top_exit"
     android:background="@drawable/livestreaming_list_people_round_rect"
-    android:drawableStart="@drawable/livestreaming_list_people"
-    android:drawablePadding="4dp"
-    android:gravity="center_vertical"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
-    android:textColor="@android:color/white"
-    android:textSize="12sp"
-    app:layout_constraintEnd_toStartOf="@+id/live_exit"
+    app:layout_constraintEnd_toStartOf="@+id/live_top_exit"
     app:layout_constraintTop_toTopOf="parent" />
-
-  <androidx.constraintlayout.utils.widget.ImageFilterView
-    android:id="@+id/live_member_count_notify"
-    android:layout_width="8dp"
-    android:layout_height="8dp"
-    android:background="#FF0D23"
-    android:visibility="gone"
-    app:layout_constraintEnd_toEndOf="@id/live_member_count"
-    app:layout_constraintTop_toTopOf="@id/live_member_count"
-    app:roundPercent="1" />
 
   <com.zegocloud.uikit.components.message.ZegoInRoomMessageView
     android:id="@+id/live_message_view"
@@ -110,7 +99,7 @@
     app:layout_constraintBottom_toTopOf="@+id/live_bottom_menu_bar"
     app:layout_constraintStart_toStartOf="parent" />
 
-  <com.zegocloud.uikit.prebuilt.livestreaming.internal.BottomMenuBar
+  <com.zegocloud.uikit.prebuilt.livestreaming.internal.components.BottomMenuBar
     android:id="@+id/live_bottom_menu_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -120,7 +109,7 @@
     android:id="@+id/live_group"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:constraint_referenced_ids="live_bottom_menu_bar,live_message_view,live_member_count,live_exit,live_host_layout" />
+    app:constraint_referenced_ids="live_bottom_menu_bar,live_message_view,live_top_member_count,live_top_exit,live_top_host_info" />
 
   <ImageView
     android:id="@+id/preview_back"

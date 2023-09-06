@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <FrameLayout
+    android:id="@+id/pk_layout_top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/pk_mix_video_layout"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintDimensionRatio="18:16"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/pk_layout_top">
+
+    <com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZEGOVideoView
+      android:id="@+id/audience_mix_video"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+    <com.zegocloud.uikit.prebuilt.livestreaming.internal.core.ZegoPKAvatarView
+      android:id="@+id/audience_mix_self_icon"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:background="@color/gray_444"
+      android:visibility="invisible"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintDimensionRatio="9:16"
+      app:layout_constraintEnd_toStartOf="@+id/audience_mix_other_icon"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+      android:id="@+id/audience_mix_self_foreground"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:layout_gravity="center"
+      app:layout_constraintBottom_toBottomOf="@+id/audience_mix_self_icon"
+      app:layout_constraintEnd_toEndOf="@+id/audience_mix_self_icon"
+      app:layout_constraintStart_toStartOf="@+id/audience_mix_self_icon"
+      app:layout_constraintTop_toTopOf="@+id/audience_mix_self_icon" />
+
+    <com.zegocloud.uikit.prebuilt.livestreaming.internal.core.ZegoPKAvatarView
+      android:id="@+id/audience_mix_other_icon"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:background="@color/gray_444"
+      android:visibility="invisible"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintDimensionRatio="9:16"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@+id/audience_mix_self_icon"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+      android:id="@+id/audience_mix_other_foreground"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:layout_gravity="center"
+      app:layout_constraintBottom_toBottomOf="@+id/audience_mix_other_icon"
+      app:layout_constraintEnd_toEndOf="@+id/audience_mix_other_icon"
+      app:layout_constraintStart_toStartOf="@+id/audience_mix_other_icon"
+      app:layout_constraintTop_toTopOf="@+id/audience_mix_other_icon" />
+
+    <FrameLayout
+      android:id="@+id/audience_mix_other_tips"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:visibility="gone"
+      app:layout_constraintBottom_toBottomOf="@+id/audience_mix_other_icon"
+      app:layout_constraintEnd_toEndOf="@+id/audience_mix_other_icon"
+      app:layout_constraintStart_toStartOf="@+id/audience_mix_other_icon"
+      app:layout_constraintTop_toTopOf="@+id/audience_mix_other_icon"></FrameLayout>
+
+    <FrameLayout
+      android:id="@+id/audience_mix_self_tips"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:visibility="gone"
+      app:layout_constraintBottom_toBottomOf="@+id/audience_mix_self_icon"
+      app:layout_constraintEnd_toEndOf="@+id/audience_mix_self_icon"
+      app:layout_constraintStart_toStartOf="@+id/audience_mix_self_icon"
+      app:layout_constraintTop_toTopOf="@+id/audience_mix_self_icon"></FrameLayout>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <FrameLayout
+    android:id="@+id/pk_self_video_layout"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintDimensionRatio="9:16"
+    app:layout_constraintEnd_toStartOf="@+id/pk_other_video_layout"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/pk_layout_top">
+
+    <com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZEGOVideoView
+      android:id="@+id/pk_self_video"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+    <com.zegocloud.uikit.prebuilt.livestreaming.internal.core.ZegoPKAvatarView
+      android:id="@+id/pk_self_video_icon"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center"
+      android:background="@color/gray_444"
+      android:visibility="gone" />
+
+    <FrameLayout
+      android:id="@+id/pk_self_video_foreground"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center" />
+
+  </FrameLayout>
+
+  <FrameLayout
+    android:id="@+id/pk_other_video_layout"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintDimensionRatio="9:16"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toEndOf="@id/pk_self_video_layout"
+    app:layout_constraintTop_toBottomOf="@id/pk_layout_top">
+
+    <com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZEGOVideoView
+      android:id="@+id/pk_other_video"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+    <com.zegocloud.uikit.prebuilt.livestreaming.internal.core.ZegoPKAvatarView
+      android:id="@+id/pk_other_video_icon"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center"
+      android:background="@color/gray_444"
+      android:visibility="gone" />
+
+    <FrameLayout
+      android:id="@+id/pk_other_video_foreground"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center" />
+
+    <FrameLayout
+      android:id="@+id/pk_other_video_tips"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:visibility="gone"></FrameLayout>
+
+
+  </FrameLayout>
+
+  <FrameLayout
+    android:id="@+id/pk_layout_center"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toBottomOf="@+id/pk_mix_video_layout"
+    app:layout_constraintTop_toTopOf="@+id/pk_mix_video_layout" />
+
+  <FrameLayout
+    android:id="@+id/pk_layout_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@+id/pk_mix_video_layout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

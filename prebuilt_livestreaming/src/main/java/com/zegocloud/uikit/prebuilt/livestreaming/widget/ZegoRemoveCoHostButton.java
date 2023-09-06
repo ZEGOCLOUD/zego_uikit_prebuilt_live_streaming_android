@@ -11,7 +11,7 @@ import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoStartInvitationButton;
 import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveInvitationType;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.Collections;
 import java.util.List;

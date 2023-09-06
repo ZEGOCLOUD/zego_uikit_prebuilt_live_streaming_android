@@ -9,10 +9,12 @@ import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager.ZegoLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.ConfirmDialog;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.LiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.Collections;
 import java.util.Map;
@@ -22,7 +24,6 @@ public class ZegoCoHostControlButton extends FrameLayout {
     private ZegoRequestCoHostButton requestCoHostButton;
     private ZegoCancelRequestCoHostButton cancelRequestCoHostButton;
     private ZegoEndCoHostButton endCoHostButton;
-    private OnClickListener endCoHostListener;
 
     public ZegoCoHostControlButton(@NonNull Context context) {
         super(context);
@@ -69,7 +70,7 @@ public class ZegoCoHostControlButton extends FrameLayout {
                 String message = getContext().getString(R.string.livestreaming_end_co_host_message);
                 String cancelButtonName = getContext().getString(R.string.livestreaming_end_co_host_cancel);
                 String confirmButtonName = getContext().getString(R.string.livestreaming_end_co_host_ok);
-                ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+                ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
                 if (translationText != null) {
                     ZegoDialogInfo dialogInfo = translationText.endConnectionDialogInfo;
                     if (dialogInfo != null && dialogInfo.title != null) {
@@ -87,16 +88,8 @@ public class ZegoCoHostControlButton extends FrameLayout {
                 }
                 new ConfirmDialog.Builder(getContext()).setTitle(title).setMessage(message)
                     .setPositiveButton(confirmButtonName, (dialog, which) -> {
-                        ZegoUIKitUser localUser = ZegoUIKit.getLocalUser();
-                        if (localUser == null) {
-                            return;
-                        }
-                        ZegoUIKit.turnCameraOn(localUser.userID, false);
-                        ZegoUIKit.turnMicrophoneOn(localUser.userID, false);
+                        ZegoLiveStreamingManager.getInstance().endCoHost();
                         showRequestCoHostButton();
-                        if (endCoHostListener != null) {
-                            endCoHostListener.onClick(v);
-                        }
                         dialog.dismiss();
                     }).setNegativeButton(cancelButtonName, (dialog, which) -> {
                         dialog.dismiss();
@@ -104,7 +97,7 @@ public class ZegoCoHostControlButton extends FrameLayout {
             }
         });
         addView(endCoHostButton);
-        ZegoTranslationText translationText = LiveStreamingManager.getInstance().getTranslationText();
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null && translationText.requestCoHostButton != null) {
             requestCoHostButton.setText(translationText.requestCoHostButton);
         }
@@ -114,6 +107,25 @@ public class ZegoCoHostControlButton extends FrameLayout {
         if (translationText != null && translationText.endCoHostButton != null) {
             endCoHostButton.setText(translationText.endCoHostButton);
         }
+        showRequestCoHostButton();
+
+        ZegoLiveStreamingManager.getInstance().addLiveStreamingListener(new ZegoLiveStreamingListener() {
+
+            @Override
+            public void onPKStarted() {
+                for (int i = 0; i < getChildCount(); i++) {
+                    getChildAt(i).setVisibility(GONE);
+                }
+            }
+
+            @Override
+            public void onPKEnded() {
+                ZegoLiveStreamingRole userRole = ZegoLiveStreamingManager.getInstance().getCurrentUserRole();
+                if (userRole == ZegoLiveStreamingRole.AUDIENCE) {
+                    showRequestCoHostButton();
+                }
+            }
+        });
     }
 
     public void showRequestCoHostButton() {
@@ -147,9 +159,5 @@ public class ZegoCoHostControlButton extends FrameLayout {
             }
             ZegoUIKit.getSignalingPlugin().cancelInvitation(Collections.singletonList(hostUserID), "", null);
         }
-    }
-
-    public void setEndCoHostListener(OnClickListener endCoHostListener) {
-        this.endCoHostListener = endCoHostListener;
     }
 }
