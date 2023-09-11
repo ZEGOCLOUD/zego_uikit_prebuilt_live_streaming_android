@@ -217,6 +217,7 @@ public class BottomMenuBar extends LinearLayout {
                     view.setVisibility(GONE);
                 }
             }
+            break;
 
         }
         if (view != null) {
@@ -364,6 +365,7 @@ public class BottomMenuBar extends LinearLayout {
         if (screenSharingVideoConfig == null) {
             return;
         }
+
         for (View view : showList) {
             if (view instanceof ZegoScreenSharingToggleButton) {
                 ((ZegoScreenSharingToggleButton) view).setPresetResolution(screenSharingVideoConfig.resolution);

@@ -877,7 +877,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             public void onResult(boolean allGranted, @NonNull List<String> grantedList,
                 @NonNull List<String> deniedList) {
                 String localUserID = ZegoUIKit.getLocalUser().userID;
-                ZegoUIKit.turnCameraOn(localUserID, true);
+                ZegoUIKit.turnCameraOn(localUserID, config.turnOnCameraWhenCohosted);
                 ZegoUIKit.turnMicrophoneOn(localUserID, true);
                 ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.COHOST);
             }

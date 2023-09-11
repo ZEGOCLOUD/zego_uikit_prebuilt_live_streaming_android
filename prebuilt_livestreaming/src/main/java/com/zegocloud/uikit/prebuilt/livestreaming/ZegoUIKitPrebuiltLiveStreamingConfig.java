@@ -26,6 +26,7 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public ZegoLiveStreamingRole role = ZegoLiveStreamingRole.AUDIENCE;
     public boolean turnOnCameraWhenJoining = false;
     public boolean turnOnMicrophoneWhenJoining = false;
+    public boolean turnOnCameraWhenCohosted = true;
     public boolean useSpeakerWhenJoining = true;
     public ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig = new ZegoPrebuiltAudioVideoViewConfig();
     public ZegoBottomMenuBarConfig bottomMenuBarConfig = new ZegoBottomMenuBarConfig(
