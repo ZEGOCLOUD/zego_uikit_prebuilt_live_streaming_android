@@ -7,6 +7,7 @@ import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKListener;
@@ -70,8 +71,12 @@ public class ZegoLiveStreamingManager {
 
     void init(Application application, Long appID, String appSign, ZegoUIKitPrebuiltLiveStreamingConfig config) {
         ZegoUIKit.init(application, appID, appSign, ZegoScenario.BROADCAST);
-        ZegoUIKit.getBeautyPlugin().init(application, appID, appSign);
-        ZegoUIKit.getBeautyPlugin().setZegoBeautyPluginConfig(config.beautyConfig);
+        if (config.bottomMenuBarConfig.hostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
+            || config.bottomMenuBarConfig.coHostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
+            || config.bottomMenuBarConfig.audienceButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)) {
+            ZegoUIKit.getBeautyPlugin().setZegoBeautyPluginConfig(config.beautyConfig);
+            ZegoUIKit.getBeautyPlugin().init(application, appID, appSign);
+        }
         context = application.getApplicationContext();
     }
 

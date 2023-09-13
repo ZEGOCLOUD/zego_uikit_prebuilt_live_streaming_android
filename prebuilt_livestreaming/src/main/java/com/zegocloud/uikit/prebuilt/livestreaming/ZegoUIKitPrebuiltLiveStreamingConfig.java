@@ -29,12 +29,12 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public boolean turnOnCameraWhenCohosted = true;
     public boolean useSpeakerWhenJoining = true;
     public ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig = new ZegoPrebuiltAudioVideoViewConfig();
-    public ZegoBottomMenuBarConfig bottomMenuBarConfig = new ZegoBottomMenuBarConfig(
+    public ZegoBottomMenuBarConfig bottomMenuBarConfig = new ZegoBottomMenuBarConfig(new ArrayList<>(
         Arrays.asList(ZegoMenuBarButtonName.TOGGLE_CAMERA_BUTTON, ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON,
-            ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON),
+            ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON)), new ArrayList<>(
         Arrays.asList(ZegoMenuBarButtonName.TOGGLE_CAMERA_BUTTON, ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON,
-            ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON, ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON),
-        Collections.singletonList(ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON));
+            ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON, ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON)),
+        new ArrayList<>(Collections.singletonList(ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON)));
     public ZegoMemberListConfig memberListConfig;
     public ZegoDialogInfo confirmDialogInfo;
     public transient ZegoLiveStreamingEndListener zegoLiveStreamingEndListener;
