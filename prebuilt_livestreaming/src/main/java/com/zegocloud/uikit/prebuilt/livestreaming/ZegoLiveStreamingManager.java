@@ -84,14 +84,20 @@ public class ZegoLiveStreamingManager {
 
     void login(String userID, String userName, ZegoUIKitCallback callback) {
         ZegoUIKit.login(userID, userName);
-        ZegoUIKit.getSignalingPlugin().login(userID, userName, new ZegoUIKitPluginCallback() {
-            @Override
-            public void onResult(int errorCode, String message) {
-                if (callback != null) {
-                    callback.onResult(errorCode);
+        if (ZegoUIKit.getSignalingPlugin().isPluginExited()) {
+            ZegoUIKit.getSignalingPlugin().login(userID, userName, new ZegoUIKitPluginCallback() {
+                @Override
+                public void onResult(int errorCode, String message) {
+                    if (callback != null) {
+                        callback.onResult(errorCode);
+                    }
                 }
+            });
+        } else {
+            if (callback != null) {
+                callback.onResult(0);
             }
-        });
+        }
         invitationListener = new ZegoUIKitSignalingPluginInvitationListener() {
             @Override
             public void onInvitationReceived(ZegoUIKitUser inviter, int type, String data) {
@@ -247,18 +253,22 @@ public class ZegoLiveStreamingManager {
     }
 
     void joinRoom(String roomID, boolean markAsLargeRoom, ZegoUIKitCallback callback) {
-        ZegoUIKit.getSignalingPlugin().joinRoom(roomID, new ZegoUIKitPluginCallback() {
-            @Override
-            public void onResult(int errorCode, String message) {
-                if (errorCode == 0) {
-                    ZegoUIKit.joinRoom(roomID, markAsLargeRoom, callback);
-                } else {
-                    if (callback != null) {
-                        callback.onResult(errorCode);
+        if (ZegoUIKit.getSignalingPlugin().isPluginExited()) {
+            ZegoUIKit.getSignalingPlugin().joinRoom(roomID, new ZegoUIKitPluginCallback() {
+                @Override
+                public void onResult(int errorCode, String message) {
+                    if (errorCode == 0) {
+                        ZegoUIKit.joinRoom(roomID, markAsLargeRoom, callback);
+                    } else {
+                        if (callback != null) {
+                            callback.onResult(errorCode);
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            ZegoUIKit.joinRoom(roomID, markAsLargeRoom, callback);
+        }
         pkService.addRoomListeners();
         pkService.addListener(new PKListener() {
             @Override
