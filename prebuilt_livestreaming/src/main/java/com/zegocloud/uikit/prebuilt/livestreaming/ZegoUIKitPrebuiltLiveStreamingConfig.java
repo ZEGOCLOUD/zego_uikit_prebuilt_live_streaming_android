@@ -55,6 +55,7 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public transient ZegoAvatarViewProvider avatarViewProvider;
     public ZegoLiveStreamingPKBattleConfig pkBattleConfig = new ZegoLiveStreamingPKBattleConfig();
     public ZegoBeautyPluginConfig beautyConfig = new ZegoBeautyPluginConfig();
+    public boolean showMemberButton = true;
 
 
     public static ZegoUIKitPrebuiltLiveStreamingConfig host() {

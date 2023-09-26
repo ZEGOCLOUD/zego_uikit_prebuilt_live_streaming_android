@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
@@ -633,6 +632,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
     public void showLiveView() {
         binding.liveGroup.setVisibility(View.VISIBLE);
+        binding.liveTopMemberCount.setVisibility(config.showMemberButton ? View.VISIBLE : View.GONE);
         binding.previewGroup.setVisibility(View.GONE);
     }
 
