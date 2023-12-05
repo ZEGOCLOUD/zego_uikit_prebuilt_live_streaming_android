@@ -1,11 +1,11 @@
 package com.zegocloud.uikit.prebuilt.livestreaming.internal.components;
 
 import android.content.Context;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog.Builder;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog.Builder;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;

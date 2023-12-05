@@ -3,8 +3,6 @@ package com.zegocloud.uikit.prebuilt.livestreaming;
 import android.app.Application;
 import android.content.Context;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
-import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
@@ -16,6 +14,8 @@ import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKRequest;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.UserRequestCallback;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.ZegoLiveStreamingPKBattleRejectCode;
+import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
+import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
 import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
@@ -79,8 +79,6 @@ public class ZegoLiveStreamingManager {
         }
         context = application.getApplicationContext();
     }
-
-    private static final String TAG = "ZegoLiveStreamingManage";
 
     void login(String userID, String userName, ZegoUIKitCallback callback) {
         ZegoUIKit.login(userID, userName);

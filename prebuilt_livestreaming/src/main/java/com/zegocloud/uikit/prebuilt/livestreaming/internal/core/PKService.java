@@ -6,9 +6,9 @@ import android.os.Looper;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
+import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginRoomAttributesOperatedCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginRoomPropertyUpdateListener;
@@ -451,7 +451,14 @@ public class PKService {
             recvPKStartRequest = null;
         }
         String pkExtendedData = getPKExtendedData(PKExtendedData.START_PK);
-        acceptUserRequest(requestID, pkExtendedData, new PluginCallbackListener() {
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(pkExtendedData);
+            jsonObject.put("custom_data", customData);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        acceptUserRequest(requestID, jsonObject.toString(), new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
                 int code = (int) result.get("code");
@@ -669,8 +676,6 @@ public class PKService {
             }
         }
     }
-
-    private static final String TAG = "PKService";
 
     private void startMixStreamTask(boolean muteAudio, IZegoMixerStartCallback callback) {
         String currentRoomID = ZegoUIKit.getRoom().roomID;

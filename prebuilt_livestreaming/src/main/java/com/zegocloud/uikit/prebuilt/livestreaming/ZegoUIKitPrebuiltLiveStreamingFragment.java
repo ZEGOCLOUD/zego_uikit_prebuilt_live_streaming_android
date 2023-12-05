@@ -33,7 +33,6 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingFragmentLivestreamingBinding;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveMemberList;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ReceiveCoHostRequestDialog;
@@ -42,6 +41,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoScreen
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
+import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingFragmentLivestreamingBinding;
 import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;

@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog.Builder;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
@@ -14,7 +15,6 @@ import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager.ZegoL
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.Collections;
 import java.util.Map;
@@ -86,7 +86,7 @@ public class ZegoCoHostControlButton extends FrameLayout {
                         confirmButtonName = dialogInfo.confirmButtonName;
                     }
                 }
-                new ConfirmDialog.Builder(getContext()).setTitle(title).setMessage(message)
+                new Builder(getContext()).setTitle(title).setMessage(message)
                     .setPositiveButton(confirmButtonName, (dialog, which) -> {
                         ZegoLiveStreamingManager.getInstance().endCoHost();
                         showRequestCoHostButton();

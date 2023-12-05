@@ -2,7 +2,6 @@ package com.zegocloud.uikit.prebuilt.livestreaming.internal.components;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;

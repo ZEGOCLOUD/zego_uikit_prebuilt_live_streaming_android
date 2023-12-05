@@ -14,13 +14,13 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.components.audiovideo.ZegoAvatarViewProvider;
-import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager.ZegoLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingPKBattleConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltAudioVideoViewConfig;
-import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingLayoutPkBinding;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
+import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingLayoutPkBinding;
 import com.zegocloud.uikit.service.defines.ZegoCameraStateChangeListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -55,8 +55,6 @@ public class PKBattleView extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
         initView();
     }
-
-    private static final String TAG = "PKView";
 
     private void initView() {
         binding = LivestreamingLayoutPkBinding.inflate(LayoutInflater.from(getContext()), this, true);

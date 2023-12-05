@@ -2,19 +2,16 @@ package com.zegocloud.uikit.prebuilt.livestreaming.internal.core;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.components.audiovideo.ZegoAvatarViewProvider;
 import com.zegocloud.uikit.components.internal.RippleIconView;
-import com.zegocloud.uikit.service.defines.ZegoSoundLevelUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.express.IExpressEngineEventHandler;
 import com.zegocloud.uikit.service.internal.UIKitCore;
 import com.zegocloud.uikit.service.internal.UIKitCoreUser;
-import im.zego.zegoexpress.entity.ZegoSoundLevelInfo;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -80,8 +77,6 @@ public class ZegoPKAvatarView extends FrameLayout {
             }
         });
     }
-
-    private static final String TAG = "ZegoPKAvatarView";
 
     public void setShowSoundWave(boolean showSoundWave) {
         this.showSoundWave = showSoundWave;
