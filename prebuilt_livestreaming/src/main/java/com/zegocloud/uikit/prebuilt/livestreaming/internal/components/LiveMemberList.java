@@ -86,7 +86,7 @@ public class LiveMemberList extends BottomSheetDialog {
                 ZegoUIKitUser host = null;
                 ZegoUIKitUser you = null;
 
-                String hostUserID = ZegoUIKit.getRoomProperties().get("host");
+                String hostUserID = ZegoLiveStreamingManager.getInstance().getHostID();
                 for (ZegoUIKitUser uiKitUser : userList) {
                     boolean isHost = Objects.equals(uiKitUser.userID, hostUserID);
                     boolean isYou = Objects.equals(uiKitUser, ZegoUIKit.getLocalUser());
@@ -151,7 +151,7 @@ public class LiveMemberList extends BottomSheetDialog {
                         customIcon.addView(customAvatarView);
                     }
                     ZegoUIKitUser localUser = ZegoUIKit.getLocalUser();
-                    String hostUserID = ZegoUIKit.getRoomProperties().get("host");
+                    String hostUserID = ZegoLiveStreamingManager.getInstance().getHostID();
                     boolean isYou = Objects.equals(uiKitUser, localUser);
                     boolean isHost = Objects.equals(uiKitUser.userID, hostUserID);
                     boolean isCoHost = uiKitUser.isCameraOn || uiKitUser.isMicrophoneOn;

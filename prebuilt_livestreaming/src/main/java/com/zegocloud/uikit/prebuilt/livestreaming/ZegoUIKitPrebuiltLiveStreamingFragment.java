@@ -33,15 +33,16 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
+import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingFragmentLivestreamingBinding;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveMemberList;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ReceiveCoHostRequestDialog;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoAudioVideoForegroundView;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoScreenShareForegroundView;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.RTCRoomProperty;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
-import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingFragmentLivestreamingBinding;
 import com.zegocloud.uikit.service.defines.ZegoAudioVideoUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;
@@ -165,9 +166,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
         if (isLocalUserHost) {
             Map<String, String> map = new HashMap<>();
-            map.put("host", "");
-            map.put("live_status", "0");
-            ZegoUIKit.updateRoomProperties(map);
+            map.put(RTCRoomProperty.HOST, RTCRoomProperty.HOST_REMOVE);
+            map.put(RTCRoomProperty.LIVE_STATUS, RTCRoomProperty.LIVE_STATUS_STOP);
+            ZegoLiveStreamingManager.getInstance().updateRoomProperties(map);
         }
         if (ZegoLiveStreamingManager.getInstance().isCurrentUserHost()) {
             ZegoLiveStreamingManager.getInstance().stopPKBattle();
@@ -248,13 +249,13 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         if (isLocalUserHost) {
             showPreview();
             Map<String, String> map = new HashMap<>();
-            map.put("host", userID);
-            map.put("live_status", "0");
-            ZegoUIKit.updateRoomProperties(map);
-            ZegoUIKit.startPlayingAllAudioVideo();
+            map.put(RTCRoomProperty.HOST, userID);
+            map.put(RTCRoomProperty.LIVE_STATUS, RTCRoomProperty.LIVE_STATUS_STOP);
+            ZegoLiveStreamingManager.getInstance().updateRoomProperties(map);
+            ZegoLiveStreamingManager.getInstance().resumePlayingAllAudioVideo(false);
         } else {
             showLiveView();
-            ZegoUIKit.stopPlayingAllAudioVideo();
+            ZegoLiveStreamingManager.getInstance().pausePlayingAllAudioVideo(false);
         }
 
         ZegoUIKit.setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
@@ -279,8 +280,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
                 if (binding.previewGroup.getVisibility() == View.VISIBLE) {
                     Map<String, String> map = new HashMap<>();
-                    map.put("live_status", "1");
-                    ZegoUIKit.updateRoomProperties(map);
+                    map.put(RTCRoomProperty.LIVE_STATUS, RTCRoomProperty.LIVE_STATUS_START);
+                    ZegoLiveStreamingManager.getInstance().updateRoomProperties(map);
                 }
             }
 
@@ -323,9 +324,10 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 if (ZegoUIKit.getLocalUser() == null) {
                     return;
                 }
+
                 String userID = ZegoUIKit.getLocalUser().userID;
                 isLocalUserHost = Objects.equals(ZegoLiveStreamingManager.getInstance().getHostID(), userID);
-                if (Objects.equals("host", key)) {
+                if (Objects.equals(RTCRoomProperty.HOST, key)) {
                     if (newValue != null) {
                         ZegoUIKitUser uiKitUser = ZegoUIKit.getUser(ZegoLiveStreamingManager.getInstance().getHostID());
                         if (uiKitUser != null) {
@@ -339,7 +341,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                         if (oldValue != null && oldValue.equals(userID) && !isLocalUserHost) {
                             ZegoUIKit.turnCameraOn(userID, false);
                             ZegoUIKit.turnMicrophoneOn(userID, false);
-                            ZegoUIKit.stopPlayingAllAudioVideo();
+                            ZegoLiveStreamingManager.getInstance().pausePlayingAllAudioVideo(false);
                             showLiveView();
                             ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.AUDIENCE);
                             binding.liveBackgroundViewParent.setVisibility(View.VISIBLE);
@@ -348,9 +350,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                     }
                     binding.liveVideoContainer.updateLayout();
                 }
-                if (Objects.equals("live_status", key)) {
-                    if ("1".equals(newValue)) {
-                        ZegoUIKit.startPlayingAllAudioVideo();
+                if (Objects.equals(RTCRoomProperty.LIVE_STATUS, key)) {
+                    if (RTCRoomProperty.LIVE_STATUS_START.equals(newValue)) {
+                        ZegoLiveStreamingManager.getInstance().resumePlayingAllAudioVideo(false);
                         binding.liveBackgroundViewParent.setVisibility(View.GONE);
                         if (ZegoLiveStreamingManager.getInstance().getPKInfo() == null) {
                             binding.liveVideoContainer.setVisibility(View.VISIBLE);
@@ -358,10 +360,10 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                         if (oldValue != null) {
                             showLiveView();
                         }
-                    } else if ("0".equals(newValue)) {
-                        ZegoUIKit.stopPlayingAllAudioVideo();
+                    } else if (RTCRoomProperty.LIVE_STATUS_STOP.equals(newValue)) {
+                        ZegoLiveStreamingManager.getInstance().pausePlayingAllAudioVideo(false);
                         hostFirst = true;
-                        if ("1".equals(oldValue)) {
+                        if (RTCRoomProperty.LIVE_STATUS_START.equals(oldValue)) {
                             if (!isLocalUserHost) {
                                 ZegoUIKit.turnCameraOn(userID, false);
                                 ZegoUIKit.turnMicrophoneOn(userID, false);
@@ -386,11 +388,11 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                         }
                     }
                 }
-                if (Objects.equals("enableChat", key)) {
+                if (Objects.equals(RTCRoomProperty.ENABLE_CHAT, key)) {
                     if (!isLocalUserHost) {
-                        if (newValue.equals("0")) {
+                        if (RTCRoomProperty.ENABLE_CHAT_DISABLE.equals(newValue)) {
                             binding.liveBottomMenuBar.enableChat(false);
-                        } else if (newValue.equals("1")) {
+                        } else if (RTCRoomProperty.ENABLE_CHAT_ENABLE.equals(newValue)) {
                             binding.liveBottomMenuBar.enableChat(true);
                         }
                     }
@@ -405,7 +407,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                     boolean thereIsHostInRoom = false;
                     for (int i = 0; i < updateKeys.size(); ++i) {
                         String key = updateKeys.get(i);
-                        if ("host".equals(key) && (Objects.equals(properties.get(key), "") || Objects.equals(
+                        if (RTCRoomProperty.HOST.equals(key) && (Objects.equals(properties.get(key), "") || Objects.equals(
                             properties.get(key), currentUserID))) {
                             thereIsHostInRoom = true;
                             break;

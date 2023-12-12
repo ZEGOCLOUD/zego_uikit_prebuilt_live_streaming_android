@@ -152,7 +152,7 @@ public class ZegoCoHostControlButton extends FrameLayout {
 
     public void onLiveEnd() {
         if (cancelRequestCoHostButton.getVisibility() == VISIBLE) {
-            String hostUserID = ZegoUIKit.getRoomProperties().get("host");
+            String hostUserID = ZegoLiveStreamingManager.getInstance().getHostID();
             ZegoUIKitUser uiKitUser = ZegoUIKit.getUser(hostUserID);
             if (uiKitUser == null) {
                 return;

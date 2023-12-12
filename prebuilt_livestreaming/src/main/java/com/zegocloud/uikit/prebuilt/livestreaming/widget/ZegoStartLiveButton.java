@@ -13,8 +13,9 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.FragmentActivity;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
-import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.RTCRoomProperty;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,8 +53,8 @@ public class ZegoStartLiveButton extends androidx.appcompat.widget.AppCompatButt
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
                     Map<String, String> map = new HashMap<>();
-                    map.put("live_status", "1");
-                    ZegoUIKit.updateRoomProperties(map);
+                    map.put(RTCRoomProperty.LIVE_STATUS,RTCRoomProperty.LIVE_STATUS_START);
+                    ZegoLiveStreamingManager.getInstance().updateRoomProperties(map);
                 });
                 performClick();
                 return true;

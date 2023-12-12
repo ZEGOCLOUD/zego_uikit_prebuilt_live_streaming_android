@@ -3,6 +3,8 @@ package com.zegocloud.uikit.prebuilt.livestreaming;
 import android.app.Application;
 import android.content.Context;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
+import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
@@ -12,10 +14,9 @@ import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKRequest;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.RTCRoomProperty;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.UserRequestCallback;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.ZegoLiveStreamingPKBattleRejectCode;
-import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
-import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
 import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
@@ -31,6 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
+import timber.log.Timber;
 
 public class ZegoLiveStreamingManager {
 
@@ -68,6 +70,8 @@ public class ZegoLiveStreamingManager {
     private CopyOnWriteArrayList<ZegoLiveStreamingListener> liveStreamingListenerList = new CopyOnWriteArrayList<>();
     private ZegoLiveStreamingRole currentRole;
     private ZegoTranslationText translationText;
+    private RTCRoomProperty rtcRoomProperty = new RTCRoomProperty();
+    private boolean muteByUser = false;
 
     void init(Application application, Long appID, String appSign, ZegoUIKitPrebuiltLiveStreamingConfig config) {
         ZegoUIKit.init(application, appID, appSign, ZegoScenario.BROADCAST);
@@ -336,6 +340,7 @@ public class ZegoLiveStreamingManager {
         ZegoUIKit.getSignalingPlugin().leaveRoom(null);
         removeRoomData();
         removeRoomListeners();
+        muteByUser = false;
     }
 
     void logout() {
@@ -413,11 +418,11 @@ public class ZegoLiveStreamingManager {
     }
 
     public String getHostID() {
-        return ZegoUIKit.getRoomProperties().get("host");
+        return rtcRoomProperty.getHostID();
     }
 
     public boolean isLiveStarted() {
-        return "1".equals(ZegoUIKit.getRoomProperties().get("live_status"));
+        return rtcRoomProperty.isLiveStarted();
     }
 
     public boolean isHost(String userID) {
@@ -586,6 +591,39 @@ public class ZegoLiveStreamingManager {
         ZegoUIKit.stopPublishingStream();
     }
 
+    public void unMuteAllAudioVideo() {
+        resumePlayingAllAudioVideo(true);
+    }
+
+    void resumePlayingAllAudioVideo(boolean startByUser) {
+        Timber.d("resumePlayingAllAudioVideo() called with: startByUser = [" + startByUser + "]");
+        if (muteByUser) {
+            if (startByUser) {
+                muteByUser = false;
+                if (rtcRoomProperty.isLiveStarted()) {
+                    ZegoUIKit.startPlayingAllAudioVideo();
+                }
+            }
+        } else {
+            if (rtcRoomProperty.isLiveStarted()) {
+                ZegoUIKit.startPlayingAllAudioVideo();
+            }
+        }
+    }
+
+    public void muteAllAudioVideo() {
+        pausePlayingAllAudioVideo(true);
+    }
+
+    void pausePlayingAllAudioVideo(boolean muteByUser) {
+        Timber.d("pausePlayingAllAudioVideo() called with: muteByUser = [" + muteByUser + "]");
+        this.muteByUser = muteByUser;
+        ZegoUIKit.stopPlayingAllAudioVideo();
+    }
+
+    public void updateRoomProperties(Map<String, String> newProperties) {
+        rtcRoomProperty.updateRoomProperties(newProperties);
+    }
 
     public interface ZegoLiveStreamingListener extends PKListener {
 

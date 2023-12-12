@@ -11,6 +11,7 @@ import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoCancelInvitationButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class ZegoCancelRequestCoHostButton extends ZegoCancelInvitationButton {
 
     @Override
     protected void invokedWhenClick() {
-        String hostUserID = ZegoUIKit.getRoomProperties().get("host");
+        String hostUserID = ZegoLiveStreamingManager.getInstance().getHostID();
         ZegoUIKitUser uiKitUser = ZegoUIKit.getUser(hostUserID);
         if (uiKitUser == null) {
             return;

@@ -64,8 +64,7 @@ public class ZegoRequestCoHostButton extends ZTextButton {
     @Override
     protected void afterClick() {
         super.afterClick();
-        String liveStatus = ZegoUIKit.getRoomProperties().get("live_status");
-        if (!Objects.equals(liveStatus, "1")) {
+        if (!ZegoLiveStreamingManager.getInstance().isLiveStarted()) {
             Map<String, Object> map = new HashMap<>();
             map.put("code", -1);
             map.put("message", getContext().getString(R.string.livestreaming_request_no_host_tips));
@@ -80,7 +79,7 @@ public class ZegoRequestCoHostButton extends ZTextButton {
             return;
         }
 
-        String hostUserID = ZegoUIKit.getRoomProperties().get("host");
+        String hostUserID = ZegoLiveStreamingManager.getInstance().getHostID();
         ZegoUIKitUser hostUser = ZegoUIKit.getUser(hostUserID);
         if (TextUtils.isEmpty(hostUserID) || hostUser == null) {
             Map<String, Object> map = new HashMap<>();

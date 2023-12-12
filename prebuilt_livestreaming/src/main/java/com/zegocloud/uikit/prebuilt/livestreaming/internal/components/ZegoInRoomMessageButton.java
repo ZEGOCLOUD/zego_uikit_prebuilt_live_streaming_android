@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoInRoomMessageInputBoard;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ZegoInRoomMessageButton extends AppCompatImageView {
                     return;
                 }
                 String userID = ZegoUIKit.getLocalUser().userID;
-                boolean isLocalUserHost = Objects.equals(ZegoUIKit.getRoomProperties().get("host"), userID);
+                boolean isLocalUserHost = Objects.equals(ZegoLiveStreamingManager.getInstance().getHostID(), userID);
                 if (!isLocalUserHost) {
                     if ("enableChat".equals(key)) {
                         if (newValue.equals("0")) {
