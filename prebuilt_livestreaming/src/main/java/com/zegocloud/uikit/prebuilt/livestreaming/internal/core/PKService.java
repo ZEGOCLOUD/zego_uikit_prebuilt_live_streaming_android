@@ -217,8 +217,7 @@ public class PKService {
         if (pkExtendedData != null && invitationID != null) {
             if (pkExtendedData.type == PKExtendedData.START_PK) {
                 String currentRoomID = ZegoUIKit.getRoom().roomID;
-                boolean userNotHost =
-                    TextUtils.isEmpty(currentRoomID) || (!ZegoLiveStreamingManager.getInstance().isCurrentUserHost());
+                boolean userNotHost = TextUtils.isEmpty(currentRoomID) || (!ZegoLiveStreamingManager.getInstance().isCurrentUserHost());
                 boolean alreadySend = sendPKStartRequest != null;
                 boolean alreadyReceived = recvPKStartRequest != null;
                 boolean liveNotStarted = !ZegoLiveStreamingManager.getInstance().isLiveStarted();

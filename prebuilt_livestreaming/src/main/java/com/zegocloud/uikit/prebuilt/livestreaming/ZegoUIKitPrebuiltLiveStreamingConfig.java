@@ -17,6 +17,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoLeaveLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoStartLiveButton;
 import com.zegocloud.uikit.plugin.adapter.plugins.beauty.ZegoBeautyPluginConfig;
+import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +40,7 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
     public ZegoDialogInfo confirmDialogInfo;
     public transient ZegoLiveStreamingEndListener zegoLiveStreamingEndListener;
     public transient ZegoLeaveLiveStreamingListener leaveLiveStreamingListener;
+    public transient ZegoMeRemovedFromRoomListener removedFromRoomListener;
     public ZegoTranslationText translationText = new ZegoTranslationText();
     private boolean enableCoHosting;
     public boolean markAsLargeRoom = false;

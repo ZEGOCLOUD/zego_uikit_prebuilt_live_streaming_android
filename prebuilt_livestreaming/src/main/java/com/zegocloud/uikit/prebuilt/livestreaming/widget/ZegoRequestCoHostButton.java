@@ -96,8 +96,7 @@ public class ZegoRequestCoHostButton extends ZTextButton {
             return;
         }
 
-        ZegoUIKit.getSignalingPlugin()
-            .sendInvitation(Collections.singletonList(hostUserID), 60, LiveInvitationType.REQUEST_COHOST.getValue(), "",
+       ZegoLiveStreamingManager.getInstance().sendCoHostRequest(Collections.singletonList(hostUserID), 60, LiveInvitationType.REQUEST_COHOST.getValue(), "",
                 new PluginCallbackListener() {
                     @Override
                     public void callback(Map<String, Object> result) {

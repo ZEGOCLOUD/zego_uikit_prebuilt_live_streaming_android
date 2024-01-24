@@ -66,7 +66,6 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     private OnBackPressedCallback onBackPressedCallback;
     private LivestreamingFragmentLivestreamingBinding binding;
     private Map<ZegoLiveStreamingRole, List<View>> bottomMenuBarExtendedButtons = new HashMap<>();
-    private ZegoUIKitPrebuiltLiveStreamingConfig config;
     private ConfirmDialog receiveCoHostInviteDialog;
     private ReceiveCoHostRequestDialog receiveCoHostRequestDialog;
     private LiveMemberList livememberList;
@@ -97,12 +96,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         bundle.putString("userID", userID);
         bundle.putString("userName", userName);
         fragment.setArguments(bundle);
-        fragment.setPrebuiltLiveStreamingConfig(config);
-        return fragment;
-    }
 
-    void setPrebuiltLiveStreamingConfig(ZegoUIKitPrebuiltLiveStreamingConfig prebuiltLiveStreamingConfig) {
-        config = prebuiltLiveStreamingConfig;
+        ZegoLiveStreamingManager.getInstance().setPrebuiltConfig(config);
+        return fragment;
     }
 
     @Override
@@ -115,21 +111,20 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         String userID = arguments.getString("userID");
 
         if (appID != 0) {
-            ZegoLiveStreamingManager.getInstance().init(requireActivity().getApplication(), appID, appSign, config);
+            ZegoLiveStreamingManager.getInstance().init(requireActivity().getApplication(), appID, appSign);
             ZegoLiveStreamingManager.getInstance().login(userID, userName, new ZegoUIKitCallback() {
                 @Override
                 public void onResult(int errorCode) {
                     if (errorCode == 0) {
                         String liveID = getArguments().getString("liveID");
                         if (!TextUtils.isEmpty(liveID)) {
-                            ZegoLiveStreamingManager.getInstance()
-                                .joinRoom(liveID, config.markAsLargeRoom, errorCode2 -> {
-                                    if (errorCode2 == 0) {
-                                        onRoomJoinSucceed();
-                                    } else {
-                                        onRoomJoinFailed();
-                                    }
-                                });
+                            ZegoLiveStreamingManager.getInstance().joinRoom(liveID, errorCode2 -> {
+                                if (errorCode2 == 0) {
+                                    onRoomJoinSucceed();
+                                } else {
+                                    onRoomJoinFailed();
+                                }
+                            });
                         }
                     } else {
                         requireActivity().finish();
@@ -146,7 +141,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             public void handleOnBackPressed() {
                 boolean hostStarted = ZegoLiveStreamingManager.getInstance().isLiveStarted() && isLocalUserHost;
                 boolean isNotHost = !isLocalUserHost;
-                if (config.confirmDialogInfo != null && (hostStarted || isNotHost)) {
+                ZegoUIKitPrebuiltLiveStreamingConfig liveConfig = ZegoLiveStreamingManager.getInstance()
+                    .getPrebuiltConfig();
+                if (liveConfig.confirmDialogInfo != null && (hostStarted || isNotHost)) {
                     showQuitDialog(getDialogInfo());
                 } else {
                     leaveRoom();
@@ -163,19 +160,11 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             requireActivity().unregisterReceiver(configurationChangeReceiver);
             configurationChangeReceiver = null;
         }
+        if (livememberList != null) {
+            livememberList.dismiss();
+        }
 
-        if (isLocalUserHost) {
-            Map<String, String> map = new HashMap<>();
-            map.put(RTCRoomProperty.HOST, RTCRoomProperty.HOST_REMOVE);
-            map.put(RTCRoomProperty.LIVE_STATUS, RTCRoomProperty.LIVE_STATUS_STOP);
-            ZegoLiveStreamingManager.getInstance().updateRoomProperties(map);
-        }
-        if (ZegoLiveStreamingManager.getInstance().isCurrentUserHost()) {
-            ZegoLiveStreamingManager.getInstance().stopPKBattle();
-        }
         ZegoLiveStreamingManager.getInstance().leaveRoom();
-        ZegoLiveStreamingManager.getInstance().removeUserData();
-        ZegoLiveStreamingManager.getInstance().removeUserListeners();
     }
 
     @Override
@@ -191,7 +180,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private void onRoomJoinFailed() {
-
+        requireActivity().finish();
     }
 
     private void onRoomJoinSucceed() {
@@ -218,6 +207,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
         requireActivity().registerReceiver(configurationChangeReceiver, configurationChangeFilter);
 
+        ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
         String userID = ZegoUIKit.getLocalUser().userID;
         isLocalUserHost = config.role == ZegoLiveStreamingRole.HOST;
 
@@ -303,6 +293,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private void addUIKitListeners() {
+        ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
         ZegoUIKit.addAudioVideoUpdateListener(new ZegoAudioVideoUpdateListener() {
             @Override
             public void onAudioVideoAvailable(List<ZegoUIKitUser> userList) {
@@ -402,13 +393,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             @Override
             public void onRoomPropertiesFullUpdated(List<String> updateKeys, Map<String, String> oldProperties,
                 Map<String, String> properties) {
+                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
                 if (config.role == ZegoLiveStreamingRole.HOST) {
                     String currentUserID = ZegoUIKit.getLocalUser().userID;
                     boolean thereIsHostInRoom = false;
                     for (int i = 0; i < updateKeys.size(); ++i) {
                         String key = updateKeys.get(i);
-                        if (RTCRoomProperty.HOST.equals(key) && (Objects.equals(properties.get(key), "") || Objects.equals(
-                            properties.get(key), currentUserID))) {
+                        if (RTCRoomProperty.HOST.equals(key) && (Objects.equals(properties.get(key), "")
+                            || Objects.equals(properties.get(key), currentUserID))) {
                             thereIsHostInRoom = true;
                             break;
                         }
@@ -517,7 +509,11 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         ZegoUIKit.addOnMeRemovedFromRoomListener(new ZegoMeRemovedFromRoomListener() {
             @Override
             public void onMeRemovedFromRoom() {
-                requireActivity().onBackPressed();
+                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
+                if (config.removedFromRoomListener == null) {
+                    leaveRoom();
+                    requireActivity().finish();
+                }
             }
         });
     }
@@ -527,6 +523,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private void initLiveBtns() {
+        ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
         if (config.role != ZegoLiveStreamingRole.HOST) {
             binding.liveBackgroundViewParent.setVisibility(View.VISIBLE);
             binding.liveVideoContainer.setVisibility(View.GONE);
@@ -578,6 +575,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private ZegoDialogInfo getDialogInfo() {
+        ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
         ZegoDialogInfo dialogInfo = new ZegoDialogInfo();
         if (config.confirmDialogInfo.title == null) {
             dialogInfo.title = getString(R.string.livestreaming_stop_live_title);
@@ -603,6 +601,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     private void initPreviewBtns() {
+        ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
         binding.previewBack.setOnClickListener(v -> {
             if (config.leaveLiveStreamingListener != null) {
                 config.leaveLiveStreamingListener.onLeaveLiveStreaming();
@@ -633,12 +632,14 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     public void showLiveView() {
+        ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
         binding.liveGroup.setVisibility(View.VISIBLE);
         binding.liveTopMemberCount.setVisibility(config.showMemberButton ? View.VISIBLE : View.GONE);
         binding.previewGroup.setVisibility(View.GONE);
     }
 
     private void initVideoContainer() {
+        ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
         if (config.zegoLayout == null) {
             ZegoLayout layout = new ZegoLayout();
             layout.mode = ZegoLayoutMode.PICTURE_IN_PICTURE;
@@ -758,9 +759,6 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (livememberList != null) {
-            livememberList.dismiss();
-        }
         leaveRoom();
     }
 
@@ -883,6 +881,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             public void onResult(boolean allGranted, @NonNull List<String> grantedList,
                 @NonNull List<String> deniedList) {
                 String localUserID = ZegoUIKit.getLocalUser().userID;
+                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
                 ZegoUIKit.turnCameraOn(localUserID, config.turnOnCameraWhenCohosted);
                 ZegoUIKit.turnMicrophoneOn(localUserID, true);
                 ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.COHOST);

@@ -72,13 +72,16 @@ public class ZegoLiveStreamingManager {
     private ZegoTranslationText translationText;
     private RTCRoomProperty rtcRoomProperty = new RTCRoomProperty();
     private boolean muteByUser = false;
+    private List<String> coHostInvitations = new ArrayList<>();
+    private ZegoUIKitPrebuiltLiveStreamingConfig liveConfig;
 
-    void init(Application application, Long appID, String appSign, ZegoUIKitPrebuiltLiveStreamingConfig config) {
-        ZegoUIKit.init(application, appID, appSign, ZegoScenario.BROADCAST);
-        if (config.bottomMenuBarConfig.hostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
-            || config.bottomMenuBarConfig.coHostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
-            || config.bottomMenuBarConfig.audienceButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)) {
-            ZegoUIKit.getBeautyPlugin().setZegoBeautyPluginConfig(config.beautyConfig);
+
+    void init(Application application, Long appID, String appSign) {
+        ZegoUIKit.init(application, appID, appSign, ZegoScenario.GENERAL);
+        if (liveConfig.bottomMenuBarConfig.hostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
+            || liveConfig.bottomMenuBarConfig.coHostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
+            || liveConfig.bottomMenuBarConfig.audienceButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)) {
+            ZegoUIKit.getBeautyPlugin().setZegoBeautyPluginConfig(liveConfig.beautyConfig);
             ZegoUIKit.getBeautyPlugin().init(application, appID, appSign);
         }
         context = application.getApplicationContext();
@@ -104,6 +107,8 @@ public class ZegoLiveStreamingManager {
             @Override
             public void onInvitationReceived(ZegoUIKitUser inviter, int type, String data) {
                 if (type == LiveInvitationType.REQUEST_COHOST.getValue()) {
+                    String invitationID = getStringFromJson(getJsonObjectFromString(data), "invitationID");
+                    coHostInvitations.add(invitationID);
                     if (Objects.equals(getHostID(), ZegoUIKit.getLocalUser().userID)) {
                         addReceiveCoHostRequestUser(inviter.userID);
                         //                        if (uiCallBack != null) {
@@ -111,12 +116,16 @@ public class ZegoLiveStreamingManager {
                         //                        }
                     }
                 } else if (type == LiveInvitationType.INVITE_TO_COHOST.getValue()) {
+                    String invitationID = getStringFromJson(getJsonObjectFromString(data), "invitationID");
+                    coHostInvitations.add(invitationID);
                     if (Objects.equals(getHostID(), inviter.userID)) {
                         if (uiCallBack != null) {
                             uiCallBack.showReceiveCoHostInviteDialog(inviter, type, data);
                         }
                     }
                 } else if (type == LiveInvitationType.REMOVE_COHOST.getValue()) {
+                    String invitationID = getStringFromJson(getJsonObjectFromString(data), "invitationID");
+                    coHostInvitations.add(invitationID);
                     if (uiCallBack != null) {
                         uiCallBack.removeCoHost(inviter, type, data);
                     }
@@ -132,21 +141,24 @@ public class ZegoLiveStreamingManager {
                 if (pkService.isPKInvitation(invitationID)) {
                     pkService.onInvitationTimeout(inviter, data);
                 } else {
-                    if (Objects.equals(getHostID(), inviter.userID)) {
-                        // if inviter is host,then me is audience,
-                        // and no respond to host's cohost invite
-                        removeUserStatus(inviter.userID);
-                        if (uiCallBack != null) {
-                            uiCallBack.dismissReceiveCoHostInviteDialog();
+                    if (coHostInvitations.contains(invitationID)) {
+                        if (Objects.equals(getHostID(), inviter.userID)) {
+                            // if inviter is host,then me is audience,
+                            // and no respond to host's cohost invite
+                            removeUserStatus(inviter.userID);
+                            if (uiCallBack != null) {
+                                uiCallBack.dismissReceiveCoHostInviteDialog();
+                            }
+                        } else {
+                            // if inviter not host,then me is the host,
+                            // and no respond to audience's cohost request
+                            removeUserStatusAndCheck(inviter.userID);
+                            //                    if (uiCallBack != null) {
+                            //                        uiCallBack.dismissReceiveCoHostRequestDialog();
+                            //                    }
                         }
-                    } else {
-                        // if inviter not host,then me is the host,
-                        // and no respond to audience's cohost request
-                        removeUserStatusAndCheck(inviter.userID);
-                        //                    if (uiCallBack != null) {
-                        //                        uiCallBack.dismissReceiveCoHostRequestDialog();
-                        //                    }
                     }
+
                 }
             }
 
@@ -156,19 +168,21 @@ public class ZegoLiveStreamingManager {
                 if (pkService.isPKInvitation(invitationID)) {
                     pkService.onInvitationResponseTimeout(invitees, data);
                 } else {
-                    for (ZegoUIKitUser invitee : invitees) {
-                        removeUserStatus(invitee.userID);
-                    }
-                    List<String> inviteeIDList = GenericUtils.map(invitees, uiKitUser -> uiKitUser.userID);
-                    if (inviteeIDList.contains(getHostID())) {
-                        // invitee is host.then me is audience,
-                        // and the host no respond to my cohost request
-                        if (uiCallBack != null) {
-                            uiCallBack.showRequestCoHostButton();
+                    if (coHostInvitations.contains(invitationID)) {
+                        for (ZegoUIKitUser invitee : invitees) {
+                            removeUserStatus(invitee.userID);
                         }
-                    } else {
-                        // invitee is not host,then me is host,
-                        // and the audience no respond to my cohost invite
+                        List<String> inviteeIDList = GenericUtils.map(invitees, uiKitUser -> uiKitUser.userID);
+                        if (inviteeIDList.contains(getHostID())) {
+                            // invitee is host.then me is audience,
+                            // and the host no respond to my cohost request
+                            if (uiCallBack != null) {
+                                uiCallBack.showRequestCoHostButton();
+                            }
+                        } else {
+                            // invitee is not host,then me is host,
+                            // and the audience no respond to my cohost invite
+                        }
                     }
                 }
             }
@@ -179,17 +193,19 @@ public class ZegoLiveStreamingManager {
                 if (pkService.isPKInvitation(invitationID)) {
                     pkService.onInvitationAccepted(invitee, data);
                 } else {
-                    if (Objects.equals(getHostID(), invitee.userID)) {
-                        // invitee is host.then me is audience,
-                        // and the host accept my cohost request
-                        removeUserStatusAndCheck(invitee.userID);
-                        if (uiCallBack != null) {
-                            uiCallBack.showCoHostButtons();
+                    if (coHostInvitations.contains(invitationID)) {
+                        if (Objects.equals(getHostID(), invitee.userID)) {
+                            // invitee is host.then me is audience,
+                            // and the host accept my cohost request
+                            removeUserStatusAndCheck(invitee.userID);
+                            if (uiCallBack != null) {
+                                uiCallBack.showCoHostButtons();
+                            }
+                        } else {
+                            // invitee is not host,then me is host,
+                            // and the audience accept my cohost invite
+                            removeUserStatus(invitee.userID);
                         }
-                    } else {
-                        // invitee is not host,then me is host,
-                        // and the audience accept my cohost invite
-                        removeUserStatus(invitee.userID);
                     }
                 }
             }
@@ -200,31 +216,34 @@ public class ZegoLiveStreamingManager {
                 if (pkService.isPKInvitation(invitationID)) {
                     pkService.onInvitationRefused(invitee, data);
                 } else {
-                    if (Objects.equals(getHostID(), invitee.userID)) {
-                        // invitee is host.then me is audience,
-                        // and the host refused my cohost request
-                        removeUserStatusAndCheck(invitee.userID);
-                        if (uiCallBack != null) {
-                            String string = context.getString(R.string.livestreaming_host_reject_co_host_tips);
-                            if (translationText != null && translationText.hostRejectCoHostRequestToast != null) {
-                                string = translationText.hostRejectCoHostRequestToast;
+                    if (coHostInvitations.contains(invitationID)) {
+                        if (Objects.equals(getHostID(), invitee.userID)) {
+                            // invitee is host.then me is audience,
+                            // and the host refused my cohost request
+                            removeUserStatusAndCheck(invitee.userID);
+                            if (uiCallBack != null) {
+                                String string = context.getString(R.string.livestreaming_host_reject_co_host_tips);
+                                if (translationText != null && translationText.hostRejectCoHostRequestToast != null) {
+                                    string = translationText.hostRejectCoHostRequestToast;
+                                }
+                                showTopTips(string, false);
                             }
-                            showTopTips(string, false);
-                        }
-                        if (uiCallBack != null) {
-                            uiCallBack.showRequestCoHostButton();
-                        }
-                    } else {
-                        // invitee is not host,then me is host,
-                        // and the audience refused my cohost invite
-                        removeUserStatus(invitee.userID);
-                        if (uiCallBack != null) {
-                            String string = context.getString(R.string.livestreaming_refuse_co_host_tips,
-                                invitee.userName);
-                            if (translationText != null && translationText.audienceRejectInvitationToast != null) {
-                                string = String.format(translationText.audienceRejectInvitationToast, invitee.userName);
+                            if (uiCallBack != null) {
+                                uiCallBack.showRequestCoHostButton();
                             }
-                            showTopTips(string, false);
+                        } else {
+                            // invitee is not host,then me is host,
+                            // and the audience refused my cohost invite
+                            removeUserStatus(invitee.userID);
+                            if (uiCallBack != null) {
+                                String string = context.getString(R.string.livestreaming_refuse_co_host_tips,
+                                    invitee.userName);
+                                if (translationText != null && translationText.audienceRejectInvitationToast != null) {
+                                    string = String.format(translationText.audienceRejectInvitationToast,
+                                        invitee.userName);
+                                }
+                                showTopTips(string, false);
+                            }
                         }
                     }
                 }
@@ -236,16 +255,18 @@ public class ZegoLiveStreamingManager {
                 if (pkService.isPKInvitation(invitationID)) {
                     pkService.onInvitationCanceled(inviter, data);
                 } else {
-                    if (Objects.equals(getHostID(), inviter.userID)) {
-                        // if inviter is host,then me is audience,
-                        // and host canceled cohost invite to me
-                        removeUserStatus(inviter.userID);
-                    } else {
-                        // if inviter not host,then me is host,
-                        // and the audience canceled cohost request to me
-                        removeUserStatusAndCheck(inviter.userID);
-                        if (uiCallBack != null) {
-                            uiCallBack.dismissReceiveCoHostRequestDialog();
+                    if (coHostInvitations.contains(invitationID)) {
+                        if (Objects.equals(getHostID(), inviter.userID)) {
+                            // if inviter is host,then me is audience,
+                            // and host canceled cohost invite to me
+                            removeUserStatus(inviter.userID);
+                        } else {
+                            // if inviter not host,then me is host,
+                            // and the audience canceled cohost request to me
+                            removeUserStatusAndCheck(inviter.userID);
+                            if (uiCallBack != null) {
+                                uiCallBack.dismissReceiveCoHostRequestDialog();
+                            }
                         }
                     }
                 }
@@ -254,13 +275,13 @@ public class ZegoLiveStreamingManager {
         ZegoUIKit.getSignalingPlugin().addInvitationListener(invitationListener);
     }
 
-    void joinRoom(String roomID, boolean markAsLargeRoom, ZegoUIKitCallback callback) {
+    void joinRoom(String roomID, ZegoUIKitCallback callback) {
         if (ZegoUIKit.getSignalingPlugin().isPluginExited()) {
             ZegoUIKit.getSignalingPlugin().joinRoom(roomID, new ZegoUIKitPluginCallback() {
                 @Override
                 public void onResult(int errorCode, String message) {
                     if (errorCode == 0) {
-                        ZegoUIKit.joinRoom(roomID, markAsLargeRoom, callback);
+                        ZegoUIKit.joinRoom(roomID, liveConfig.markAsLargeRoom, callback);
                     } else {
                         if (callback != null) {
                             callback.onResult(errorCode);
@@ -269,7 +290,7 @@ public class ZegoLiveStreamingManager {
                 }
             });
         } else {
-            ZegoUIKit.joinRoom(roomID, markAsLargeRoom, callback);
+            ZegoUIKit.joinRoom(roomID, liveConfig.markAsLargeRoom, callback);
         }
         pkService.addRoomListeners();
         pkService.addListener(new PKListener() {
@@ -335,12 +356,24 @@ public class ZegoLiveStreamingManager {
     }
 
     void leaveRoom() {
+        if (isCurrentUserHost()) {
+            Map<String, String> map = new HashMap<>();
+            map.put(RTCRoomProperty.HOST, RTCRoomProperty.HOST_REMOVE);
+            map.put(RTCRoomProperty.LIVE_STATUS, RTCRoomProperty.LIVE_STATUS_STOP);
+            ZegoLiveStreamingManager.getInstance().updateRoomProperties(map);
+
+            stopPKBattle();
+        }
         setCurrentRole(null);
         ZegoUIKit.leaveRoom();
         ZegoUIKit.getSignalingPlugin().leaveRoom(null);
         removeRoomData();
         removeRoomListeners();
         muteByUser = false;
+        coHostInvitations.clear();
+
+        removeUserData();
+        removeUserListeners();
     }
 
     void logout() {
@@ -520,6 +553,15 @@ public class ZegoLiveStreamingManager {
         });
     }
 
+    public void setPrebuiltConfig(ZegoUIKitPrebuiltLiveStreamingConfig config) {
+        this.liveConfig = config;
+    }
+
+    public ZegoUIKitPrebuiltLiveStreamingConfig getPrebuiltConfig() {
+        return liveConfig;
+    }
+
+
     public PKRequest getSendPKStartRequest() {
         return pkService.getSendPKStartRequest();
     }
@@ -623,6 +665,23 @@ public class ZegoLiveStreamingManager {
 
     public void updateRoomProperties(Map<String, String> newProperties) {
         rtcRoomProperty.updateRoomProperties(newProperties);
+    }
+
+    public void sendCoHostRequest(List<String> invitees, int timeout, int type, String data,
+        PluginCallbackListener callbackListener) {
+        ZegoUIKit.getSignalingPlugin().sendInvitation(invitees, timeout, type, data, new PluginCallbackListener() {
+            @Override
+            public void callback(Map<String, Object> result) {
+                int code = (int) result.get("code");
+                if (code == 0) {
+                    String invitationID = (String) result.get("invitationID");
+                    coHostInvitations.add(invitationID);
+                }
+                if (callbackListener != null) {
+                    callbackListener.callback(result);
+                }
+            }
+        });
     }
 
     public interface ZegoLiveStreamingListener extends PKListener {
