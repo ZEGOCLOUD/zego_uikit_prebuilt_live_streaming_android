@@ -17,6 +17,8 @@ import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKRequ
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.RTCRoomProperty;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.UserRequestCallback;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.ZegoLiveStreamingPKBattleRejectCode;
+import com.zegocloud.uikit.prebuilt.livestreaming.api.common.Common;
+import com.zegocloud.uikit.prebuilt.livestreaming.api.pk.PK;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
 import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
@@ -435,12 +437,6 @@ public class ZegoLiveStreamingManager {
         return userStatusMap.remove(userID);
     }
 
-    public void showTopTips(String message, boolean green) {
-        if (uiCallBack != null) {
-            uiCallBack.showTopTips(message, green);
-        }
-    }
-
     public boolean hasInviteUserCoHost(String userID) {
         Integer integer = userStatusMap.get(userID);
         if (integer != null) {
@@ -508,49 +504,12 @@ public class ZegoLiveStreamingManager {
         return currentRole;
     }
 
-    public void stopPKBattle() {
-        pkService.sendPKBattlesStopRequest();
-    }
-
-    public PKInfo getPKInfo() {
-        return pkService.getPKInfo();
-    }
-
     void stopPKBattleInner() {
         pkService.stopPKBattle();
     }
 
-    public void acceptIncomingPKBattleRequest(String requestID, String anotherHostLiveID, ZegoUIKitUser anotherHostUser,
-        String customData) {
-        pkService.acceptPKBattleStartRequest(requestID, anotherHostLiveID, anotherHostUser, customData);
-    }
-
-    public void acceptIncomingPKBattleRequest(String requestID, String anotherHostLiveID,
-        ZegoUIKitUser anotherHostUser) {
-        pkService.acceptPKBattleStartRequest(requestID, anotherHostLiveID, anotherHostUser, "");
-    }
-
-    public void rejectPKBattleStartRequest(String requestID) {
-        pkService.rejectPKBattleStartRequest(requestID, ZegoLiveStreamingPKBattleRejectCode.HOST_REJECT.ordinal());
-    }
-
     public boolean isPKUser(String userID) {
         return pkService.isPKUser(userID);
-    }
-
-    public boolean isAnotherHostMuted() {
-        return pkService.isPKUserMuted();
-    }
-
-    public void muteAnotherHostAudio(boolean mute, ZegoUIKitCallback callback) {
-        pkService.mutePKUser(mute, new IZegoMixerStartCallback() {
-            @Override
-            public void onMixerStartResult(int errorCode, JSONObject extendedData) {
-                if (callback != null) {
-                    callback.onResult(errorCode);
-                }
-            }
-        });
     }
 
     public void setPrebuiltConfig(ZegoUIKitPrebuiltLiveStreamingConfig config) {
@@ -559,42 +518,6 @@ public class ZegoLiveStreamingManager {
 
     public ZegoUIKitPrebuiltLiveStreamingConfig getPrebuiltConfig() {
         return liveConfig;
-    }
-
-
-    public PKRequest getSendPKStartRequest() {
-        return pkService.getSendPKStartRequest();
-    }
-
-    public void sendPKBattleRequest(String anotherHostUserID, int timeout, String customData,
-        UserRequestCallback callback) {
-        pkService.sendPKBattlesStartRequest(anotherHostUserID, timeout, customData, callback);
-    }
-
-    public void sendPKBattleRequest(String anotherHostUserID, UserRequestCallback callback) {
-        pkService.sendPKBattlesStartRequest(anotherHostUserID, 60, "", callback);
-    }
-
-    public void cancelPKBattleRequest(UserRequestCallback callback) {
-        pkService.cancelPKBattleStartRequest("", callback);
-    }
-
-    public void cancelPKBattleRequest(String customData, UserRequestCallback callback) {
-        pkService.cancelPKBattleStartRequest(customData, callback);
-    }
-
-    public void startPKBattleWith(String anotherHostLiveID, String anotherHostUserID, String anotherHostName) {
-        pkService.startPKBattleWith(anotherHostLiveID, anotherHostUserID, anotherHostName);
-    }
-
-    public void addLiveStreamingListener(ZegoLiveStreamingListener listener) {
-        pkService.addListener(listener);
-        liveStreamingListenerList.add(listener);
-    }
-
-    public void removeLiveStreamingListener(ZegoLiveStreamingListener listener) {
-        pkService.removeListener(listener);
-        liveStreamingListenerList.remove(listener);
     }
 
     public void removeRoomListeners() {
@@ -633,10 +556,6 @@ public class ZegoLiveStreamingManager {
         ZegoUIKit.stopPublishingStream();
     }
 
-    public void unMuteAllAudioVideo() {
-        resumePlayingAllAudioVideo(true);
-    }
-
     void resumePlayingAllAudioVideo(boolean startByUser) {
         Timber.d("resumePlayingAllAudioVideo() called with: startByUser = [" + startByUser + "]");
         if (muteByUser) {
@@ -653,8 +572,17 @@ public class ZegoLiveStreamingManager {
         }
     }
 
-    public void muteAllAudioVideo() {
-        pausePlayingAllAudioVideo(true);
+    public void renewToken(String token) {
+        ZegoUIKit.renewToken(token);
+        ZegoUIKit.getSignalingPlugin().renewToken(token);
+    }
+
+    public void addPKListener(PKListener pkListener) {
+        pkService.addListener(pkListener);
+    }
+
+    public void removePKListener(PKListener pkListener) {
+        pkService.removeListener(pkListener);
     }
 
     void pausePlayingAllAudioVideo(boolean muteByUser) {
@@ -683,6 +611,165 @@ public class ZegoLiveStreamingManager {
             }
         });
     }
+
+    /**
+     * use {@link Common#unMuteAllAudioVideo()} instead.
+     */
+    @Deprecated
+    public void unMuteAllAudioVideo() {
+        resumePlayingAllAudioVideo(true);
+    }
+
+    /**
+     * use {@link Common#muteAllAudioVideo()} instead.
+     */
+    @Deprecated
+    public void muteAllAudioVideo() {
+        pausePlayingAllAudioVideo(true);
+    }
+
+    /**
+     * use {@link PK#acceptIncomingPKBattleRequest(String, String, ZegoUIKitUser, String)}  instead.
+     */
+    @Deprecated
+    public void acceptIncomingPKBattleRequest(String requestID, String anotherHostLiveID, ZegoUIKitUser anotherHostUser,
+        String customData) {
+        pkService.acceptPKBattleStartRequest(requestID, anotherHostLiveID, anotherHostUser, customData);
+    }
+
+    /**
+     * use {@link PK#acceptIncomingPKBattleRequest(String, String, ZegoUIKitUser)}   instead.
+     */
+    @Deprecated
+    public void acceptIncomingPKBattleRequest(String requestID, String anotherHostLiveID,
+        ZegoUIKitUser anotherHostUser) {
+        pkService.acceptPKBattleStartRequest(requestID, anotherHostLiveID, anotherHostUser, "");
+    }
+
+    /**
+     * use {@link PK#rejectPKBattleStartRequest(String)} instead.
+     */
+    @Deprecated
+    public void rejectPKBattleStartRequest(String requestID) {
+        pkService.rejectPKBattleStartRequest(requestID, ZegoLiveStreamingPKBattleRejectCode.HOST_REJECT.ordinal());
+    }
+
+    /**
+     * use {@link PK#isAnotherHostMuted()} instead.
+     */
+    @Deprecated
+    public boolean isAnotherHostMuted() {
+        return pkService.isPKUserMuted();
+    }
+
+    /**
+     * use {@link PK#muteAnotherHostAudio(boolean, ZegoUIKitCallback)} instead.
+     */
+    @Deprecated
+    public void muteAnotherHostAudio(boolean mute, ZegoUIKitCallback callback) {
+        pkService.mutePKUser(mute, new IZegoMixerStartCallback() {
+            @Override
+            public void onMixerStartResult(int errorCode, JSONObject extendedData) {
+                if (callback != null) {
+                    callback.onResult(errorCode);
+                }
+            }
+        });
+    }
+
+    /**
+     * use {@link Common#showTopTips(String, boolean)} instead.
+     */
+    @Deprecated
+    public void showTopTips(String message, boolean green) {
+        if (uiCallBack != null) {
+            uiCallBack.showTopTips(message, green);
+        }
+    }
+
+    /**
+     * use {@link PK#startPKBattleWith(String, String, String)} instead.
+     */
+    @Deprecated
+    public void startPKBattleWith(String anotherHostLiveID, String anotherHostUserID, String anotherHostName) {
+        pkService.startPKBattleWith(anotherHostLiveID, anotherHostUserID, anotherHostName);
+    }
+
+    /**
+     * use {@link PK#getSendPKStartRequest()} instead.
+     */
+    @Deprecated
+    public PKRequest getSendPKStartRequest() {
+        return pkService.getSendPKStartRequest();
+    }
+
+    /**
+     * use {@link PK#sendPKBattleRequest(String, int, String, UserRequestCallback)}  instead.
+     */
+    @Deprecated
+    public void sendPKBattleRequest(String anotherHostUserID, int timeout, String customData,
+        UserRequestCallback callback) {
+        pkService.sendPKBattlesStartRequest(anotherHostUserID, timeout, customData, callback);
+    }
+
+    /**
+     * use {@link PK#sendPKBattleRequest(String, UserRequestCallback)} instead.
+     */
+    @Deprecated
+    public void sendPKBattleRequest(String anotherHostUserID, UserRequestCallback callback) {
+        pkService.sendPKBattlesStartRequest(anotherHostUserID, 60, "", callback);
+    }
+
+    /**
+     * use {@link PK#cancelPKBattleRequest(UserRequestCallback)} instead.
+     */
+    @Deprecated
+    public void cancelPKBattleRequest(UserRequestCallback callback) {
+        pkService.cancelPKBattleStartRequest("", callback);
+    }
+
+    /**
+     * use {@link PK#cancelPKBattleRequest(String, UserRequestCallback)} instead.
+     */
+    @Deprecated
+    public void cancelPKBattleRequest(String customData, UserRequestCallback callback) {
+        pkService.cancelPKBattleStartRequest(customData, callback);
+    }
+
+    /**
+     * use {@link PK#stopPKBattle()}
+     */
+    @Deprecated
+    public void stopPKBattle() {
+        pkService.sendPKBattlesStopRequest();
+    }
+
+    /**
+     * use {@link PK#getPKInfo()} instead.
+     */
+    @Deprecated
+    public PKInfo getPKInfo() {
+        return pkService.getPKInfo();
+    }
+
+    /**
+     * use {@link PK#getPKInfo()} instead.
+     */
+    @Deprecated
+    public void addLiveStreamingListener(ZegoLiveStreamingListener listener) {
+        pkService.addListener(listener);
+        liveStreamingListenerList.add(listener);
+    }
+
+    /**
+     * use {@link PK#getPKInfo()} instead.
+     */
+    @Deprecated
+    public void removeLiveStreamingListener(ZegoLiveStreamingListener listener) {
+        pkService.removeListener(listener);
+        liveStreamingListenerList.remove(listener);
+    }
+
 
     public interface ZegoLiveStreamingListener extends PKListener {
 

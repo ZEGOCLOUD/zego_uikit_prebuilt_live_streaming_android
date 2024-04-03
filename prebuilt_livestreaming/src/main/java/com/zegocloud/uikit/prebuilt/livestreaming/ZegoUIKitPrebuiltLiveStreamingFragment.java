@@ -101,6 +101,21 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         return fragment;
     }
 
+    public static ZegoUIKitPrebuiltLiveStreamingFragment newInstanceWithToken(long appID, String token, String userID,
+        String userName, String liveID, ZegoUIKitPrebuiltLiveStreamingConfig config) {
+        ZegoUIKitPrebuiltLiveStreamingFragment fragment = new ZegoUIKitPrebuiltLiveStreamingFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong("appID", appID);
+        bundle.putString("appToken", token);
+        bundle.putString("liveID", liveID);
+        bundle.putString("userID", userID);
+        bundle.putString("userName", userName);
+        fragment.setArguments(bundle);
+
+        ZegoLiveStreamingManager.getInstance().setPrebuiltConfig(config);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,9 +124,13 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         String appSign = arguments.getString("appSign");
         String userName = arguments.getString("userName");
         String userID = arguments.getString("userID");
+        String token = arguments.getString("appToken");
 
         if (appID != 0) {
             ZegoLiveStreamingManager.getInstance().init(requireActivity().getApplication(), appID, appSign);
+            if (!TextUtils.isEmpty(token)) {
+                ZegoLiveStreamingManager.getInstance().renewToken(token);
+            }
             ZegoLiveStreamingManager.getInstance().login(userID, userName, new ZegoUIKitCallback() {
                 @Override
                 public void onResult(int errorCode) {
@@ -393,7 +412,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             @Override
             public void onRoomPropertiesFullUpdated(List<String> updateKeys, Map<String, String> oldProperties,
                 Map<String, String> properties) {
-                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
+                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance()
+                    .getPrebuiltConfig();
                 if (config.role == ZegoLiveStreamingRole.HOST) {
                     String currentUserID = ZegoUIKit.getLocalUser().userID;
                     boolean thereIsHostInRoom = false;
@@ -509,7 +529,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         ZegoUIKit.addOnMeRemovedFromRoomListener(new ZegoMeRemovedFromRoomListener() {
             @Override
             public void onMeRemovedFromRoom() {
-                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
+                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance()
+                    .getPrebuiltConfig();
                 if (config.removedFromRoomListener == null) {
                     leaveRoom();
                     requireActivity().finish();
@@ -881,7 +902,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             public void onResult(boolean allGranted, @NonNull List<String> grantedList,
                 @NonNull List<String> deniedList) {
                 String localUserID = ZegoUIKit.getLocalUser().userID;
-                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
+                ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance()
+                    .getPrebuiltConfig();
                 ZegoUIKit.turnCameraOn(localUserID, config.turnOnCameraWhenCohosted);
                 ZegoUIKit.turnMicrophoneOn(localUserID, true);
                 ZegoLiveStreamingManager.getInstance().setCurrentRole(ZegoLiveStreamingRole.COHOST);
