@@ -753,7 +753,7 @@ public class ZegoLiveStreamingManager {
     }
 
     /**
-     * use {@link PK#getPKInfo()} instead.
+     * use {@link com.zegocloud.uikit.prebuilt.livestreaming.api.pk.Events#setPKListener(PKListener)}  instead.
      */
     @Deprecated
     public void addLiveStreamingListener(ZegoLiveStreamingListener listener) {
@@ -762,7 +762,7 @@ public class ZegoLiveStreamingManager {
     }
 
     /**
-     * use {@link PK#getPKInfo()} instead.
+     * use {@link com.zegocloud.uikit.prebuilt.livestreaming.api.pk.Events#setPKListener(PKListener)}  instead.
      */
     @Deprecated
     public void removeLiveStreamingListener(ZegoLiveStreamingListener listener) {
