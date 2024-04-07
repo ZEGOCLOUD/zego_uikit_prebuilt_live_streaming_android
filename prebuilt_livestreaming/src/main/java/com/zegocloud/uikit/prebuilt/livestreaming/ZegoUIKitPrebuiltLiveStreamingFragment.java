@@ -129,7 +129,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         if (appID != 0) {
             ZegoLiveStreamingManager.getInstance().init(requireActivity().getApplication(), appID, appSign);
             if (!TextUtils.isEmpty(token)) {
-                ZegoLiveStreamingManager.getInstance().renewToken(token);
+                ZegoUIKit.renewToken(token);
             }
             ZegoLiveStreamingManager.getInstance().login(userID, userName, new ZegoUIKitCallback() {
                 @Override
