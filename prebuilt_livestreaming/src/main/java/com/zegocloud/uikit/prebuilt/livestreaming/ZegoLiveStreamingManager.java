@@ -572,11 +572,6 @@ public class ZegoLiveStreamingManager {
         }
     }
 
-    public void renewToken(String token) {
-        ZegoUIKit.renewToken(token);
-        ZegoUIKit.getSignalingPlugin().renewToken(token);
-    }
-
     public void addPKListener(PKListener pkListener) {
         pkService.addListener(pkListener);
     }
