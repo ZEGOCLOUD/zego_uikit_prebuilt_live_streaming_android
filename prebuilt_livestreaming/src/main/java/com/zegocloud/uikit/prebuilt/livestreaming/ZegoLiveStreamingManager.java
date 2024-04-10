@@ -5,6 +5,8 @@ import android.content.Context;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
+import com.zegocloud.uikit.prebuilt.livestreaming.api.ZegoUIKitPrebuiltLiveStreamingService;
+import com.zegocloud.uikit.prebuilt.livestreaming.api.common.RoleChangedListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
@@ -494,6 +496,10 @@ public class ZegoLiveStreamingManager {
         boolean notifyChange = currentRole != liveStreamingRole;
         currentRole = liveStreamingRole;
         if (notifyChange) {
+            RoleChangedListener roleChangedListener = ZegoUIKitPrebuiltLiveStreamingService.common.events.getRoleChangedListener();
+            if (roleChangedListener != null) {
+                roleChangedListener.onRoleChanged(currentRole);
+            }
             for (ZegoLiveStreamingListener listener : liveStreamingListenerList) {
                 listener.onRoleChanged(currentRole);
             }
@@ -748,7 +754,13 @@ public class ZegoLiveStreamingManager {
     }
 
     /**
-     * use {@link com.zegocloud.uikit.prebuilt.livestreaming.api.pk.Events#setPKListener(PKListener)}  instead.
+     * if listen to PK events, use
+     * {@link com.zegocloud.uikit.prebuilt.livestreaming.api.pk.Events#setPKListener(PKListener)}  instead.
+     * <p>
+     * <p>
+     * if listen to roleChanged events, use
+     * {@link com.zegocloud.uikit.prebuilt.livestreaming.api.common.Events#setRoleChangedListener(RoleChangedListener)}
+     * instead
      */
     @Deprecated
     public void addLiveStreamingListener(ZegoLiveStreamingListener listener) {
@@ -757,7 +769,13 @@ public class ZegoLiveStreamingManager {
     }
 
     /**
-     * use {@link com.zegocloud.uikit.prebuilt.livestreaming.api.pk.Events#setPKListener(PKListener)}  instead.
+     * if listen to PK events, use
+     * {@link com.zegocloud.uikit.prebuilt.livestreaming.api.pk.Events#setPKListener(PKListener)}  instead.
+     * <p>
+     * <p>
+     * if listen to roleChanged events, use
+     * {@link com.zegocloud.uikit.prebuilt.livestreaming.api.common.Events#setRoleChangedListener(RoleChangedListener)}
+     * instead
      */
     @Deprecated
     public void removeLiveStreamingListener(ZegoLiveStreamingListener listener) {

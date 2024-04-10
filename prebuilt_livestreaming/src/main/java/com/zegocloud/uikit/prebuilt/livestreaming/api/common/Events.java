@@ -6,6 +6,7 @@ import com.zegocloud.uikit.service.express.IExpressEngineEventHandler;
 public class Events {
 
     private IExpressEngineEventHandler expressEngineEventHandler;
+    private RoleChangedListener roleChangedListener;
 
     public void setExpressEngineEventHandler(IExpressEngineEventHandler eventHandler) {
         if (this.expressEngineEventHandler != null) {
@@ -15,5 +16,13 @@ public class Events {
         if (eventHandler != null) {
             ZegoUIKit.addEventHandler(eventHandler);
         }
+    }
+
+    public void setRoleChangedListener(RoleChangedListener listener) {
+        this.roleChangedListener = roleChangedListener;
+    }
+
+    public RoleChangedListener getRoleChangedListener() {
+        return roleChangedListener;
     }
 }
