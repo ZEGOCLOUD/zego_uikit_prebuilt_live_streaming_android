@@ -1,6 +1,7 @@
 package com.zegocloud.uikit.prebuilt.livestreaming.api.common;
 
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.service.express.IExpressEngineEventHandler;
 
 public class Events {
@@ -18,11 +19,11 @@ public class Events {
         }
     }
 
-    public void setRoleChangedListener(RoleChangedListener listener) {
-        this.roleChangedListener = roleChangedListener;
+    public void addRoleChangedListener(RoleChangedListener listener) {
+        ZegoLiveStreamingManager.getInstance().addRoleListener(listener);
     }
 
-    public RoleChangedListener getRoleChangedListener() {
-        return roleChangedListener;
+    public void removeRoleChangedListener(RoleChangedListener listener) {
+        ZegoLiveStreamingManager.getInstance().removeRoleListener();
     }
 }

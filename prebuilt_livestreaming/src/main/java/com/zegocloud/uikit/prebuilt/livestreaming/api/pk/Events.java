@@ -7,13 +7,11 @@ public class Events {
 
     private PKListener listener;
 
-    public void setPKListener(PKListener listener) {
-        if (this.listener != null) {
-            ZegoLiveStreamingManager.getInstance().removePKListener(this.listener);
-        }
-        this.listener = listener;
-        if (listener != null) {
-            ZegoLiveStreamingManager.getInstance().addPKListener(listener);
-        }
+    public void addPKListener(PKListener listener) {
+        ZegoLiveStreamingManager.getInstance().addPKListener(listener);
+    }
+
+    public void removePKListener(PKListener listener) {
+        ZegoLiveStreamingManager.getInstance().removePKListener(listener);
     }
 }
