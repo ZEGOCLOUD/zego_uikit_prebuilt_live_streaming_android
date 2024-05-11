@@ -13,8 +13,8 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.FragmentActivity;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
-import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.RTCRoomProperty;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,29 +84,62 @@ public class ZegoStartLiveButton extends androidx.appcompat.widget.AppCompatButt
         if (getContext() instanceof FragmentActivity) {
             PermissionX.init((FragmentActivity) getContext()).permissions(permissions).onExplainRequestReason((scope, deniedList) -> {
                 String message = "";
+                String camera = "";
+                String mic = "";
+                String settings = "";
+                String cancel = "";
+                String ok = "";
+                String micAndCamera = "";
+                String settingsCamera = "";
+                String settingsMic = "";
+                String settingsMicAndCamera = "";
+                ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+                if (translationText != null) {
+                    camera = translationText.permissionExplainCamera;
+                    mic = translationText.permissionExplainMic;
+                    micAndCamera = translationText.permissionExplainMicAndCamera;
+                    settings = translationText.settings;
+                    cancel = translationText.cancel;
+                    settingsCamera = translationText.settingCamera;
+                    settingsMic = translationText.settingMic;
+                    settingsMicAndCamera = translationText.settingMicAndCamera;
+                    ok = translationText.ok;
+                }
                 if (deniedList.size() == 1) {
                     if (deniedList.contains(permission.CAMERA)) {
-                        message = getContext().getString(R.string.livestreaming_permission_explain_camera);
+                        message = camera;
                     } else if (deniedList.contains(permission.RECORD_AUDIO)) {
-                        message = getContext().getString(R.string.livestreaming_permission_explain_mic);
+                        message = mic;
                     }
                 } else {
-                    message = getContext().getString(R.string.livestreaming_permission_explain_camera_mic);
+                    message = micAndCamera;
                 }
-                scope.showRequestReasonDialog(deniedList, message, getContext().getString(R.string.livestreaming_ok));
+                scope.showRequestReasonDialog(deniedList, message,ok);
             }).onForwardToSettings((scope, deniedList) -> {
                 String message = "";
+                String settings = "";
+                String cancel = "";
+                String settingsCamera = "";
+                String settingsMic = "";
+                String settingsMicAndCamera = "";
+                ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+                if (translationText != null) {
+                    settings = translationText.settings;
+                    cancel = translationText.cancel;
+                    settingsCamera = translationText.settingCamera;
+                    settingsMic = translationText.settingMic;
+                    settingsMicAndCamera = translationText.settingMicAndCamera;
+                }
                 if (deniedList.size() == 1) {
                     if (deniedList.contains(permission.CAMERA)) {
-                        message = getContext().getString(R.string.livestreaming_settings_camera);
+                        message = settingsCamera;
                     } else if (deniedList.contains(permission.RECORD_AUDIO)) {
-                        message = getContext().getString(R.string.livestreaming_settings_mic);
+                        message = settingsMic;
                     }
                 } else {
-                    message = getContext().getString(R.string.livestreaming_settings_camera_mic);
+                    message = settingsMicAndCamera;
                 }
-                scope.showForwardToSettingsDialog(deniedList, message, getContext().getString(R.string.livestreaming_settings),
-                    getContext().getString(R.string.livestreaming_cancel));
+                scope.showForwardToSettingsDialog(deniedList, message, settings, cancel);
             }).request(new RequestCallback() {
                 @Override
                 public void onResult(boolean allGranted, @NonNull List<String> grantedList,

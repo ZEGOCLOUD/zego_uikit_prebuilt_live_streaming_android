@@ -47,12 +47,10 @@ public class InviteCoHostDialog extends Dialog {
         childParent.setBackgroundResource(R.drawable.livestreaming_bg_bottom_menu_dialog);
         rootView.addView(childParent);
 
-
         TextView removeUserButton = new TextView(getContext());
-        removeUserButton.setText(getContext().getString(R.string.livestreaming_remove_user, userInfo.userName));
         ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null && translationText.removeUserMenuDialogButton != null) {
-            removeUserButton.setText(String.format(translationText.removeUserMenuDialogButton,userInfo.userName));
+            removeUserButton.setText(String.format(translationText.removeUserMenuDialogButton, userInfo.userName));
         }
         removeUserButton.setTextColor(Color.WHITE);
         removeUserButton.setTextSize(14);
@@ -92,7 +90,9 @@ public class InviteCoHostDialog extends Dialog {
             new LinearLayout.LayoutParams(-1, Utils.dp2px(1, getContext().getResources().getDisplayMetrics())));
 
         TextView cancelButton = new TextView(getContext());
-        cancelButton.setText(R.string.livestreaming_cancel);
+        if (translationText != null) {
+            cancelButton.setText(translationText.cancel);
+        }
         cancelButton.setTextColor(Color.WHITE);
         cancelButton.setTextSize(14);
         cancelButton.setGravity(Gravity.CENTER);

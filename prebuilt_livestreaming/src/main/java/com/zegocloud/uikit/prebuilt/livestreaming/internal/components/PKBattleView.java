@@ -18,6 +18,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager.ZegoLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingPKBattleConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltAudioVideoViewConfig;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingLayoutPkBinding;
@@ -330,7 +331,10 @@ public class PKBattleView extends FrameLayout {
         textView.setGravity(Gravity.CENTER);
         textView.setTextColor(Color.WHITE);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-        textView.setText(R.string.livestreaming_pk_host_reconnected);
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+        if (translationText != null) {
+            textView.setText(translationText.hostReconnecting);
+        }
         return textView;
     }
 

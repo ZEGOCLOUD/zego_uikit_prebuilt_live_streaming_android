@@ -3,8 +3,12 @@ package com.zegocloud.uikit.prebuilt.livestreaming;
 import android.app.Application;
 import android.content.Context;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.internal.ZegoUIKitLanguage;
+import com.zegocloud.uikit.plugin.adapter.plugins.beauty.ZegoBeautyPluginInnerTextCHS;
+import com.zegocloud.uikit.plugin.adapter.plugins.beauty.ZegoBeautyPluginInnerTextEnglish;
 import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
+import com.zegocloud.uikit.prebuilt.livestreaming.api.ZegoUIKitPrebuiltLiveStreamingService;
 import com.zegocloud.uikit.prebuilt.livestreaming.api.common.Common;
 import com.zegocloud.uikit.prebuilt.livestreaming.api.common.RoleChangedListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.api.pk.PK;
@@ -73,7 +77,6 @@ public class ZegoLiveStreamingManager {
     private CopyOnWriteArrayList<ZegoLiveStreamingListener> liveStreamingListenerList = new CopyOnWriteArrayList<>();
     private CopyOnWriteArrayList<RoleChangedListener> roleChangedListeners = new CopyOnWriteArrayList<>();
     private ZegoLiveStreamingRole currentRole;
-    private ZegoTranslationText translationText;
     private RTCRoomProperty rtcRoomProperty = new RTCRoomProperty();
     private boolean muteByUser = false;
     private List<String> coHostInvitations = new ArrayList<>();
@@ -85,6 +88,14 @@ public class ZegoLiveStreamingManager {
         if (liveConfig.bottomMenuBarConfig.hostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
             || liveConfig.bottomMenuBarConfig.coHostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
             || liveConfig.bottomMenuBarConfig.audienceButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)) {
+            if (liveConfig.translationText != null) {
+                ZegoUIKitLanguage language = liveConfig.translationText.getLanguage();
+                if (language == ZegoUIKitLanguage.CHS) {
+                    liveConfig.beautyConfig.innerText = new ZegoBeautyPluginInnerTextCHS();
+                } else {
+                    liveConfig.beautyConfig.innerText = new ZegoBeautyPluginInnerTextEnglish();
+                }
+            }
             ZegoUIKit.getBeautyPlugin().setZegoBeautyPluginConfig(liveConfig.beautyConfig);
             ZegoUIKit.getBeautyPlugin().init(application, appID, appSign);
         }
@@ -226,11 +237,11 @@ public class ZegoLiveStreamingManager {
                             // and the host refused my cohost request
                             removeUserStatusAndCheck(invitee.userID);
                             if (uiCallBack != null) {
-                                String string = context.getString(R.string.livestreaming_host_reject_co_host_tips);
-                                if (translationText != null && translationText.hostRejectCoHostRequestToast != null) {
-                                    string = translationText.hostRejectCoHostRequestToast;
+                                String string = "";
+                                if (liveConfig.translationText != null && liveConfig.translationText.hostRejectCoHostRequestToast != null) {
+                                    string = liveConfig.translationText.hostRejectCoHostRequestToast;
                                 }
-                                showTopTips(string, false);
+                                ZegoUIKitPrebuiltLiveStreamingService.common.showTopTips(string, false);
                             }
                             if (uiCallBack != null) {
                                 uiCallBack.showRequestCoHostButton();
@@ -240,13 +251,12 @@ public class ZegoLiveStreamingManager {
                             // and the audience refused my cohost invite
                             removeUserStatus(invitee.userID);
                             if (uiCallBack != null) {
-                                String string = context.getString(R.string.livestreaming_refuse_co_host_tips,
-                                    invitee.userName);
-                                if (translationText != null && translationText.audienceRejectInvitationToast != null) {
-                                    string = String.format(translationText.audienceRejectInvitationToast,
+                                String string = "";
+                                if (liveConfig.translationText != null && liveConfig.translationText.audienceRejectInvitationToast != null) {
+                                    string = String.format(liveConfig.translationText.audienceRejectInvitationToast,
                                         invitee.userName);
                                 }
-                                showTopTips(string, false);
+                                ZegoUIKitPrebuiltLiveStreamingService.common.showTopTips(string, false);
                             }
                         }
                     }
@@ -312,13 +322,16 @@ public class ZegoLiveStreamingManager {
                     }
                 }
                 if (!cancelList.isEmpty()) {
-                    ZegoUIKit.getSignalingPlugin().cancelInvitation(cancelList, "", null);
+                    ZegoUIKit.getSignalingPlugin().cancelInvitation(cancelList, "", new PluginCallbackListener() {
+                        @Override
+                        public void callback(Map<String, Object> result) {
+                        }
+                    });
                 }
                 for (String userID : refuseList) {
                     ZegoUIKit.getSignalingPlugin().refuseInvitation(userID, "", new PluginCallbackListener() {
                         @Override
                         public void callback(Map<String, Object> result) {
-
                         }
                     });
                 }
@@ -470,12 +483,8 @@ public class ZegoLiveStreamingManager {
         return localUser != null && !isCurrentUserHost() && (localUser.isMicrophoneOn || localUser.isCameraOn);
     }
 
-    public void setTranslationText(ZegoTranslationText translationText) {
-        this.translationText = translationText;
-    }
-
     public ZegoTranslationText getTranslationText() {
-        return translationText;
+        return liveConfig.translationText;
     }
 
     public void setPrebuiltUiCallBack(PrebuiltUICallBack uiCallBack) {
@@ -519,6 +528,9 @@ public class ZegoLiveStreamingManager {
 
     public void setPrebuiltConfig(ZegoUIKitPrebuiltLiveStreamingConfig config) {
         this.liveConfig = config;
+        if (config.translationText != null) {
+            ZegoUIKit.setLanguage(config.translationText.getLanguage());
+        }
     }
 
     public ZegoUIKitPrebuiltLiveStreamingConfig getPrebuiltConfig() {

@@ -1,33 +1,115 @@
 package com.zegocloud.uikit.prebuilt.livestreaming.core;
 
+import com.zegocloud.uikit.internal.ZegoUIKitLanguage;
+
 public class ZegoTranslationText {
 
-    public String startLiveStreamingButton = "Start";
-    public String endCoHostButton = "End";
-    public String requestCoHostButton = "Apply to co-host";
-    public String cancelRequestCoHostButton = "Cancel the application";
-    public String removeCoHostButton = "Remove the co-host";
-    public String inviteCoHostButton = "Invite %s to co-host";
-    public String removeUserMenuDialogButton = "remove %s from the room";
-    public String cancelMenuDialogButton = "Cancel";
+    public String startLiveStreamingButton;
+    public String endCoHostButton;
+    public String requestCoHostButton;
+    public String cancelRequestCoHostButton;
+    public String removeCoHostButton;
+    public String inviteCoHostButton;
+    public String removeUserMenuDialogButton;
+    public String cancelMenuDialogButton;
 
-    public String noHostOnline = "No host is online.";
-    public String memberListTitle = "Audience";
+    public String noHostOnline;
+    public String memberListTitle;
 
-    public String sendRequestCoHostToast = "You are applying to be a co-host, please wait for confirmation.";
-    public String hostRejectCoHostRequestToast = "Your request to co-host with the host has been refused.";
-    public String inviteCoHostFailedToast = "Failed to connect with the co-host, please try again.";
-    public String repeatInviteCoHostFailedToast = "You've sent the co-host invitation, please wait for confirmation.";
-    public String audienceRejectInvitationToast = "%s refused to be a co-host.";
-    public String requestCoHostFailed = "Failed to apply for connection.";
+    public String sendRequestCoHostToast;
+    public String hostRejectCoHostRequestToast;
+    public String inviteCoHostFailedToast;
+    public String repeatInviteCoHostFailedToast;
+    public String audienceRejectInvitationToast;
+    public String requestCoHostFailed;
+
+    public String coHostEndBecausePK;
+
+    public String permissionExplainCamera;
+    public String permissionExplainMic;
+    public String permissionExplainMicAndCamera;
+    public String settingCamera;
+    public String settingMic;
+    public String settingMicAndCamera;
+    public String ok;
+    public String cancel;
+    public String settings;
+
+    public String you;
+    public String cohost;
+    public String host;
+
+    public String agree;
+    public String disagree;
+
+    public String hostReconnecting;
+
+    public ZegoDialogInfo receivedCoHostRequestDialogInfo;
+    public ZegoDialogInfo receivedCoHostInvitationDialogInfo;
+    public ZegoDialogInfo endConnectionDialogInfo;
+    public ZegoDialogInfo stopLiveDialogInfo;
 
 
-    public String coHostEndBecausePK = "Host has started pk,cohost is ended";
+    private LanguageText languageText = new LanguageTextEnglish();
 
-    public ZegoDialogInfo receivedCoHostRequestDialogInfo = new ZegoDialogInfo("Co-host request",
-        "%s wants to co-host with you.", "Disagree", "Agree");
-    public ZegoDialogInfo receivedCoHostInvitationDialogInfo = new ZegoDialogInfo("Invitation",
-        "The host is inviting you to co-host.", "Disagree", "Agree");
-    public ZegoDialogInfo endConnectionDialogInfo = new ZegoDialogInfo("End the connection",
-        "Do you want to end the cohosting?");
+    public LanguageText getLanguageText() {
+        return languageText;
+    }
+
+    public ZegoTranslationText() {
+        languageText = new LanguageTextEnglish();
+    }
+
+    public ZegoTranslationText(ZegoUIKitLanguage language) {
+        if (language == ZegoUIKitLanguage.CHS) {
+            languageText = new LanguageTextCHS();
+        }
+        startLiveStreamingButton = languageText.startLiveStreamingButton;
+        endCoHostButton = languageText.endCoHostButton;
+        requestCoHostButton = languageText.requestCoHostButton;
+        cancelRequestCoHostButton = languageText.cancelRequestCoHostButton;
+        removeCoHostButton = languageText.removeCoHostButton;
+        inviteCoHostButton = languageText.inviteCoHostButton;
+        removeUserMenuDialogButton = languageText.removeUserMenuDialogButton;
+        cancelMenuDialogButton = languageText.cancelMenuDialogButton;
+
+        noHostOnline = languageText.noHostOnline;
+        memberListTitle = languageText.memberListTitle;
+
+        sendRequestCoHostToast = languageText.sendRequestCoHostToast;
+        hostRejectCoHostRequestToast = languageText.hostRejectCoHostRequestToast;
+        inviteCoHostFailedToast = languageText.inviteCoHostFailedToast;
+        repeatInviteCoHostFailedToast = languageText.repeatInviteCoHostFailedToast;
+        audienceRejectInvitationToast = languageText.audienceRejectInvitationToast;
+        requestCoHostFailed = languageText.requestCoHostFailed;
+
+        permissionExplainCamera = languageText.permissionExplainCamera;
+        permissionExplainMic = languageText.permissionExplainMic;
+        permissionExplainMicAndCamera = languageText.permissionExplainMicAndCamera;
+        settingCamera = languageText.settingCamera;
+        settingMic = languageText.settingMic;
+        settingMicAndCamera = languageText.settingMicAndCamera;
+        ok = languageText.ok;
+        cancel = languageText.cancel;
+        settings = languageText.settings;
+        you = languageText.you;
+        cohost = languageText.cohost;
+        host = languageText.host;
+
+        agree = languageText.agree;
+        disagree = languageText.disagree;
+        hostReconnecting = languageText.hostReconnecting;
+
+        receivedCoHostRequestDialogInfo = languageText.receivedCoHostRequestDialogInfo;
+        receivedCoHostInvitationDialogInfo = languageText.receivedCoHostInvitationDialogInfo;
+        endConnectionDialogInfo = languageText.endConnectionDialogInfo;
+        stopLiveDialogInfo = languageText.stopLiveDialogInfo;
+    }
+
+    public ZegoUIKitLanguage getLanguage() {
+        if (languageText instanceof LanguageTextCHS) {
+            return ZegoUIKitLanguage.CHS;
+        }
+        return ZegoUIKitLanguage.ENGLISH;
+    }
 }

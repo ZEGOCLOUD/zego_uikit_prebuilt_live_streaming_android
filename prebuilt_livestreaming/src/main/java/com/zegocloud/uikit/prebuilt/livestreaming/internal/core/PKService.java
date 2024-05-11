@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
@@ -34,6 +35,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
+import timber.log.Timber;
 
 public class PKService {
 
@@ -156,6 +158,7 @@ public class PKService {
     }
 
     public void onInvitationAccepted(ZegoUIKitUser invitee, String data) {
+        Timber.d("onInvitationAccepted() called with: invitee = [" + invitee + "], data = [" + data + "]");
         String invitationID = getStringFromJson(getJsonObjectFromString(data), "invitationID");
         PKExtendedData pkExtendedData = PKExtendedData.parse(data);
         if (pkExtendedData != null && invitationID != null) {

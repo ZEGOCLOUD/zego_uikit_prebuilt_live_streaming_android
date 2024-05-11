@@ -249,7 +249,6 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             });
         }
 
-        ZegoLiveStreamingManager.getInstance().setTranslationText(config.translationText);
         ZegoLiveStreamingManager.getInstance().setPrebuiltUiCallBack(this);
 
         initPreviewBtns();
@@ -282,8 +281,6 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 if (ZegoLiveStreamingManager.getInstance().isCurrentUserCoHost()) {
                     if (config.translationText != null && config.translationText.coHostEndBecausePK != null) {
                         showTopTips(config.translationText.coHostEndBecausePK, true);
-                    } else {
-                        showTopTips(getString(R.string.livestreaming_cohost_end_because_pk), true);
                     }
                 }
 
@@ -597,28 +594,32 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
     private ZegoDialogInfo getDialogInfo() {
         ZegoUIKitPrebuiltLiveStreamingConfig config = ZegoLiveStreamingManager.getInstance().getPrebuiltConfig();
-        ZegoDialogInfo dialogInfo = new ZegoDialogInfo();
-        if (config.confirmDialogInfo.title == null) {
-            dialogInfo.title = getString(R.string.livestreaming_stop_live_title);
-        } else {
-            dialogInfo.title = config.confirmDialogInfo.title;
+        if (TextUtils.isEmpty(config.confirmDialogInfo.title)) {
+            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+            if (translationText != null && translationText.stopLiveDialogInfo != null) {
+                config.confirmDialogInfo.title = translationText.stopLiveDialogInfo.title;
+            }
         }
-        if (config.confirmDialogInfo.message == null) {
-            dialogInfo.message = getString(R.string.livestreaming_stop_live_message);
-        } else {
-            dialogInfo.message = config.confirmDialogInfo.message;
+        if (TextUtils.isEmpty(config.confirmDialogInfo.message)) {
+            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+            if (translationText != null && translationText.stopLiveDialogInfo != null) {
+                config.confirmDialogInfo.message = translationText.stopLiveDialogInfo.message;
+            }
         }
-        if (config.confirmDialogInfo.confirmButtonName == null) {
-            dialogInfo.confirmButtonName = getString(R.string.livestreaming_stop_live_ok);
-        } else {
-            dialogInfo.confirmButtonName = config.confirmDialogInfo.confirmButtonName;
+        if (TextUtils.isEmpty(config.confirmDialogInfo.confirmButtonName)) {
+            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+            if (translationText != null && translationText.stopLiveDialogInfo != null) {
+                config.confirmDialogInfo.confirmButtonName = translationText.stopLiveDialogInfo.confirmButtonName;
+            }
         }
-        if (config.confirmDialogInfo.cancelButtonName == null) {
-            dialogInfo.cancelButtonName = getString(R.string.livestreaming_stop_live_cancel);
-        } else {
-            dialogInfo.cancelButtonName = config.confirmDialogInfo.cancelButtonName;
+        if (TextUtils.isEmpty(config.confirmDialogInfo.cancelButtonName)) {
+            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+            if (translationText != null && translationText.stopLiveDialogInfo != null) {
+                config.confirmDialogInfo.cancelButtonName = translationText.stopLiveDialogInfo.cancelButtonName;
+            }
         }
-        return dialogInfo;
+
+        return config.confirmDialogInfo;
     }
 
     private void initPreviewBtns() {
@@ -743,29 +744,52 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
         PermissionX.init(requireActivity()).permissions(permissions).onExplainRequestReason((scope, deniedList) -> {
             String message = "";
+            String camera = "";
+            String mic = "";
+            String ok = "";
+            String micAndCamera = "";
+            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+            if (translationText != null) {
+                camera = translationText.permissionExplainCamera;
+                mic = translationText.permissionExplainMic;
+                micAndCamera = translationText.permissionExplainMicAndCamera;
+                ok = translationText.ok;
+            }
             if (deniedList.size() == 1) {
                 if (deniedList.contains(permission.CAMERA)) {
-                    message = getContext().getString(R.string.livestreaming_permission_explain_camera);
+                    message = camera;
                 } else if (deniedList.contains(permission.RECORD_AUDIO)) {
-                    message = getContext().getString(R.string.livestreaming_permission_explain_mic);
+                    message = mic;
                 }
             } else {
-                message = getContext().getString(R.string.livestreaming_permission_explain_camera_mic);
+                message = micAndCamera;
             }
-            scope.showRequestReasonDialog(deniedList, message, getString(R.string.livestreaming_ok));
+            scope.showRequestReasonDialog(deniedList, message, ok);
         }).onForwardToSettings((scope, deniedList) -> {
             String message = "";
+            String settings = "";
+            String cancel = "";
+            String settingsCamera = "";
+            String settingsMic = "";
+            String settingsMicAndCamera = "";
+            ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+            if (translationText != null) {
+                settings = translationText.settings;
+                cancel = translationText.cancel;
+                settingsCamera = translationText.settingCamera;
+                settingsMic = translationText.settingMic;
+                settingsMicAndCamera = translationText.settingMicAndCamera;
+            }
             if (deniedList.size() == 1) {
                 if (deniedList.contains(permission.CAMERA)) {
-                    message = getContext().getString(R.string.livestreaming_settings_camera);
+                    message = settingsCamera;
                 } else if (deniedList.contains(permission.RECORD_AUDIO)) {
-                    message = getContext().getString(R.string.livestreaming_settings_mic);
+                    message = settingsMic;
                 }
             } else {
-                message = getContext().getString(R.string.livestreaming_settings_camera_mic);
+                message = settingsMicAndCamera;
             }
-            scope.showForwardToSettingsDialog(deniedList, message, getString(R.string.livestreaming_settings),
-                getString(R.string.livestreaming_cancel));
+            scope.showForwardToSettingsDialog(deniedList, message, settings, cancel);
         }).request(new RequestCallback() {
             @Override
             public void onResult(boolean allGranted, @NonNull List<String> grantedList,
@@ -845,10 +869,10 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             showCoHostButtons();
         });
 
-        String title = context.getString(R.string.livestreaming_receive_co_host_invite_title);
-        String message = context.getString(R.string.livestreaming_receive_co_host_invite_message);
-        String cancelButtonName = context.getString(R.string.livestreaming_receive_co_host_invite_cancel);
-        String confirmButtonName = context.getString(R.string.livestreaming_receive_co_host_invite_ok);
+        String title = "";
+        String message = "";
+        String cancelButtonName = "";
+        String confirmButtonName = "";
         ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null) {
             ZegoDialogInfo dialogInfo = translationText.receivedCoHostInvitationDialogInfo;

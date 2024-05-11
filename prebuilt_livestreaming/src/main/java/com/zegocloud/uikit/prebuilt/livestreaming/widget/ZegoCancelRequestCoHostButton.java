@@ -12,6 +12,7 @@ import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoCancelInvitationButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
 import java.util.Map;
@@ -31,7 +32,10 @@ public class ZegoCancelRequestCoHostButton extends ZegoCancelInvitationButton {
     @Override
     protected void initView() {
         setBackgroundResource(R.drawable.livestreaming_bg_cohost_btn);
-        setText(R.string.livestreaming_cancel_co_host);
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+        if (translationText != null) {
+            setText(translationText.cancelRequestCoHostButton);
+        }
         setTextColor(Color.WHITE);
         setTextSize(13);
         setGravity(Gravity.CENTER);

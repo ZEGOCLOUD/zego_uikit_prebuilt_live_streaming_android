@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoStartInvitationButton;
@@ -34,7 +35,10 @@ public class ZegoRemoveCoHostButton extends ZegoStartInvitationButton {
     protected void initView() {
         super.initView();
         type = LiveInvitationType.REMOVE_COHOST.getValue();
-        setText(R.string.livestreaming_remove_co_host);
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+        if (translationText != null) {
+            setText(translationText.removeCoHostButton);
+        }
         setBackground(null);
         setTextColor(Color.WHITE);
         setTextSize(14);

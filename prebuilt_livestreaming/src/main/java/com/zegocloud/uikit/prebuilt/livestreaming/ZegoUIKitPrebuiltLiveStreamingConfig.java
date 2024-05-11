@@ -4,6 +4,7 @@ import android.view.View;
 import com.zegocloud.uikit.components.audiovideo.ZegoAvatarViewProvider;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayout;
 import com.zegocloud.uikit.components.common.ZegoPresetResolution;
+import com.zegocloud.uikit.plugin.adapter.plugins.beauty.ZegoBeautyPluginConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoBottomMenuBarConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingEndListener;
@@ -16,7 +17,6 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltVideoConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ZegoLeaveLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoStartLiveButton;
-import com.zegocloud.uikit.plugin.adapter.plugins.beauty.ZegoBeautyPluginConfig;
 import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,11 +37,19 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
             ZegoMenuBarButtonName.SWITCH_CAMERA_FACING_BUTTON, ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON)),
         new ArrayList<>(Collections.singletonList(ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON)));
     public ZegoMemberListConfig memberListConfig;
+
+    /**
+     * if confirmDialogInfo is not null,a confirm dialog will show when host stop live or exit button is clicked or
+     * back button is pressed. Please use {@link ZegoTranslationText#stopLiveDialogInfo }  to custom stopLiveDialog
+     * dialog texts.
+     */
+    @Deprecated
     public ZegoDialogInfo confirmDialogInfo;
     public transient ZegoLiveStreamingEndListener zegoLiveStreamingEndListener;
     public transient ZegoLeaveLiveStreamingListener leaveLiveStreamingListener;
     public transient ZegoMeRemovedFromRoomListener removedFromRoomListener;
     public ZegoTranslationText translationText = new ZegoTranslationText();
+
     private boolean enableCoHosting;
     public boolean markAsLargeRoom = false;
     public boolean needConfirmWhenOthersTurnOnYourCamera = false;
@@ -69,8 +77,7 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
         config.role = ZegoLiveStreamingRole.HOST;
         config.turnOnCameraWhenJoining = true;
         config.turnOnMicrophoneWhenJoining = true;
-        config.confirmDialogInfo = new ZegoDialogInfo("Stop the live", "Are you sure to stop the live?", "Cancel",
-            "Stop it");
+        config.confirmDialogInfo = new ZegoDialogInfo();
         if (enableCoHosting) {
             config.bottomMenuBarConfig.audienceButtons = Collections.singletonList(
                 ZegoMenuBarButtonName.COHOST_CONTROL_BUTTON);

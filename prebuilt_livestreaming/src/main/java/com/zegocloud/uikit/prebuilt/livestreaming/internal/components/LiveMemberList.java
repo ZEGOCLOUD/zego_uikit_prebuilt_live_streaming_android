@@ -160,19 +160,25 @@ public class LiveMemberList extends BottomSheetDialog {
                         builder.append("(");
                     }
                     if (isYou) {
-                        builder.append(getContext().getString(R.string.livestreaming_you));
+                        if (translationText != null) {
+                            builder.append(translationText.you);
+                        }
                     }
                     if (isHost) {
                         if (isYou) {
                             builder.append(",");
                         }
-                        builder.append(getContext().getString(R.string.livestreaming_host));
+                        if (translationText != null) {
+                            builder.append(translationText.host);
+                        }
                     } else {
                         if (isCoHost) {
                             if (isYou) {
                                 builder.append(",");
                             }
-                            builder.append(getContext().getString(R.string.livestreaming_co_host));
+                            if (translationText != null) {
+                                builder.append(translationText.cohost);
+                            }
                         }
                     }
 
@@ -192,13 +198,19 @@ public class LiveMemberList extends BottomSheetDialog {
                     ZegoAcceptCoHostButton agree = view.findViewById(R.id.live_member_item_agree);
                     agree.setInviterID(uiKitUser.userID);
                     agree.setTextSize(14);
-                    ZegoRefuseCoHostButton disagree = view.findViewById(R.id.live_member_item_disagree);
-                    disagree.setInviterID(uiKitUser.userID);
-                    agree.setTextSize(14);
+                    if (translationText != null) {
+                        agree.setText(translationText.agree);
+                    }
                     agree.setRequestCallbackListener(v -> {
                         dismiss();
                         ZegoLiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                     });
+                    ZegoRefuseCoHostButton disagree = view.findViewById(R.id.live_member_item_disagree);
+                    disagree.setInviterID(uiKitUser.userID);
+                    disagree.setTextSize(14);
+                    if (translationText != null) {
+                        disagree.setText(translationText.disagree);
+                    }
                     disagree.setRequestCallbackListener(v -> {
                         dismiss();
                         ZegoLiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);

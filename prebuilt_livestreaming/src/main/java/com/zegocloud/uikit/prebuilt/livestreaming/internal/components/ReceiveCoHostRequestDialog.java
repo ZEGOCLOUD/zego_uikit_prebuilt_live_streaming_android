@@ -34,10 +34,10 @@ public class ReceiveCoHostRequestDialog {
             }
         });
 
-        String title = context.getString(R.string.livestreaming_receive_co_host_request_title);
-        String message = context.getString(R.string.livestreaming_receive_co_host_request_message, inviter.userName);
-        String cancelButtonName = context.getString(R.string.livestreaming_receive_co_host_request_cancel);
-        String confirmButtonName = context.getString(R.string.livestreaming_receive_co_host_request_ok);
+        String title = "";
+        String message = "";
+        String cancelButtonName = "";
+        String confirmButtonName = "";
         ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
         if (translationText != null) {
             ZegoDialogInfo dialogInfo = translationText.receivedCoHostRequestDialogInfo;
@@ -45,7 +45,7 @@ public class ReceiveCoHostRequestDialog {
                 title = dialogInfo.title;
             }
             if (dialogInfo != null && dialogInfo.message != null) {
-                message = String.format(dialogInfo.message,inviter.userName);
+                message = String.format(dialogInfo.message, inviter.userName);
             }
             if (dialogInfo != null && dialogInfo.cancelButtonName != null) {
                 cancelButtonName = dialogInfo.cancelButtonName;

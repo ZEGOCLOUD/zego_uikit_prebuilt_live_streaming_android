@@ -1,7 +1,8 @@
 package com.zegocloud.uikit.prebuilt.livestreaming.internal.components;
 
 import android.content.Context;
-import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoAcceptCoHostButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.widget.ZegoRefuseCoHostButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -27,8 +28,16 @@ public class ReceiveCoHostInviteDialog {
                 dismiss();
             }
         });
-        dialog = new ConfirmDialog.Builder(context).setTitle(R.string.livestreaming_receive_co_host_invite_title)
-            .setMessage(R.string.livestreaming_receive_co_host_invite_message).setCustomPositiveButton(acceptButton)
+        String title = "";
+        String message = "";
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+        if (translationText != null && translationText.receivedCoHostRequestDialogInfo != null) {
+            title = translationText.receivedCoHostRequestDialogInfo.title;
+            message = translationText.receivedCoHostRequestDialogInfo.message;
+        }
+        dialog = new ConfirmDialog.Builder(context).setTitle(title)
+            .setMessage(message)
+            .setCustomPositiveButton(acceptButton)
             .setCustomNegativeButton(refuseButton).build();
     }
 

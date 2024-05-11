@@ -9,7 +9,8 @@ import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoRefuseInvitationButton;
-import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import java.util.Map;
 
 public class ZegoRefuseCoHostButton extends ZegoRefuseInvitationButton {
@@ -26,7 +27,10 @@ public class ZegoRefuseCoHostButton extends ZegoRefuseInvitationButton {
 
     @Override
     protected void initView() {
-        setText(R.string.livestreaming_disagree);
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+        if (translationText != null) {
+            setText(translationText.disagree);
+        }
         setTextColor(Color.WHITE);
         setTextSize(16);
         setGravity(Gravity.CENTER);

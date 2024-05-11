@@ -7,13 +7,12 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.components.common.ZTextButton;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
-import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,8 +43,10 @@ public class ZegoInviteJoinCoHostButton extends ZTextButton {
 
     public void setInvitee(ZegoUIKitUser invitee) {
         this.invitee = invitee;
-        String text = getContext().getString(R.string.livestreaming_invite_co_host, invitee.userName);
-        setText(text);
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+        if (translationText != null) {
+            setText(String.format(translationText.inviteCoHostButton,invitee.userName));
+        }
     }
 
     @Override
@@ -65,7 +66,6 @@ public class ZegoInviteJoinCoHostButton extends ZTextButton {
             if (ZegoLiveStreamingManager.getInstance().hasInviteUserCoHost(invitee.userID)) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("code", -1);
-                map.put("message", getContext().getString(R.string.livestreaming_invite_co_host_repeat));
                 ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
                 if (translationText != null && translationText.repeatInviteCoHostFailedToast != null) {
                     map.put("message", translationText.repeatInviteCoHostFailedToast);
@@ -84,9 +84,7 @@ public class ZegoInviteJoinCoHostButton extends ZTextButton {
                 public void callback(Map<String, Object> result) {
                     int code = (int) result.get("code");
                     if (code != 0) {
-                        result.put("message", getContext().getString(R.string.livestreaming_invite_co_host_tips));
-                        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance()
-                            .getTranslationText();
+                        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
                         if (translationText != null && translationText.inviteCoHostFailedToast != null) {
                             result.put("message", translationText.inviteCoHostFailedToast);
                         }

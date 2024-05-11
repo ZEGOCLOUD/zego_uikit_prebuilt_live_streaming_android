@@ -45,7 +45,7 @@ public class ZegoCountedMemberButton extends FrameLayout {
         memberButton.setCompoundDrawablePadding(drawablePadding);
         memberButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         memberButton.setTextColor(Color.WHITE);
-        memberButton.setGravity(Gravity.CENTER_VERTICAL);
+        memberButton.setGravity(Gravity.CENTER);
         int padding = Utils.dp2px(12, getResources().getDisplayMetrics());
         memberButton.setPadding(padding, 0, padding, 0);
         addView(memberButton);

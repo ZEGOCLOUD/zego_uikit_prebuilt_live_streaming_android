@@ -16,13 +16,6 @@ public class ZegoDialogInfo implements Serializable {
         this.confirmButtonName = "";
     }
 
-    public ZegoDialogInfo(String title, String message) {
-        this.title = title;
-        this.message = message;
-        this.cancelButtonName = "Cancel";
-        this.confirmButtonName = "OK";
-    }
-
     public ZegoDialogInfo(String title, String message, String cancelButtonName, String confirmButtonName) {
         this.title = title;
         this.message = message;

@@ -7,17 +7,18 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog.Builder;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
-import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager.ZegoLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog.Builder;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.Collections;
 import java.util.Map;
+import timber.log.Timber;
 
 public class ZegoCoHostControlButton extends FrameLayout {
 
@@ -66,10 +67,10 @@ public class ZegoCoHostControlButton extends FrameLayout {
         endCoHostButton = new ZegoEndCoHostButton(getContext());
         endCoHostButton.setOnClickListener(v -> {
             if (getContext() instanceof Activity) {
-                String title = getContext().getString(R.string.livestreaming_end_co_host_title);
-                String message = getContext().getString(R.string.livestreaming_end_co_host_message);
-                String cancelButtonName = getContext().getString(R.string.livestreaming_end_co_host_cancel);
-                String confirmButtonName = getContext().getString(R.string.livestreaming_end_co_host_ok);
+                String title = "";
+                String message = "";
+                String cancelButtonName = "";
+                String confirmButtonName = "";
                 ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
                 if (translationText != null) {
                     ZegoDialogInfo dialogInfo = translationText.endConnectionDialogInfo;
@@ -129,14 +130,21 @@ public class ZegoCoHostControlButton extends FrameLayout {
     }
 
     public void showRequestCoHostButton() {
+        PKInfo pkInfo = ZegoLiveStreamingManager.getInstance().getPKInfo();
+        if (pkInfo != null) {
+            return;
+        }
         for (int i = 0; i < getChildCount(); i++) {
             getChildAt(i).setVisibility(GONE);
         }
         requestCoHostButton.setVisibility(VISIBLE);
-
     }
 
     public void showCancelRequestCoHostButton() {
+        PKInfo pkInfo = ZegoLiveStreamingManager.getInstance().getPKInfo();
+        if (pkInfo != null) {
+            return;
+        }
         for (int i = 0; i < getChildCount(); i++) {
             getChildAt(i).setVisibility(GONE);
         }
@@ -144,6 +152,10 @@ public class ZegoCoHostControlButton extends FrameLayout {
     }
 
     public void showEndCoHostButton() {
+        PKInfo pkInfo = ZegoLiveStreamingManager.getInstance().getPKInfo();
+        if (pkInfo != null) {
+            return;
+        }
         for (int i = 0; i < getChildCount(); i++) {
             getChildAt(i).setVisibility(GONE);
         }

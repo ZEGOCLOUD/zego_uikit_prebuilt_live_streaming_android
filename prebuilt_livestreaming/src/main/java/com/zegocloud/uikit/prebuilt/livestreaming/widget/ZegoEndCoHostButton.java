@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.utils.Utils;
 
 public class ZegoEndCoHostButton extends androidx.appcompat.widget.AppCompatButton {
@@ -27,7 +29,10 @@ public class ZegoEndCoHostButton extends androidx.appcompat.widget.AppCompatButt
 
     protected void initView() {
         setBackgroundResource(R.drawable.livestreaming_bg_end_cohost_btn);
-        setText(R.string.livestreaming_end);
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+        if (translationText != null) {
+            setText(translationText.endCoHostButton);
+        }
         setTextColor(Color.WHITE);
         setTextSize(13);
         setGravity(Gravity.CENTER);

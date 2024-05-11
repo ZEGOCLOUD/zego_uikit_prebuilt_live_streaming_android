@@ -10,6 +10,8 @@ import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoAcceptInvitationButton;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
+import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import java.util.Map;
 
 public class ZegoAcceptCoHostButton extends ZegoAcceptInvitationButton {
@@ -27,7 +29,10 @@ public class ZegoAcceptCoHostButton extends ZegoAcceptInvitationButton {
     @Override
     protected void initView() {
         super.initView();
-        setText(R.string.livestreaming_agree);
+        ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance().getTranslationText();
+        if (translationText != null) {
+            setText(translationText.agree);
+        }
         setTextColor(Color.WHITE);
         setTextSize(16);
         setGravity(Gravity.CENTER);
