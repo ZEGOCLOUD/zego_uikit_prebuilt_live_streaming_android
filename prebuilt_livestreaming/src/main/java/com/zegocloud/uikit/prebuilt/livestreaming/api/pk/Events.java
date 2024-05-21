@@ -5,8 +5,6 @@ import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKListener;
 
 public class Events {
 
-    private PKListener listener;
-
     public void addPKListener(PKListener listener) {
         ZegoLiveStreamingManager.getInstance().addPKListener(listener);
     }

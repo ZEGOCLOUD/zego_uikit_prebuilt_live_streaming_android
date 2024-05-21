@@ -9,7 +9,5 @@ public class ZegoUIKitPrebuiltLiveStreamingService {
     public static PK pk = new PK();
     public static Cohost cohost = new Cohost();
     public static Common common = new Common();
-
-    //    public Event event;
 }
 
