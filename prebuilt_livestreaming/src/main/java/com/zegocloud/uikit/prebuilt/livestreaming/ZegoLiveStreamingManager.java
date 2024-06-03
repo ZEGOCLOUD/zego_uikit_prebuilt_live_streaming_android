@@ -642,15 +642,6 @@ public class ZegoLiveStreamingManager {
     }
 
     /**
-     * use {@link PK#acceptIncomingPKBattleRequest(String, String, ZegoUIKitUser, String)}  instead.
-     */
-    @Deprecated
-    public void acceptIncomingPKBattleRequest(String requestID, String anotherHostLiveID, ZegoUIKitUser anotherHostUser,
-        String customData) {
-        pkService.acceptPKBattleStartRequest(requestID, anotherHostLiveID, anotherHostUser, customData);
-    }
-
-    /**
      * use {@link PK#acceptIncomingPKBattleRequest(String, String, ZegoUIKitUser)}   instead.
      */
     @Deprecated

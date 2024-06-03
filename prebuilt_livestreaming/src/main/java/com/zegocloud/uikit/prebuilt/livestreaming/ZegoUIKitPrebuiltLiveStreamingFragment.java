@@ -85,6 +85,15 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         // Required empty public constructor
     }
 
+    /**
+     * @param appID    You can create a project and obtain the appID from the [ZEGO Console]().
+     * @param appSign  You can create a project and obtain the appSign from the [ZEGO Console]().
+     * @param userID   The ID of the currently logged-in user. It can be any valid string, typically, you would use the ID from your own user system.
+     * @param userName The name of the currently logged-in user. It can be any valid string, typically, you would use the name from your own user system.
+     * @param liveID   The ID of the live broadcast. This ID is the unique identifier for the current live broadcast, so you need to ensure its uniqueness. It can be any valid string. Users providing the same liveID will log in to the same live broadcast room.
+     * @param config   The configuration for initializing the live broadcast.
+     * @return
+     */
     public static ZegoUIKitPrebuiltLiveStreamingFragment newInstance(long appID, String appSign, String userID,
         String userName, String liveID, ZegoUIKitPrebuiltLiveStreamingConfig config) {
 
@@ -101,6 +110,15 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         return fragment;
     }
 
+    /**
+     * @param appID    You can create a project and obtain the appID from the [ZEGO Console]().
+     * @param token  You can create a project and obtain the ServerSecret from the [ZEGO Console]() and then generate token by your server to avoid leaking your appSign.
+     * @param userID   The ID of the currently logged-in user. It can be any valid string, typically, you would use the ID from your own user system.
+     * @param userName The name of the currently logged-in user. It can be any valid string, typically, you would use the name from your own user system.
+     * @param liveID   The ID of the live broadcast. This ID is the unique identifier for the current live broadcast, so you need to ensure its uniqueness. It can be any valid string. Users providing the same liveID will log in to the same live broadcast room.
+     * @param config   The configuration for initializing the live broadcast.
+     * @return
+     */
     public static ZegoUIKitPrebuiltLiveStreamingFragment newInstanceWithToken(long appID, String token, String userID,
         String userName, String liveID, ZegoUIKitPrebuiltLiveStreamingConfig config) {
         ZegoUIKitPrebuiltLiveStreamingFragment fragment = new ZegoUIKitPrebuiltLiveStreamingFragment();
@@ -531,6 +549,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 if (config.removedFromRoomListener == null) {
                     leaveRoom();
                     requireActivity().finish();
+                } else {
+                    config.removedFromRoomListener.onMeRemovedFromRoom();
                 }
             }
         });
@@ -821,6 +841,11 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             }).build().show();
     }
 
+    /**
+     *
+     * @param viewList The list of custom buttons to be added.
+     * @param role The role to which these buttons will be added for display.
+     */
     public void addButtonToBottomMenuBar(List<View> viewList, ZegoLiveStreamingRole role) {
         bottomMenuBarExtendedButtons.put(role, viewList);
         if (binding != null) {
