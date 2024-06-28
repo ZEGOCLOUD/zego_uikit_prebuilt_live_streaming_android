@@ -2,7 +2,9 @@ package com.zegocloud.uikit.prebuilt.livestreaming.api.common;
 
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
+import com.zegocloud.uikit.service.defines.ZegoBarrageMessageListener;
 import com.zegocloud.uikit.service.defines.ZegoInRoomMessageSendStateListener;
+import im.zego.zegoexpress.callback.IZegoIMSendBarrageMessageCallback;
 
 public class Common {
 
@@ -32,5 +34,9 @@ public class Common {
      */
     public void sendInRoomMessage(String message, ZegoInRoomMessageSendStateListener listener) {
         ZegoUIKit.sendInRoomMessage(message, listener);
+    }
+
+    public static void sendBarrageMessage(String roomID, String message, IZegoIMSendBarrageMessageCallback callback){
+        ZegoUIKit.sendBarrageMessage(roomID, message, callback);
     }
 }
