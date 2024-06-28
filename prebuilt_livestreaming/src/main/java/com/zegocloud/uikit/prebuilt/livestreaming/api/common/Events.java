@@ -25,11 +25,11 @@ public class Events {
         ZegoLiveStreamingManager.getInstance().removeRoleListener();
     }
 
-    public void addInRoomMessageReceivedListener(ZegoInRoomMessageListener inRoomMessageListener) {
+    public void addInRoomMessageListener(ZegoInRoomMessageListener inRoomMessageListener) {
         ZegoUIKit.addInRoomMessageReceivedListener(inRoomMessageListener);
     }
 
-    public void removeInRoomMessageReceivedListener(ZegoInRoomMessageListener inRoomMessageListener) {
+    public void removeInRoomMessageListener(ZegoInRoomMessageListener inRoomMessageListener) {
         ZegoUIKit.removeInRoomMessageReceivedListener(inRoomMessageListener);
     }
 
