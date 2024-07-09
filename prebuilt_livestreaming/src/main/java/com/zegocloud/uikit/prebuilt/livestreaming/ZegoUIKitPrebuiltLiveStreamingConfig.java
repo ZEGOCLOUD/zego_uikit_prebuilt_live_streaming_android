@@ -52,8 +52,8 @@ public class ZegoUIKitPrebuiltLiveStreamingConfig {
 
     private boolean enableCoHosting;
     public boolean markAsLargeRoom = false;
-    public boolean needConfirmWhenOthersTurnOnYourCamera = false;
-    public boolean needConfirmWhenOthersTurnOnYourMicrophone = false;
+    public boolean needConfirmWhenOthersTurnOnYourCamera = true;
+    public boolean needConfirmWhenOthersTurnOnYourMicrophone = true;
     public ZegoDialogInfo othersTurnOnYourCameraConfirmDialogInfo;
     public ZegoDialogInfo othersTurnOnYourMicrophoneConfirmDialogInfo;
     public transient ZegoStartLiveButton startLiveButton;
