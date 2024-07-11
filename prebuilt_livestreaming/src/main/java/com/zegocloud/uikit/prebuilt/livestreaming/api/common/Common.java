@@ -40,6 +40,9 @@ public class Common {
         ZegoUIKit.sendBarrageMessage(roomID, message, callback);
     }
 
+    /**
+     * reset all beauty values to default.
+     */
     public static void resetAllBeautiesToDefault() {
         ZegoUIKit.getBeautyPlugin().resetBeautyValueToDefault(null);
     }

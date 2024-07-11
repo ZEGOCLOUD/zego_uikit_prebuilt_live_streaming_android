@@ -57,7 +57,7 @@ public class ZegoTranslationText {
     }
 
     public ZegoTranslationText() {
-        languageText = new LanguageTextEnglish();
+        this(ZegoUIKitLanguage.ENGLISH);
     }
 
     public ZegoTranslationText(ZegoUIKitLanguage language) {
