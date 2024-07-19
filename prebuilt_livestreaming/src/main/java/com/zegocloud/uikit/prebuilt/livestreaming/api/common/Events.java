@@ -33,11 +33,11 @@ public class Events {
         ZegoUIKit.removeInRoomMessageReceivedListener(inRoomMessageListener);
     }
 
-    public static void addBarrageMessageListener(ZegoBarrageMessageListener listener) {
+    public void addBarrageMessageListener(ZegoBarrageMessageListener listener) {
         ZegoUIKit.addBarrageMessageListener(listener);
     }
 
-    public static void removeBarrageMessageListener(ZegoBarrageMessageListener listener) {
+    public void removeBarrageMessageListener(ZegoBarrageMessageListener listener) {
         ZegoUIKit.removeBarrageMessageListener(listener);
     }
 }

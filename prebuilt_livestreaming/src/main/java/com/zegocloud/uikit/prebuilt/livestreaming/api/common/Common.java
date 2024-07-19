@@ -36,14 +36,14 @@ public class Common {
         ZegoUIKit.sendInRoomMessage(message, listener);
     }
 
-    public static void sendBarrageMessage(String roomID, String message, IZegoIMSendBarrageMessageCallback callback) {
+    public void sendBarrageMessage(String roomID, String message, IZegoIMSendBarrageMessageCallback callback) {
         ZegoUIKit.sendBarrageMessage(roomID, message, callback);
     }
 
     /**
      * reset all beauty values to default.
      */
-    public static void resetAllBeautiesToDefault() {
+    public void resetAllBeautiesToDefault() {
         ZegoUIKit.getBeautyPlugin().resetBeautyValueToDefault(null);
     }
 }
