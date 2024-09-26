@@ -5,7 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +34,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager.ZegoL
 import com.zegocloud.uikit.prebuilt.livestreaming.core.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingRole;
+import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingFragmentLivestreamingBinding;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog;
@@ -60,6 +63,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements PrebuiltUICallBack {
 
@@ -88,9 +92,13 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     /**
      * @param appID    You can create a project and obtain the appID from the [ZEGO Console]().
      * @param appSign  You can create a project and obtain the appSign from the [ZEGO Console]().
-     * @param userID   The ID of the currently logged-in user. It can be any valid string, typically, you would use the ID from your own user system.
-     * @param userName The name of the currently logged-in user. It can be any valid string, typically, you would use the name from your own user system.
-     * @param liveID   The ID of the live broadcast. This ID is the unique identifier for the current live broadcast, so you need to ensure its uniqueness. It can be any valid string. Users providing the same liveID will log in to the same live broadcast room.
+     * @param userID   The ID of the currently logged-in user. It can be any valid string, typically, you would use the
+     *                 ID from your own user system.
+     * @param userName The name of the currently logged-in user. It can be any valid string, typically, you would use
+     *                 the name from your own user system.
+     * @param liveID   The ID of the live broadcast. This ID is the unique identifier for the current live broadcast, so
+     *                 you need to ensure its uniqueness. It can be any valid string. Users providing the same liveID
+     *                 will log in to the same live broadcast room.
      * @param config   The configuration for initializing the live broadcast.
      * @return
      */
@@ -112,10 +120,15 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
 
     /**
      * @param appID    You can create a project and obtain the appID from the [ZEGO Console]().
-     * @param token  You can create a project and obtain the ServerSecret from the [ZEGO Console]() and then generate token by your server to avoid leaking your appSign.
-     * @param userID   The ID of the currently logged-in user. It can be any valid string, typically, you would use the ID from your own user system.
-     * @param userName The name of the currently logged-in user. It can be any valid string, typically, you would use the name from your own user system.
-     * @param liveID   The ID of the live broadcast. This ID is the unique identifier for the current live broadcast, so you need to ensure its uniqueness. It can be any valid string. Users providing the same liveID will log in to the same live broadcast room.
+     * @param token    You can create a project and obtain the ServerSecret from the [ZEGO Console]() and then generate
+     *                 token by your server to avoid leaking your appSign.
+     * @param userID   The ID of the currently logged-in user. It can be any valid string, typically, you would use the
+     *                 ID from your own user system.
+     * @param userName The name of the currently logged-in user. It can be any valid string, typically, you would use
+     *                 the name from your own user system.
+     * @param liveID   The ID of the live broadcast. This ID is the unique identifier for the current live broadcast, so
+     *                 you need to ensure its uniqueness. It can be any valid string. Users providing the same liveID
+     *                 will log in to the same live broadcast room.
      * @param config   The configuration for initializing the live broadcast.
      * @return
      */
@@ -149,6 +162,27 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             if (!TextUtils.isEmpty(token)) {
                 ZegoUIKit.renewToken(token);
             }
+
+            ZegoUIKitPrebuiltLiveStreamingConfig liveConfig = ZegoLiveStreamingManager.getInstance()
+                .getPrebuiltConfig();
+
+            boolean hasScreenShareButton =
+                liveConfig.bottomMenuBarConfig.hostButtons.contains(ZegoMenuBarButtonName.SCREEN_SHARING_TOGGLE_BUTTON)
+                    || liveConfig.bottomMenuBarConfig.coHostButtons.contains(
+                    ZegoMenuBarButtonName.SCREEN_SHARING_TOGGLE_BUTTON)
+                    || liveConfig.bottomMenuBarConfig.audienceButtons.contains(
+                    ZegoMenuBarButtonName.SCREEN_SHARING_TOGGLE_BUTTON);
+            if (hasScreenShareButton) {
+                boolean foregroundService = hasForegroundServicePermissionDeclared(getContext());
+                boolean mediaProjection = hasMediaProjectionPermissionDeclared(getContext());
+                if (!foregroundService || !mediaProjection) {
+                    throw new UnsupportedOperationException(
+                        "You have to declare foregroundService and mediaProjection permissions in manifest file to use screen share feature."
+                            + "According to [google play store polices](https://support.google.com/googleplay/android-developer/answer/13392821?hl=en),"
+                            + "And declare the information in Play Console to avoid been rejected by google play store.");
+                }
+            }
+
             ZegoLiveStreamingManager.getInstance().login(userID, userName, new ZegoUIKitCallback() {
                 @Override
                 public void onResult(int errorCode) {
@@ -190,6 +224,34 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
+    }
+
+    private static final String FOREGROUND_SERVICE = "android.permission.FOREGROUND_SERVICE";
+    private static final String FOREGROUND_SERVICE_MEDIA_PROJECTION = "android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION";
+
+    public static boolean hasForegroundServicePermissionDeclared(Context context) {
+        String[] permissions = getManifestPermissions(context);
+        Optional<String> optionalString = Arrays.stream(permissions).filter(FOREGROUND_SERVICE::equals).findAny();
+        return optionalString.isPresent();
+    }
+
+    public static boolean hasMediaProjectionPermissionDeclared(Context context) {
+        String[] permissions = getManifestPermissions(context);
+        Optional<String> optionalString = Arrays.stream(permissions).filter(FOREGROUND_SERVICE_MEDIA_PROJECTION::equals)
+            .findAny();
+        return optionalString.isPresent();
+    }
+
+    private static String[] getManifestPermissions(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                .getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
+            if (packageInfo != null) {
+                return packageInfo.requestedPermissions;
+            }
+        } catch (NameNotFoundException e) {
+        }
+        return null;
     }
 
     private void leaveRoom() {
@@ -842,9 +904,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
     }
 
     /**
-     *
      * @param viewList The list of custom buttons to be added.
-     * @param role The role to which these buttons will be added for display.
+     * @param role     The role to which these buttons will be added for display.
      */
     public void addButtonToBottomMenuBar(List<View> viewList, ZegoLiveStreamingRole role) {
         bottomMenuBarExtendedButtons.put(role, viewList);
