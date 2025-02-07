@@ -158,14 +158,9 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         String token = arguments.getString("appToken");
 
         if (appID != 0) {
-            ZegoLiveStreamingManager.getInstance().init(requireActivity().getApplication(), appID, appSign);
-            if (!TextUtils.isEmpty(token)) {
-                ZegoUIKit.renewToken(token);
-            }
 
             ZegoUIKitPrebuiltLiveStreamingConfig liveConfig = ZegoLiveStreamingManager.getInstance()
                 .getPrebuiltConfig();
-
             boolean hasScreenShareButton =
                 liveConfig.bottomMenuBarConfig.hostButtons.contains(ZegoMenuBarButtonName.SCREEN_SHARING_TOGGLE_BUTTON)
                     || liveConfig.bottomMenuBarConfig.coHostButtons.contains(
@@ -183,6 +178,8 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
                 }
             }
 
+            ZegoLiveStreamingManager.getInstance()
+                .init(requireActivity().getApplication(), appID, appSign, token, userID, userName);
             ZegoLiveStreamingManager.getInstance().login(userID, userName, new ZegoUIKitCallback() {
                 @Override
                 public void onResult(int errorCode) {
@@ -941,7 +938,7 @@ public class ZegoUIKitPrebuiltLiveStreamingFragment extends Fragment implements 
         acceptButton.setInviterID(inviter.userID);
         ZegoRefuseCoHostButton refuseButton = new ZegoRefuseCoHostButton(context);
         refuseButton.setInviterID(inviter.userID);
-        refuseButton.setRequestCallbackListener(v -> {
+        refuseButton.setRequestCallbackListener(result -> {
             if (receiveCoHostInviteDialog != null) {
                 receiveCoHostInviteDialog.dismiss();
             }

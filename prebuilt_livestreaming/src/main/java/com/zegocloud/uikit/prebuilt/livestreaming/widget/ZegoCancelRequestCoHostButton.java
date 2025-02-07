@@ -15,6 +15,8 @@ import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
+import im.zego.uikit.libuikitreport.ReportUtil;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ZegoCancelRequestCoHostButton extends ZegoCancelInvitationButton {
@@ -42,7 +44,7 @@ public class ZegoCancelRequestCoHostButton extends ZegoCancelInvitationButton {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         setPadding(Utils.dp2px(14, displayMetrics), 0, Utils.dp2px(16, displayMetrics), 0);
         setCompoundDrawablePadding(Utils.dp2px(6, displayMetrics));
-        setCompoundDrawablesWithIntrinsicBounds(R.drawable.livestreaming_bottombar_cohost,0,0,0);
+        setCompoundDrawablesWithIntrinsicBounds(R.drawable.livestreaming_bottombar_cohost, 0, 0, 0);
         setOnClickListener(null);
     }
 
@@ -57,6 +59,19 @@ public class ZegoCancelRequestCoHostButton extends ZegoCancelInvitationButton {
         ZegoUIKit.getSignalingPlugin().cancelInvitation(invitees, "", new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
+                int code = (int) result.get("code");
+                String invitationID = (String) result.get("invitationID");
+                if (code == 0) {
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("action", "cancel");
+                    hashMap.put("call_id", invitationID);
+                    boolean currentUserHost = ZegoLiveStreamingManager.getInstance().isCurrentUserHost();
+                    if (currentUserHost) {
+                        ReportUtil.reportEvent("livestreaming/cohost/host/respond", hashMap);
+                    } else {
+                        ReportUtil.reportEvent("livestreaming/cohost/audience/respond", hashMap);
+                    }
+                }
                 if (callbackListener != null) {
                     callbackListener.callback(result);
                 }

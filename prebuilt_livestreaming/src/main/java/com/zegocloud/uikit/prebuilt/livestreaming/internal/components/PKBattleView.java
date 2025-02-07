@@ -14,19 +14,21 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.components.audiovideo.ZegoAvatarViewProvider;
+import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager.ZegoLiveStreamingListener;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoLiveStreamingPKBattleConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoPrebuiltAudioVideoViewConfig;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
-import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.prebuilt.livestreaming.databinding.LivestreamingLayoutPkBinding;
+import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
 import com.zegocloud.uikit.service.defines.ZegoCameraStateChangeListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import im.zego.uikit.libuikitreport.ReportUtil;
 import im.zego.zegoexpress.constants.ZegoViewMode;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -218,6 +220,9 @@ public class PKBattleView extends FrameLayout {
             } else {
                 binding.pkOtherVideo.startPlayRemoteAudioVideo();
             }
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("stream_id", pkInfo.getPKStream());
+            ReportUtil.reportEvent("livestreaming/pk/stream/startplay", hashMap);
 
             binding.pkSelfVideo.setUserID(currentUser.userID);
             if (avatarViewProvider != null) {
@@ -270,6 +275,11 @@ public class PKBattleView extends FrameLayout {
             String streamID = ZegoUIKit.getRoom().roomID + "_mix";
             binding.audienceMixVideo.setStreamID(streamID);
             binding.audienceMixVideo.startPlayRemoteAudioVideo();
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("stream_id", streamID);
+            ReportUtil.reportEvent("livestreaming/pk/stream/startplay", hashMap);
+
         }
 
         onHostCameraUpdate(hostUser.isCameraOn);

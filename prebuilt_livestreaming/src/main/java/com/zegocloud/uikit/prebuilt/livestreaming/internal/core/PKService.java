@@ -15,6 +15,7 @@ import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginRoomAttribute
 import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginRoomPropertyUpdateListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.express.IExpressEngineEventHandler;
+import im.zego.uikit.libuikitreport.ReportUtil;
 import im.zego.zegoexpress.callback.IZegoMixerStartCallback;
 import im.zego.zegoexpress.callback.IZegoMixerStopCallback;
 import im.zego.zegoexpress.constants.ZegoMixRenderMode;
@@ -220,7 +221,8 @@ public class PKService {
         if (pkExtendedData != null && invitationID != null) {
             if (pkExtendedData.type == PKExtendedData.START_PK) {
                 String currentRoomID = ZegoUIKit.getRoom().roomID;
-                boolean userNotHost = TextUtils.isEmpty(currentRoomID) || (!ZegoLiveStreamingManager.getInstance().isCurrentUserHost());
+                boolean userNotHost =
+                    TextUtils.isEmpty(currentRoomID) || (!ZegoLiveStreamingManager.getInstance().isCurrentUserHost());
                 boolean alreadySend = sendPKStartRequest != null;
                 boolean alreadyReceived = recvPKStartRequest != null;
                 boolean liveNotStarted = !ZegoLiveStreamingManager.getInstance().isLiveStarted();
@@ -253,6 +255,12 @@ public class PKService {
                 }
 
                 inviter.userName = pkExtendedData.userName;
+
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("call_id", invitationID);
+                hashMap.put("extended_data", data);
+                ReportUtil.reportEvent("livestreaming/pk/received", hashMap);
+
                 for (PKListener listener : listenerList) {
                     listener.onIncomingPKBattleRequestReceived(invitationID, inviter, pkExtendedData.roomID,
                         customData);
@@ -435,6 +443,12 @@ public class PKService {
                 int code = (int) result.get("code");
                 String invitationID = (String) result.get("invitationID");
                 if (code == 0) {
+
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("call_id", invitationID);
+                    hashMap.put("extended_data", jsonObject.toString());
+                    ReportUtil.reportEvent("livestreaming/pk/invite", hashMap);
+
                     sendPKStartRequest.requestID = invitationID;
                     sendPKStartRequest.anotherUserID = targetUserID;
                 } else {
@@ -464,6 +478,13 @@ public class PKService {
             @Override
             public void callback(Map<String, Object> result) {
                 int code = (int) result.get("code");
+                String invitationID = (String) result.get("invitationID");
+                if (code == 0) {
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("call_id", invitationID);
+                    hashMap.put("action", "accept");
+                    ReportUtil.reportEvent("livestreaming/pk/respond", hashMap);
+                }
                 if (code == 0) {
                     startPKBattleWith(anotherHostLiveID, anotherHostUser.userID, anotherHostUser.userName);
                 } else {
@@ -484,7 +505,19 @@ public class PKService {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        rejectUserRequest(requestID, jsonObject.toString(), null);
+        rejectUserRequest(requestID, jsonObject.toString(), new PluginCallbackListener() {
+            @Override
+            public void callback(Map<String, Object> result) {
+                int code = (int) result.get("code");
+                String invitationID = (String) result.get("invitationID");
+                if (code == 0) {
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("call_id", invitationID);
+                    hashMap.put("action", "refuse");
+                    ReportUtil.reportEvent("livestreaming/pk/respond", hashMap);
+                }
+            }
+        });
     }
 
     public void cancelPKBattleStartRequest(String customData, UserRequestCallback callback) {
@@ -504,6 +537,10 @@ public class PKService {
                     int code = (int) result.get("code");
                     String invitationID = (String) result.get("invitationID");
                     if (code == 0) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("call_id", invitationID);
+                        hashMap.put("action", "cancel");
+                        ReportUtil.reportEvent("livestreaming/pk/respond", hashMap);
                         sendPKStartRequest = null;
                     }
                     if (callback != null) {
@@ -524,7 +561,18 @@ public class PKService {
     private void sendPKBattlesStopRequestInner() {
         if (currentPKInfo != null) {
             String pkExtendedData = getPKExtendedData(PKExtendedData.END_PK);
-            sendUserRequest(currentPKInfo.pkUser.userID, 60, pkExtendedData, null);
+            sendUserRequest(currentPKInfo.pkUser.userID, 60, pkExtendedData, new PluginCallbackListener() {
+                @Override
+                public void callback(Map<String, Object> result) {
+                    int code = (int) result.get("code");
+                    String invitationID = (String) result.get("invitationID");
+                    if (code == 0) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("call_id", invitationID);
+                        ReportUtil.reportEvent("livestreaming/pk/end", hashMap);
+                    }
+                }
+            });
             setCurrentPKInfo(null);
         }
     }
@@ -914,8 +962,11 @@ public class PKService {
                 new PluginCallbackListener() {
                     @Override
                     public void callback(Map<String, Object> result) {
+                        int code = (int) result.get("code");
                         String invitationID = (String) result.get("invitationID");
-                        pkInvitations.add(invitationID);
+                        if (code == 0) {
+                            pkInvitations.add(invitationID);
+                        }
                         if (callbackListener != null) {
                             callbackListener.callback(result);
                         }

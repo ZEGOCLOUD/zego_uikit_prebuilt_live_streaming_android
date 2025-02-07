@@ -2,6 +2,7 @@ package com.zegocloud.uikit.prebuilt.livestreaming;
 
 import android.app.Application;
 import android.content.Context;
+import android.text.TextUtils;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.internal.ZegoUIKitLanguage;
 import com.zegocloud.uikit.plugin.adapter.plugins.beauty.ZegoBeautyPluginInnerTextCHS;
@@ -29,6 +30,7 @@ import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginInvitationListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import im.zego.uikit.libuikitreport.ReportUtil;
 import im.zego.zegoexpress.callback.IZegoMixerStartCallback;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,7 +85,24 @@ public class ZegoLiveStreamingManager {
     private ZegoUIKitPrebuiltLiveStreamingConfig liveConfig;
 
 
-    void init(Application application, Long appID, String appSign) {
+    void init(Application application, Long appID, String appSign,String token,String userID,String userName) {
+        HashMap<String, Object> commonParams = new HashMap<>();
+        commonParams.put(ReportUtil.PLATFORM, "android");
+        commonParams.put(ReportUtil.PLATFORM_VERSION, android.os.Build.VERSION.SDK_INT + "");
+        commonParams.put(ReportUtil.UIKIT_VERSION, ZegoUIKit.getVersion());
+        commonParams.put(ReportUtil.USER_ID, userID);
+        commonParams.put("livestreaming_version", getVersion());
+        ReportUtil.create(appID, appSign, commonParams);
+
+        init(application,appID,appSign);
+        if (!TextUtils.isEmpty(token)) {
+            ZegoUIKit.renewToken(token);
+        }
+
+    }
+
+    private void init(Application application, Long appID, String appSign) {
+        long startTime = System.currentTimeMillis();
         ZegoUIKit.init(application, appID, appSign, ZegoScenario.GENERAL);
         if (liveConfig.bottomMenuBarConfig.hostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
             || liveConfig.bottomMenuBarConfig.coHostButtons.contains(ZegoMenuBarButtonName.BEAUTY_BUTTON)
@@ -100,6 +119,17 @@ public class ZegoLiveStreamingManager {
             ZegoUIKit.getBeautyPlugin().init(application, appID, appSign);
         }
         context = application.getApplicationContext();
+
+        boolean initExpress = ZegoUIKit.isExpressEngineInitSucceed();
+        boolean initZIM = ZegoUIKit.getSignalingPlugin().isPluginInitSucceed();
+        HashMap<String, Object> hashMap = new HashMap<>();
+        if (initExpress && initZIM) {
+            hashMap.put("error", 0);
+        } else {
+            hashMap.put("error", -1);
+        }
+        hashMap.put("start_time", startTime);
+        ReportUtil.reportEvent("livestreaming/init", hashMap);
     }
 
     void login(String userID, String userName, ZegoUIKitCallback callback) {
@@ -125,6 +155,11 @@ public class ZegoLiveStreamingManager {
                     String invitationID = getStringFromJson(getJsonObjectFromString(data), "invitationID");
                     coHostInvitations.add(invitationID);
                     if (Objects.equals(getHostID(), ZegoUIKit.getLocalUser().userID)) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("call_id", invitationID);
+                        hashMap.put("audience_id", inviter.userID);
+                        hashMap.put("extended_data", data);
+                        ReportUtil.reportEvent("livestreaming/cohost/host/received", hashMap);
                         addReceiveCoHostRequestUser(inviter.userID);
                         //                        if (uiCallBack != null) {
                         //                            uiCallBack.showReceiveCoHostRequestDialog(inviter, type, data);
@@ -134,6 +169,13 @@ public class ZegoLiveStreamingManager {
                     String invitationID = getStringFromJson(getJsonObjectFromString(data), "invitationID");
                     coHostInvitations.add(invitationID);
                     if (Objects.equals(getHostID(), inviter.userID)) {
+
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("call_id", invitationID);
+                        hashMap.put("host_id", inviter.userID);
+                        hashMap.put("extended_data", data);
+                        ReportUtil.reportEvent("livestreaming/cohost/audience/received", hashMap);
+
                         if (uiCallBack != null) {
                             uiCallBack.showReceiveCoHostInviteDialog(inviter, type, data);
                         }
@@ -141,6 +183,13 @@ public class ZegoLiveStreamingManager {
                 } else if (type == LiveInvitationType.REMOVE_COHOST.getValue()) {
                     String invitationID = getStringFromJson(getJsonObjectFromString(data), "invitationID");
                     coHostInvitations.add(invitationID);
+
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("call_id", invitationID);
+                    hashMap.put("host_id", inviter.userID);
+                    hashMap.put("extended_data", data);
+                    ReportUtil.reportEvent("livestreaming/cohost/cohost/received", hashMap);
+
                     if (uiCallBack != null) {
                         uiCallBack.removeCoHost(inviter, type, data);
                     }
@@ -161,12 +210,25 @@ public class ZegoLiveStreamingManager {
                             // if inviter is host,then me is audience,
                             // and no respond to host's cohost invite
                             removeUserStatus(inviter.userID);
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("call_id", invitationID);
+                            hashMap.put("action", "timeout");
+                            ReportUtil.reportEvent("livestreaming/cohost/audience/respond", hashMap);
+
+
                             if (uiCallBack != null) {
                                 uiCallBack.dismissReceiveCoHostInviteDialog();
                             }
                         } else {
                             // if inviter not host,then me is the host,
                             // and no respond to audience's cohost request
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("call_id", invitationID);
+                            hashMap.put("action", "timeout");
+                            ReportUtil.reportEvent("livestreaming/cohost/host/respond", hashMap);
+
                             removeUserStatusAndCheck(inviter.userID);
                             //                    if (uiCallBack != null) {
                             //                        uiCallBack.dismissReceiveCoHostRequestDialog();
@@ -191,12 +253,23 @@ public class ZegoLiveStreamingManager {
                         if (inviteeIDList.contains(getHostID())) {
                             // invitee is host.then me is audience,
                             // and the host no respond to my cohost request
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("call_id", invitationID);
+                            hashMap.put("action", "timeout");
+                            ReportUtil.reportEvent("livestreaming/cohost/host/respond", hashMap);
+
                             if (uiCallBack != null) {
                                 uiCallBack.showRequestCoHostButton();
                             }
                         } else {
                             // invitee is not host,then me is host,
                             // and the audience no respond to my cohost invite
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("call_id", invitationID);
+                            hashMap.put("action", "timeout");
+                            ReportUtil.reportEvent("livestreaming/cohost/audience/respond", hashMap);
+
                         }
                     }
                 }
@@ -238,7 +311,8 @@ public class ZegoLiveStreamingManager {
                             removeUserStatusAndCheck(invitee.userID);
                             if (uiCallBack != null) {
                                 String string = "";
-                                if (liveConfig.translationText != null && liveConfig.translationText.hostRejectCoHostRequestToast != null) {
+                                if (liveConfig.translationText != null
+                                    && liveConfig.translationText.hostRejectCoHostRequestToast != null) {
                                     string = liveConfig.translationText.hostRejectCoHostRequestToast;
                                 }
                                 ZegoUIKitPrebuiltLiveStreamingService.common.showTopTips(string, false);
@@ -252,7 +326,8 @@ public class ZegoLiveStreamingManager {
                             removeUserStatus(invitee.userID);
                             if (uiCallBack != null) {
                                 String string = "";
-                                if (liveConfig.translationText != null && liveConfig.translationText.audienceRejectInvitationToast != null) {
+                                if (liveConfig.translationText != null
+                                    && liveConfig.translationText.audienceRejectInvitationToast != null) {
                                     string = String.format(liveConfig.translationText.audienceRejectInvitationToast,
                                         invitee.userName);
                                 }
@@ -799,5 +874,9 @@ public class ZegoLiveStreamingManager {
 
         default void onRoleChanged(ZegoLiveStreamingRole liveStreamingRole) {
         }
+    }
+
+    public String getVersion() {
+        return "Prebuilt_LiveSteaming" + "_3.3.0";
     }
 }

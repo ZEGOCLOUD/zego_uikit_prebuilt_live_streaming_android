@@ -17,6 +17,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
+import im.zego.uikit.libuikitreport.ReportUtil;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -113,6 +114,13 @@ public class ZegoRequestCoHostButton extends ZTextButton {
                                 result.put("message", translationText.requestCoHostFailed);
                             }
                         } else {
+                            String currentRoomID = ZegoUIKit.getRoom().roomID;
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("room_id", currentRoomID);
+                            String invitationID = (String) result.get("invitationID");
+                            hashMap.put("call_id", invitationID);
+                            ReportUtil.reportEvent("livestreaming/cohost/audience/invite", hashMap);
+
                             ZegoTranslationText translationText = ZegoLiveStreamingManager.getInstance()
                                 .getTranslationText();
                             if (translationText != null && translationText.sendRequestCoHostToast != null) {

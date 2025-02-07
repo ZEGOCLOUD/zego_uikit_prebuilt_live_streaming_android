@@ -14,6 +14,7 @@ import com.zegocloud.uikit.prebuilt.livestreaming.ZegoLiveStreamingManager;
 import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.LiveInvitationType;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import im.zego.uikit.libuikitreport.ReportUtil;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,6 +91,11 @@ public class ZegoInviteJoinCoHostButton extends ZTextButton {
                         }
                         ZegoLiveStreamingManager.getInstance().showTopTips((String) result.get("message"), code == 0);
                     } else {
+                        String zimCallID = (String) result.get("invitationID");
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("call_id", zimCallID);
+                        hashMap.put("audience_id", invitee.userID);
+                        ReportUtil.reportEvent("livestreaming/cohost/host/invite",hashMap);
                         if (invitee != null) {
                             ZegoLiveStreamingManager.getInstance()
                                 .setUserStatus(invitee.userID, ZegoLiveStreamingManager.INVITE_JOIN_COHOST);

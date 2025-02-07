@@ -16,9 +16,9 @@ import com.zegocloud.uikit.prebuilt.livestreaming.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.components.ConfirmDialog.Builder;
 import com.zegocloud.uikit.prebuilt.livestreaming.internal.core.PKService.PKInfo;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import im.zego.uikit.libuikitreport.ReportUtil;
 import java.util.Collections;
 import java.util.Map;
-import timber.log.Timber;
 
 public class ZegoCoHostControlButton extends FrameLayout {
 
@@ -90,6 +90,7 @@ public class ZegoCoHostControlButton extends FrameLayout {
                 new Builder(getContext()).setTitle(title).setMessage(message)
                     .setPositiveButton(confirmButtonName, (dialog, which) -> {
                         ZegoLiveStreamingManager.getInstance().endCoHost();
+                        ReportUtil.reportEvent("livestreaming/cohost/audience/stop", null);
                         showRequestCoHostButton();
                         dialog.dismiss();
                     }).setNegativeButton(cancelButtonName, (dialog, which) -> {

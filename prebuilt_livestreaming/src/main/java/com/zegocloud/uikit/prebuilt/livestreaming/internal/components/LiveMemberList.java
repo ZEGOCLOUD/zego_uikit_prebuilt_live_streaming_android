@@ -201,7 +201,7 @@ public class LiveMemberList extends BottomSheetDialog {
                     if (translationText != null) {
                         agree.setText(translationText.agree);
                     }
-                    agree.setRequestCallbackListener(v -> {
+                    agree.setRequestCallbackListener(result -> {
                         dismiss();
                         ZegoLiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                     });
@@ -211,7 +211,7 @@ public class LiveMemberList extends BottomSheetDialog {
                     if (translationText != null) {
                         disagree.setText(translationText.disagree);
                     }
-                    disagree.setRequestCallbackListener(v -> {
+                    disagree.setRequestCallbackListener(result -> {
                         dismiss();
                         ZegoLiveStreamingManager.getInstance().removeUserStatusAndCheck(uiKitUser.userID);
                     });

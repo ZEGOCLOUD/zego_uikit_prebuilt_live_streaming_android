@@ -15,7 +15,9 @@ import com.zegocloud.uikit.plugin.invitation.components.ZegoStartInvitationButto
 import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.prebuilt.livestreaming.R;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import im.zego.uikit.libuikitreport.ReportUtil;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,14 +50,25 @@ public class ZegoRemoveCoHostButton extends ZegoStartInvitationButton {
     @Override
     protected void invokedWhenClick() {
         List<String> idList = GenericUtils.map(invitees, zegoUIKitUser -> zegoUIKitUser.userID);
-        ZegoLiveStreamingManager.getInstance().sendCoHostRequest(idList, timeout, type, data, new PluginCallbackListener() {
-            @Override
-            public void callback(Map<String, Object> result) {
-                if (callbackListener != null) {
-                    callbackListener.callback(result);
+        ZegoLiveStreamingManager.getInstance()
+            .sendCoHostRequest(idList, timeout, type, data, new PluginCallbackListener() {
+                @Override
+                public void callback(Map<String, Object> result) {
+                    int code = (int) result.get("code");
+                    String invitationID = (String) result.get("invitationID");
+                    if (code == 0) {
+                        String currentRoomID = ZegoUIKit.getRoom().roomID;
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("cohost_id", idList.get(0));
+                        hashMap.put("room_id", currentRoomID);
+                        hashMap.put("call_id", invitationID);
+                        ReportUtil.reportEvent("livestreaming/cohost/host/stop", hashMap);
+                    }
+                    if (callbackListener != null) {
+                        callbackListener.callback(result);
+                    }
                 }
-            }
-        });
+            });
     }
 
     public void setRequestCallbackListener(PluginCallbackListener callbackListener) {
